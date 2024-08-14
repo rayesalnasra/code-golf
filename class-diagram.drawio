@@ -57,7 +57,7 @@
         <mxCell id="VJJSbOsw-ExNcY2Q_p88-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="tykuztvJxobjOQb9VciZ-5" target="tykuztvJxobjOQb9VciZ-10">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="tykuztvJxobjOQb9VciZ-5" value="userProfile" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="tykuztvJxobjOQb9VciZ-5" value="userProfile extends User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="770" y="50" width="160" height="170" as="geometry" />
         </mxCell>
         <mxCell id="tykuztvJxobjOQb9VciZ-6" value="+ getUser() : String&lt;div&gt;+ getEmail() : String&lt;/div&gt;&lt;div&gt;+ getPosition() : int&lt;/div&gt;&lt;div&gt;+ getDateJoined() : Date&lt;/div&gt;&lt;div&gt;+ getScore() : int&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="tykuztvJxobjOQb9VciZ-5" vertex="1">
