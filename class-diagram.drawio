@@ -11,10 +11,10 @@
           <mxGeometry y="30" width="310" height="110" as="geometry" />
         </mxCell>
         <mxCell id="AD_UT4TeYZ6WEzwYOdvF-14" value="Challenge" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="440" y="395" width="140" height="150" as="geometry" />
+          <mxGeometry x="450" y="370" width="140" height="270" as="geometry" />
         </mxCell>
-        <mxCell id="AD_UT4TeYZ6WEzwYOdvF-15" value="+title: String&lt;div&gt;+description: String&lt;/div&gt;&lt;div&gt;+difficulty: int&lt;/div&gt;&lt;div&gt;+code: String&lt;/div&gt;&lt;div&gt;+date_created: Date&lt;/div&gt;&lt;div&gt;+author: User&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="AD_UT4TeYZ6WEzwYOdvF-14" vertex="1">
-          <mxGeometry y="30" width="140" height="120" as="geometry" />
+        <mxCell id="AD_UT4TeYZ6WEzwYOdvF-15" value="+title: String&lt;div&gt;+description: String&lt;/div&gt;&lt;div&gt;+difficulty: int&lt;/div&gt;&lt;div&gt;+code: String&lt;/div&gt;&lt;div&gt;+date_created: Date&lt;/div&gt;&lt;div&gt;+author: User&lt;/div&gt;&lt;div&gt;+challengeID: int&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+getTestCases()&lt;/div&gt;&lt;div&gt;+addTestCase()&lt;/div&gt;&lt;div&gt;+getSolution()&lt;/div&gt;&lt;div&gt;+addSolution()&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="AD_UT4TeYZ6WEzwYOdvF-14" vertex="1">
+          <mxGeometry y="30" width="140" height="240" as="geometry" />
         </mxCell>
         <mxCell id="AD_UT4TeYZ6WEzwYOdvF-22" value="userSolution" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="230" y="390" width="170" height="160" as="geometry" />
