@@ -9,6 +9,19 @@ body {
   background-color: black;
   color: white;
 }
+/* 
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: var(--bkg-color);
+}
+
+h1,
+p {
+  color: var(--text-color);
+} */
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -83,9 +96,9 @@ footer {
   background-color: rgb(5, 118, 7);
   color: white;
   margin-top: auto;
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 100cap;
   height: 50px;
 }
 
