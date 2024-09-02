@@ -30,6 +30,7 @@ const Navbar = () => {
                             <a href="#Discussion.html">Discussion</a>
                             <a href="#Documentation.html">Documentation</a>
                             <a href="#Tutorial.html">Tutorial</a>
+                            <button onclick="myFunction()">Dark mode</button>
                             <a href="#Sign Out.html">Sign Out</a>
                         </div>
                     </div>
