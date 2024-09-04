@@ -1,13 +1,37 @@
-import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import HomePage from './HomePage'
+import ProfilePage from './ProfilePage'
+import LeaderboardPage from './LeaderboardPage'
+import TutorialPage from './TutorialPage'
+import DocumentationPage from './DocumentationPage'
+import DiscussionPage from './DiscussionPage'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1>Vite + React</h1>
-    </>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/profile">Profile</Link></li>
+            <li><Link to="/leaderboard">Leaderboard</Link></li>
+            <li><Link to="/tutorial">Tutorial</Link></li>
+            <li><Link to="/documentation">Documentation</Link></li>
+            <li><Link to="/discussion">Discussion</Link></li>
+          </ul>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/tutorial" element={<TutorialPage />} />
+          <Route path="/documentation" element={<DocumentationPage />} />
+          <Route path="/discussion" element={<DiscussionPage />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
