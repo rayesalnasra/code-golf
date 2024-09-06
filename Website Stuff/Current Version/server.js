@@ -10,12 +10,7 @@ const port = 3000;
 
 // Initialize Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBjz2Fn1zx4rnJb1uldNVkAXGRyDRN5gI8",
-    authDomain: "login-auth-8e5a9.firebaseapp.com",
-    projectId: "login-auth-8e5a9",
-    storageBucket: "login-auth-8e5a9.appspot.com",
-    messagingSenderId: "568739474039",
-    appId: "1:568739474039:web:2d2dba8f18647f9bfdf472"
+//Edit In
 };
 
 firebase.initializeApp(firebaseConfig);
