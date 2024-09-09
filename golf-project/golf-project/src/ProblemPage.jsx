@@ -6,9 +6,12 @@ import axios from "axios";
 export default function ProblemPage() {
     // State to hold the code from the editor
     const [code, setCode] = useState("");
-  
+    
     // State to hold the output after code submission
     const [output, setOutput] = useState("");
+    
+    // State to hold the test result
+    const [testResult, setTestResult] = useState("");
   
     // Update the code state when the editor content changes
     const handleChange = React.useCallback((value) => {
@@ -17,7 +20,7 @@ export default function ProblemPage() {
   
     // Placeholder function for handling code submission
     const submitCode = () => {
-      // TODO: Add logic to handle code submission and update output
+      // TODO: Add logic to handle code submission, update output, and set testResult
     };
   
     return (
@@ -48,7 +51,13 @@ export default function ProblemPage() {
             </pre>
           </div>
         )}
+        
+        {/* Display the test result if there is any */}
+        {testResult && (
+          <div>
+            Test {testResult}
+          </div>
+        )}
       </div>
     );
   }
-  
