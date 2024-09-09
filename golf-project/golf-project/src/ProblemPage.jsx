@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
-
+import { python } from "@codemirror/lang-python";
+import axios from "axios";
 function ProblemPage() {
   return (
     <>
