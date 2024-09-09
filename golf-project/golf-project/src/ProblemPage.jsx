@@ -4,13 +4,18 @@ import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
 export default function ProblemPage() {
-    // State to hold the code from the editor
+    // State to store the code from the editor
     const [code, setCode] = useState("");
   
-    // Update the code state when editor content changes
+    // Update the code state when the editor content changes
     const handleChange = React.useCallback((value) => {
       setCode(value);
     }, []);
+  
+    // Placeholder function for handling code submission
+    const submitCode = () => {
+      // TODO: Add logic to handle code submission
+    };
   
     return (
       <div>
@@ -19,12 +24,17 @@ export default function ProblemPage() {
         
         {/* CodeMirror editor for writing Python code */}
         <CodeMirror
-          value={code} // Initial content of the editor
+          value={code} // Current code in the editor
           height="200px" // Height of the editor
-          theme="dark" // Theme for the editor
+          theme="dark" // Editor theme
           extensions={[python({ jsx: true })]} // Python syntax highlighting
-          onChange={handleChange} // Function to call when the editor content changes
+          onChange={handleChange} // Function to call when editor content changes
         />
+        
+        {/* Button to submit the code */}
+        <button onClick={submitCode}>
+          Submit
+        </button>
       </div>
     );
   }
