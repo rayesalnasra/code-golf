@@ -15,7 +15,7 @@ app.use(cors());
 // Use middleware to parse incoming JSON requests
 app.use(express.json());
 
-// Python template to wrap user code for testing
+// Python template to wrap user code and add test functionality
 const pythonTemplate = `
 import sys
 import inspect
@@ -70,8 +70,20 @@ app.post('/python', (req, res) => {
     // Write the combined code to a Python file
     fs.writeFileSync('test.py', finalCode);
 
-    // Send a response back indicating the file has been written
-    res.send('Python code has been written to test.py');
+    // Execute the Python script and capture output
+    exec('python3 test.py', (error, stdout, stderr) => {
+        // Combine standard output and error
+        const output = stdout || stderr;
+        
+        // Determine if the test passed or failed based on the output
+        const passOrFail = output.includes('Test passed') ? 'passed' : 'failed';
+        
+        // Send back the result as JSON
+        res.json({ 
+            output: output,
+            passOrFail: passOrFail
+        });
+    });
 });
 
 // Start the server and listen on the defined port
