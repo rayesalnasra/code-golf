@@ -5,6 +5,7 @@ import LeaderboardPage from './LeaderboardPage'
 import TutorialPage from './TutorialPage'
 import DocumentationPage from './DocumentationPage'
 import DiscussionPage from './DiscussionPage'
+import ProblemPage from './ProblemPage'
 import './App.css'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <li><Link to="/tutorial">Tutorial</Link></li>
             <li><Link to="/documentation">Documentation</Link></li>
             <li><Link to="/discussion">Discussion</Link></li>
+            <li><Link to="/problem">Problem</Link></li> 
           </ul>
         </nav>
 
@@ -29,6 +31,7 @@ function App() {
           <Route path="/tutorial" element={<TutorialPage />} />
           <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/discussion" element={<DiscussionPage />} />
+          <Route path="/problem" element={<ProblemPage />} />
         </Routes>
       </div>
     </Router>
