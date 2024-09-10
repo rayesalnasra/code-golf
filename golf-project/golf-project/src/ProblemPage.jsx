@@ -3,65 +3,23 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
-export default function ProblemPage() {
-  const [code, setCode] = useState("");
-  const [output, setOutput] = useState("");
-  const [testResult, setTestResult] = useState("");
-
-  const handleChange = React.useCallback((value) => {
-    setCode(value);
-  }, []);
-
-  const submitCode = () => {
-    axios.post("http://localhost:80/python", { code })
-      .then((res) => {
-        setOutput(res.data.output);
-        setTestResult(res.data.passOrFail);
-      })
-      .catch((error) => {
-        console.error("Error submitting code:", error);
-        if (error.response) {
-          setOutput(error.response.data.output || "An error occurred while running your code.");
-        } else if (error.request) {
-          setOutput("Unable to reach the server. Please check your connection and try again.");
-        } else {
-          setOutput("An unexpected error occurred. Please try again.");
-        }
-        setTestResult("failed");
-      });
-  };
+export default function App() {
+  // Initialize state with default Python code
+  const [code, setCode] = useState("def add(a, b):\n    return a + b");
 
   return (
     <div>
       <h1>Python Code Tester</h1>
-      <div>Create a function that adds two numbers in Python</div>
+      <div>Create a function that adds two numbers in Python</div> 
       
+      {/* CodeMirror editor for writing Python code */}
       <CodeMirror
-        value={code}
-        height="200px"
-        theme="dark"
-        extensions={[python({ jsx: true })]}
-        onChange={handleChange}
+        value={code} // Current code in the editor
+        height="200px" // Height of the editor
+        theme="dark" // Editor theme
+        extensions={[python({ jsx: true })]} // Python language support
+        onChange={(value) => setCode(value)} // Update state when the code changes
       />
-      
-      <button onClick={submitCode}>
-        Submit
-      </button>
-      
-      {output && (
-        <div>
-          <h2>Output:</h2>
-          <pre>
-            {output}
-          </pre>
-        </div>
-      )}
-      
-      {testResult && (
-        <div>
-          Test {testResult}
-        </div>
-      )}
     </div>
   );
 }
