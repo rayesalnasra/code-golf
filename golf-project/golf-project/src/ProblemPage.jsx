@@ -70,20 +70,22 @@ export default function ProblemPage() {
 
   return (
     <div className="problem-page">
-      <Link to="/" className="back-link">
+      <Link to="/problems" className="back-link">
         &larr; Back to problem selection
       </Link>
       
       <h2 className="problem-description">{problemDescriptions[problemId]}</h2>
       
-      <CodeMirror
-        value={code}
-        height="200px"
-        theme="dark"
-        extensions={[python({ jsx: true })]}
-        onChange={handleChange}
-        className="code-editor"
-      />
+      <div className="code-editor-container">
+        <CodeMirror
+          value={code}
+          height="200px"
+          theme="light"
+          extensions={[python({ jsx: true })]}
+          onChange={handleChange}
+          className="code-editor"
+        />
+      </div>
       
       <div className="button-container">
         <button 
@@ -103,7 +105,7 @@ export default function ProblemPage() {
       
       {results.length > 0 && (
         <div className="results-container">
-          <h2 className="results-title">Test Results:</h2>
+          <h3 className="results-title">Test Results:</h3>
           {results.map((result, index) => (
             <div key={index} className={`result-item ${result.passed ? 'result-passed' : 'result-failed'}`}>
               {result.error ? (

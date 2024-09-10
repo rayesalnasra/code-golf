@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./ProblemSelectionPage.css";
 
 const problems = [
   { id: "add", title: "Add Two Numbers" },
@@ -8,7 +9,7 @@ const problems = [
 
 export default function ProblemSelectionPage() {
   return (
-    <div className="home-page">
+    <div className="problem-selection-page">
       <h2 className="problem-list-title">Select a Problem:</h2>
       <ul className="problem-list">
         {problems.map((problem) => (
