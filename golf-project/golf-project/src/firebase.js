@@ -1,45 +1,33 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
-import dotenv from 'dotenv';
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 
-dotenv.config();
-
+// Access environment variables
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export async function getTestCases() {
-  try {
-    const testCasesCol = collection(db, 'testCases');
-    const testCasesSnapshot = await getDocs(testCasesCol);
-    return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error("Error fetching test cases:", error);
-    throw error;
-  }
+  const testCasesCol = collection(db, 'testCases');
+  const testCasesSnapshot = await getDocs(testCasesCol);
+  return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
 export async function saveUserCode(problemId, code) {
-  try {
-    const userSubmissionsCol = collection(db, 'userSubmissions');
-    const docRef = await addDoc(userSubmissionsCol, {
-      problemId,
-      code,
-      timestamp: new Date()
-    });
-    return docRef.id;
-  } catch (error) {
-    console.error("Error saving user code:", error);
-    throw error;
-  }
+  const userSubmissionsCol = collection(db, 'userSubmissions');
+  const docRef = await addDoc(userSubmissionsCol, {
+    problemId,
+    code,
+    timestamp: new Date()
+  });
+  return docRef.id;
 }
 
 export default app;
