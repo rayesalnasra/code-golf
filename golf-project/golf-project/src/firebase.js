@@ -23,4 +23,14 @@ export async function getTestCases() {
   return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
+export async function saveUserCode(problemId, code) {
+  const userSubmissionsCol = collection(db, 'userSubmissions');
+  const docRef = await addDoc(userSubmissionsCol, {
+    problemId,
+    code,
+    timestamp: new Date()
+  });
+  return docRef.id;
+}
+
 export default app;
