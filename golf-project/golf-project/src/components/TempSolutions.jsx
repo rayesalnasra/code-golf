@@ -1,15 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { readData, updateData } from "./databaseUtils";
+
+// ToDo:
+// 1. Fix code so that user score is update in the database.
+// 2. Separate into pages.
 
 function TempSolutions({ incrementScore }) {
   const ans = "a + b = c";
   const [inputValue, setInputValue] = useState("");
   const [resultMessage, setResultMessage] = useState("");
+  const [currentScore, setCurrentScore] = useState(0);
+
+  const userId = "user2";
+
+  useEffect(() => {
+    // Fetch the current score from the database
+    readData(`users/${userId}`, (data) => {
+      if (data && data.score !== undefined) {
+        setCurrentScore(data.score);
+      }
+    });
+  }, [userId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim() === ans) {
       setResultMessage("Correct");
       incrementScore();
+      const newScore = currentScore + 1;
+      setCurrentScore(newScore);
+      updateData(`users/${userId}`, { score: newScore });
     } else {
       setResultMessage("Incorrect");
     }

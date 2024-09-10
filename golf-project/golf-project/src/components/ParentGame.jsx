@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TempSolutions from "./TempSolutions";
 import TempProfile from "./TempProfile";
+import TempLeaderboard from "./TempLeaderboard";
 
 function ParentGame() {
   const [score, setScore] = useState(0);
@@ -13,6 +14,7 @@ function ParentGame() {
     <div>
       <TempProfile score={score} />
       <TempSolutions incrementScore={incrementScore} />
+      <TempLeaderboard />
     </div>
   );
 }
