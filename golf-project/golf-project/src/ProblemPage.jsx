@@ -33,7 +33,7 @@ export default function ProblemPage() {
   }, []);
 
   const runCode = () => {
-    axios.post("http://localhost:80/python", { code, problem: problemId })
+    axios.post("http://localhost:3000/python", { code, problem: problemId })
       .then((res) => {
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
