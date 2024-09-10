@@ -111,6 +111,14 @@ app.post('/python', async (req, res) => {
 
         // Execute the Python script using child_process.exec
         exec(`python3 test.py '${JSON.stringify(testCases)}' '${userCode.replace(/'/g, "\\'")}'`, (error, stdout, stderr) => {
+            if (error) {
+                console.error('Execution error:', error);
+                return res.status(500).json({
+                    error: 'An error occurred during Python script execution',
+                    passOrFail: 'failed'
+                });
+            }
+
             let results;
             try {
                 results = JSON.parse(stdout);
