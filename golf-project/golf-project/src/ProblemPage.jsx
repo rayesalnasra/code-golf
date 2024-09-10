@@ -20,6 +20,7 @@ export default function ProblemPage() {
   const [code, setCode] = useState(initialCodes[problemId] || "");
   const [results, setResults] = useState([]);
   const [testResult, setTestResult] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setCode(initialCodes[problemId] || "");
@@ -44,12 +45,15 @@ export default function ProblemPage() {
   };
 
   const submitCode = async () => {
+    setIsSaving(true);
     try {
       await saveUserCode(problemId, code);
       alert("Code submitted successfully!");
     } catch (error) {
       console.error("Error submitting code:", error);
       alert("Failed to submit code. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -91,8 +95,9 @@ export default function ProblemPage() {
         <button 
           className="btn btn-success" 
           onClick={submitCode}
+          disabled={isSaving}
         >
-          Submit
+          {isSaving ? "Submitting..." : "Submit"}
         </button>
       </div>
       
