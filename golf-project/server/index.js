@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { getTestCases } from './firebase.js';
 
 const app = express();
-const port = 80;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
