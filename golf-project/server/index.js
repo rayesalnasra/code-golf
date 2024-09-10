@@ -5,105 +5,33 @@ import { exec } from 'child_process';
 import { getTestCases } from './firebase.js';
 
 const app = express();
-const port = 3000;
+const port = 80;
 
 app.use(cors());
 app.use(express.json());
 
-// Python template to wrap user code
-const pythonTemplate = `
-import sys
-import json
-import traceback
-
-def capture_print(func):
-    from io import StringIO
-    import sys
-
-    def wrapper(*args, **kwargs):
-        old_stdout = sys.stdout
-        sys.stdout = StringIO()
-        try:
-            result = func(*args, **kwargs)
-            printed_output = sys.stdout.getvalue()
-            return result, printed_output
-        finally:
-            sys.stdout = old_stdout
-
-    return wrapper
-
-@capture_print
-def run_user_code(user_code, inputs):
-    # Create a new namespace to execute the user's code
-    namespace = {}
-    exec(user_code, namespace)
-    
-    # Find the user-defined function
-    user_functions = [obj for name, obj in namespace.items() if callable(obj)]
-    
-    if not user_functions:
-        print("Error: No function defined")
-        return None
-    
-    user_function = user_functions[0]  # Take the first function defined
-    return user_function(*inputs)
-
-def run_tests(test_cases, user_code):
-    results = []
-    for test_case in test_cases:
-        try:
-            inputs = test_case['inputs']
-            expected_output = test_case['expected_output']
-            actual_output, printed_output = run_user_code(user_code, inputs)
-            
-            passed = actual_output == expected_output
-            results.append({
-                'inputs': inputs,
-                'expected_output': expected_output,
-                'actual_output': actual_output,
-                'printed_output': printed_output,
-                'passed': passed
-            })
-        except Exception as e:
-            results.append({
-                'inputs': inputs,
-                'error': str(e),
-                'traceback': traceback.format_exc(),
-                'passed': False
-            })
-    
-    print(json.dumps(results))
-
-if __name__ == "__main__":
-    test_cases = json.loads(sys.argv[1])
-    user_code = sys.argv[2]
-    try:
-        run_tests(test_cases, user_code)
-    except Exception as e:
-        print(json.dumps([{
-            'error': str(e),
-            'traceback': traceback.format_exc(),
-            'passed': False
-        }]))
-`;
-
 app.post('/python', async (req, res) => { 
-    const userCode = req.body.code;
+    const { code, problem } = req.body;
 
     try {
         // Get test cases from Firebase
-        const testCases = await getTestCases();
-        console.log('Fetched test cases:', testCases);
+        const allTestCases = await getTestCases();
+        console.log('Fetched test cases:', allTestCases);
+
+        // Filter test cases based on the problem
+        const testCases = problem === 'add' 
+            ? allTestCases.filter(tc => Array.isArray(tc.inputs) && tc.inputs.length === 2)
+            : allTestCases.filter(tc => Array.isArray(tc.inputs) && tc.inputs.length === 1);
 
         if (!testCases || testCases.length === 0) {
-            throw new Error('No test cases fetched');
+            throw new Error('No test cases fetched for the selected problem');
         }
 
-        // Write the Python template to a file
-        fs.writeFileSync('test.py', pythonTemplate);
+        // Write the user's code to a file
+        fs.writeFileSync('user_code.py', code);
 
         // Execute the Python script using child_process.exec
-        exec(`python3 test.py '${JSON.stringify(testCases)}' '${userCode.replace(/'/g, "\\'")}'`, (error, stdout, stderr) => {
+        exec(`python3 test.py '${JSON.stringify(testCases)}'`, (error, stdout, stderr) => {
             let results;
             try {
                 results = JSON.parse(stdout);
