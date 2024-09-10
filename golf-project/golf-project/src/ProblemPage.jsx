@@ -6,13 +6,21 @@ import axios from "axios";
 export default function App() {
   // Initialize state with default Python code
   const [code, setCode] = useState("def add(a, b):\n    return a + b");
-  const [output, setOutput] = useState(""); // State to store the output from the server
+  const [results, setResults] = useState([]); // State to store test results
+  const [testResult, setTestResult] = useState(""); // State to store the overall test result
 
-  // Function to submit code to the server
+  // Function to handle code submission
   const submitCode = () => {
     axios.post("http://localhost:80/python", { code })
-      .then((res) => setOutput(res.data.output)) // Update output state with the server response
-      .catch((error) => console.error("Error submitting code:", error)); // Log errors to the console
+      .then((res) => {
+        setResults(res.data.results); // Update results with data from the server
+        setTestResult(res.data.passOrFail); // Update overall test result
+      })
+      .catch((error) => {
+        console.error("Error submitting code:", error); // Log any errors
+        setResults([{ error: "An error occurred while submitting your code." }]); // Set error result
+        setTestResult("failed"); // Set test result to failed
+      });
   };
 
   return (
@@ -34,11 +42,36 @@ export default function App() {
         Submit
       </button>
       
-      {/* Display the output from the server if available */}
-      {output && (
+      {/* Display the test results if available */}
+      {results.length > 0 && (
         <div>
-          <h2>Output:</h2>
-          <pre>{output}</pre>
+          <h2>Test Results:</h2>
+          {results.map((result, index) => (
+            <div key={index}>
+              {result.error ? (
+                <div>
+                  <strong>Error:</strong> {result.error} {/* Display error if present */}
+                </div>
+              ) : (
+                <div>
+                  <div><strong>Inputs:</strong> {JSON.stringify(result.inputs)}</div>
+                  <div><strong>Expected Output:</strong> {JSON.stringify(result.expected_output)}</div>
+                  <div><strong>Actual Output:</strong> {JSON.stringify(result.actual_output)}</div>
+                  {result.printed_output && (
+                    <div><strong>Printed Output:</strong> <pre>{result.printed_output}</pre></div>
+                  )}
+                  <div><strong>Passed:</strong> {result.passed ? 'Yes' : 'No'}</div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Display the overall test result */}
+      {testResult && (
+        <div>
+          Overall Result: {testResult}
         </div>
       )}
     </div>
