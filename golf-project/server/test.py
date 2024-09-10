@@ -1,4 +1,3 @@
-
 import sys
 import json
 import traceback
@@ -35,7 +34,11 @@ def run_user_code(user_code, inputs):
     user_function = user_functions[0]  # Take the first function defined
     return user_function(*inputs)
 
-def run_tests(test_cases, user_code):
+def run_tests(test_cases):
+    # Read the user's code from the file
+    with open('user_code.py', 'r') as file:
+        user_code = file.read()
+
     results = []
     for test_case in test_cases:
         try:
@@ -63,9 +66,8 @@ def run_tests(test_cases, user_code):
 
 if __name__ == "__main__":
     test_cases = json.loads(sys.argv[1])
-    user_code = sys.argv[2]
     try:
-        run_tests(test_cases, user_code)
+        run_tests(test_cases)
     except Exception as e:
         print(json.dumps([{
             'error': str(e),
