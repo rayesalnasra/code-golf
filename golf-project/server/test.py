@@ -1,41 +1,74 @@
 
 import sys
-import inspect
+import json
 import traceback
 
-print("hello world")
+def capture_print(func):
+    from io import StringIO
+    import sys
 
-def run_tests():
-    # Find the user-defined function in the code
-    user_functions = [obj for name, obj in inspect.getmembers(sys.modules[__name__]) 
-                      if inspect.isfunction(obj) and obj.__module__ == __name__]
+    def wrapper(*args, **kwargs):
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+        try:
+            result = func(*args, **kwargs)
+            printed_output = sys.stdout.getvalue()
+            return result, printed_output
+        finally:
+            sys.stdout = old_stdout
+
+    return wrapper
+
+@capture_print
+def run_user_code(user_code, inputs):
+    # Create a new namespace to execute the user's code
+    namespace = {}
+    exec(user_code, namespace)
+    
+    # Find the user-defined function
+    user_functions = [obj for name, obj in namespace.items() if callable(obj)]
     
     if not user_functions:
         print("Error: No function defined")
-        return
+        return None
     
-    user_function = user_functions[0]  # Use the first defined function
+    user_function = user_functions[0]  # Take the first function defined
+    return user_function(*inputs)
+
+def run_tests(test_cases, user_code):
+    results = []
+    for test_case in test_cases:
+        try:
+            inputs = test_case['inputs']
+            expected_output = test_case['expected_output']
+            actual_output, printed_output = run_user_code(user_code, inputs)
+            
+            passed = actual_output == expected_output
+            results.append({
+                'inputs': inputs,
+                'expected_output': expected_output,
+                'actual_output': actual_output,
+                'printed_output': printed_output,
+                'passed': passed
+            })
+        except Exception as e:
+            results.append({
+                'inputs': inputs,
+                'error': str(e),
+                'traceback': traceback.format_exc(),
+                'passed': False
+            })
     
-    a, b = 2, 3
-    expected_result = 5
-    
-    try:
-        # Execute the user-defined function and check results
-        actual_result = user_function(a, b)
-        print(f"Test input: a={a}, b={b}")
-        print(f"Expected output: {expected_result}")
-        print(f"Actual output: {actual_result}")
-        print(f"Test {'passed' if actual_result == expected_result else 'failed'}")
-    except Exception as e:
-        print(f"Error during function execution: {str(e)}")
-        print(traceback.format_exc())
+    print(json.dumps(results))
 
 if __name__ == "__main__":
+    test_cases = json.loads(sys.argv[1])
+    user_code = sys.argv[2]
     try:
-        run_tests()
-    except SyntaxError as e:
-        print(f"Syntax Error: {str(e)}")
-        print(traceback.format_exc())
+        run_tests(test_cases, user_code)
     except Exception as e:
-        print(f"Unexpected Error: {str(e)}")
-        print(traceback.format_exc())
+        print(json.dumps([{
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'passed': False
+        }]))
