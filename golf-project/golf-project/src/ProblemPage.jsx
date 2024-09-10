@@ -22,7 +22,7 @@ export default function App() {
   // Function to handle the submission of code to the server
   const submitCode = () => {
     // Send a POST request to the server with the code
-    axios.post("http://localhost:80/python", { code })
+    axios.post("http://localhost:3000/python", { code })
       .then((res) => {
         // On successful response, update results and testResult state
         setResults(res.data.results);
