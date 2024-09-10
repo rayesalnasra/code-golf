@@ -1,18 +1,23 @@
-import { initializeApp } from 'firebase/app'; 
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBjz2Fn1zx4rnJb1uldNVkAXGRyDRN5gI8",
-    authDomain: "login-auth-8e5a9.firebaseapp.com",
-    databaseURL: "https://login-auth-8e5a9-default-rtdb.firebaseio.com",
-    projectId: "login-auth-8e5a9",
-    storageBucket: "login-auth-8e5a9.appspot.com",
-    messagingSenderId: "568739474039",
-    appId: "1:568739474039:web:2d2dba8f18647f9bfdf472"
-  
-  };
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+};
 
-  const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  export default app;
-  
-  
+export async function getTestCases() {
+  const testCasesCol = collection(db, 'testCases');
+  const testCasesSnapshot = await getDocs(testCasesCol);
+  return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+export default app;
