@@ -14,7 +14,7 @@ export default function ProblemSelectionPage() {
         {problems.map((problem) => (
           <li key={problem.id} className="problem-item">
             <Link
-              to={`/problem/${problem.id}`}
+              to={`/problems/${problem.id}`}
               className="problem-link"
             >
               {problem.title}
