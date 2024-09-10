@@ -3,27 +3,29 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
+// Main functional component
 export default function App() {
-  // State to store the user's Python code
+  // State to manage the Python code input by the user
   const [code, setCode] = useState("def add(a, b):\n    return a + b");
-  
-  // State to store the results of the test cases
+
+  // State to store the results of the test cases from the server
   const [results, setResults] = useState([]);
-  
-  // State to store the overall test result (pass/fail)
+
+  // State to store the overall result (pass/fail) of the test cases
   const [testResult, setTestResult] = useState("");
 
   // Function to handle code submission
   const submitCode = () => {
+    // Send POST request to the server with the code
     axios.post("http://localhost:80/python", { code })
       .then((res) => {
-        // Update the state with the test results and overall test result
+        // On success, update results and testResult state
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
       })
       .catch((error) => {
+        // Handle errors
         console.error("Error submitting code:", error);
-        // Handle different types of errors and update the results state accordingly
         if (error.response) {
           // Server responded with an error
           setResults([{ 
@@ -31,17 +33,16 @@ export default function App() {
             traceback: error.response.data.traceback
           }]);
         } else if (error.request) {
-          // No response from the server
+          // No response received
           setResults([{ 
             error: "Unable to reach the server. Please check your connection and try again." 
           }]);
         } else {
-          // Other unexpected errors
+          // Other errors
           setResults([{ 
             error: "An unexpected error occurred. Please try again." 
           }]);
         }
-        // Set the test result to "failed" in case of an error
         setTestResult("failed");
       });
   };
@@ -49,23 +50,23 @@ export default function App() {
   return (
     <div>
       <h1>Python Code Tester</h1>
-      <div>Create a function that adds two numbers in Python</div>
+      <div>Create a function that adds two numbers in Python</div> 
       
-      {/* CodeMirror editor for editing Python code */}
+      {/* CodeMirror editor for Python code input */}
       <CodeMirror
-        value={code} // The current value of the editor
-        height="200px" // Height of the editor
-        theme="dark" // Theme of the editor
-        extensions={[python({ jsx: true })]} // Extension for Python language support
-        onChange={(value) => setCode(value)} // Update state when the code changes
+        value={code} // Set the editor's content
+        height="200px" // Set the editor's height
+        theme="dark" // Set the editor's theme
+        extensions={[python({ jsx: true })]} // Use Python language mode
+        onChange={(value) => setCode(value)} // Update state on content change
       />
       
-      {/* Button to submit the code for testing */}
+      {/* Button to submit the code */}
       <button onClick={submitCode}>
         Submit
       </button>
       
-      {/* Display test results if any results are available */}
+      {/* Display test results if available */}
       {results.length > 0 && (
         <div>
           <h2>Test Results:</h2>
@@ -73,9 +74,9 @@ export default function App() {
             <div key={index}>
               {result.error ? (
                 <div>
-                  <strong>Error:</strong> {result.error} {/* Display error message */}
+                  <strong>Error:</strong> {result.error}
                   {result.traceback && (
-                    <pre>{result.traceback}</pre> {/* Display traceback if available */}
+                    <pre>{result.traceback}</pre> // Display traceback if available
                   )}
                 </div>
               ) : (
@@ -94,7 +95,7 @@ export default function App() {
         </div>
       )}
       
-      {/* Display the overall test result */}
+      {/* Display the overall result */}
       {testResult && (
         <div>
           Overall Result: {testResult}
