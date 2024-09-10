@@ -3,17 +3,27 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
+const problemDescriptions = {
+  add: "Create a function that adds two numbers in Python",
+  reverse: "Create a function that reverses a given string in Python",
+};
+
+const initialCodes = {
+  add: "def add(a, b):\n    return a + b",
+  reverse: "def reverse_string(s):\n    return s[::-1]",
+};
+
 // Main functional component for the Python code tester
 export default function App() {
   // State to manage the Python code input by the user
-  const [code, setCode] = useState("def add(a, b):\n    return a + b");
+  const [code, setCode] = useState(initialCodes["add"]); // Default to "add" problem
 
   // State to store the results of test cases from the server
   const [results, setResults] = useState([]);
 
   // State to store the overall result of the test cases (pass/fail)
   const [testResult, setTestResult] = useState("");
-  
+
   // Memoized callback to handle changes in the CodeMirror editor
   const handleChange = React.useCallback((value) => {
     setCode(value); // Update code state with the new value from the editor
@@ -22,7 +32,7 @@ export default function App() {
   // Function to handle the submission of code to the server
   const submitCode = () => {
     // Send a POST request to the server with the code
-    axios.post("http://localhost:3000/python", { code })
+    axios.post("http://localhost:/python", { code })
       .then((res) => {
         // On successful response, update results and testResult state
         setResults(res.data.results);
@@ -52,18 +62,21 @@ export default function App() {
       });
   };
 
+  // Replace fixed problem description with dynamic one
+  const problemDescription = problemDescriptions["add"];
+  
   return (
     <div>
       <h1>Python Code Tester</h1>
-      <div>Create a function that adds two numbers in Python</div>
+      <div>{problemDescription}</div>
       
       {/* CodeMirror editor for Python code input */}
       <CodeMirror
-        value={code} // Set the editor's content
-        height="200px" // Set the editor's height
-        theme="dark" // Set the editor's theme
-        extensions={[python({ jsx: true })]} // Use Python language mode
-        onChange={handleChange} // Handle content changes
+        value={code}
+        height="200px"
+        theme="dark"
+        extensions={[python({ jsx: true })]}
+        onChange={handleChange}
       />
       
       {/* Button to submit the code */}
