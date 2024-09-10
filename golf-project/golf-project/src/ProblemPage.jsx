@@ -3,37 +3,41 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
-// Main functional component
+// Main functional component for the Python code tester
 export default function App() {
   // State to manage the Python code input by the user
   const [code, setCode] = useState("def add(a, b):\n    return a + b");
 
-  // State to store the results of the test cases from the server
+  // State to store the results of test cases from the server
   const [results, setResults] = useState([]);
 
-  // State to store the overall result (pass/fail) of the test cases
+  // State to store the overall result of the test cases (pass/fail)
   const [testResult, setTestResult] = useState("");
+  
+  // Memoized callback to handle changes in the CodeMirror editor
+  const handleChange = React.useCallback((value) => {
+    setCode(value); // Update code state with the new value from the editor
+  }, []);
 
-  // Function to handle code submission
+  // Function to handle the submission of code to the server
   const submitCode = () => {
-    // Send POST request to the server with the code
+    // Send a POST request to the server with the code
     axios.post("http://localhost:80/python", { code })
       .then((res) => {
-        // On success, update results and testResult state
+        // On successful response, update results and testResult state
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
       })
       .catch((error) => {
-        // Handle errors
+        // Handle different types of errors
         console.error("Error submitting code:", error);
         if (error.response) {
           // Server responded with an error
           setResults([{ 
-            error: error.response.data.error || "An error occurred while running your code.",
-            traceback: error.response.data.traceback
+            error: error.response.data.error || "An error occurred while running your code."
           }]);
         } else if (error.request) {
-          // No response received
+          // No response received from the server
           setResults([{ 
             error: "Unable to reach the server. Please check your connection and try again." 
           }]);
@@ -43,6 +47,7 @@ export default function App() {
             error: "An unexpected error occurred. Please try again." 
           }]);
         }
+        // Set the overall result to "failed"
         setTestResult("failed");
       });
   };
@@ -50,7 +55,7 @@ export default function App() {
   return (
     <div>
       <h1>Python Code Tester</h1>
-      <div>Create a function that adds two numbers in Python</div> 
+      <div>Create a function that adds two numbers in Python</div>
       
       {/* CodeMirror editor for Python code input */}
       <CodeMirror
@@ -58,7 +63,7 @@ export default function App() {
         height="200px" // Set the editor's height
         theme="dark" // Set the editor's theme
         extensions={[python({ jsx: true })]} // Use Python language mode
-        onChange={(value) => setCode(value)} // Update state on content change
+        onChange={handleChange} // Handle content changes
       />
       
       {/* Button to submit the code */}
