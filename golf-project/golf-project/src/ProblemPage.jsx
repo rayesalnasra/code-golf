@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
+import { saveUserCode } from "./firebase";
 
 const problemDescriptions = {
   add: "Create a function that adds two numbers in Python",
@@ -13,88 +15,97 @@ const initialCodes = {
   reverse: "def reverse_string(s):\n    return s[::-1]",
 };
 
-// Main functional component for the Python code tester
-export default function App() {
-  // State to manage the Python code input by the user
-  const [code, setCode] = useState(initialCodes["add"]); // Default to "add" problem
-
-  // State to store the results of test cases from the server
+export default function ProblemPage() {
+  const { problemId } = useParams();
+  const [code, setCode] = useState(initialCodes[problemId] || "");
   const [results, setResults] = useState([]);
-
-  // State to store the overall result of the test cases (pass/fail)
   const [testResult, setTestResult] = useState("");
 
-  // Memoized callback to handle changes in the CodeMirror editor
+  useEffect(() => {
+    setCode(initialCodes[problemId] || "");
+    setResults([]);
+    setTestResult("");
+  }, [problemId]);
+
   const handleChange = React.useCallback((value) => {
-    setCode(value); // Update code state with the new value from the editor
+    setCode(value);
   }, []);
 
-  // Function to handle the submission of code to the server
-  const submitCode = () => {
-    // Send a POST request to the server with the code
-    axios.post("http://localhost:/python", { code })
+  const runCode = () => {
+    axios.post("http://localhost:80/python", { code, problem: problemId })
       .then((res) => {
-        // On successful response, update results and testResult state
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
       })
       .catch((error) => {
-        // Handle different types of errors
-        console.error("Error submitting code:", error);
-        if (error.response) {
-          // Server responded with an error
-          setResults([{ 
-            error: error.response.data.error || "An error occurred while running your code."
-          }]);
-        } else if (error.request) {
-          // No response received from the server
-          setResults([{ 
-            error: "Unable to reach the server. Please check your connection and try again." 
-          }]);
-        } else {
-          // Other errors
-          setResults([{ 
-            error: "An unexpected error occurred. Please try again." 
-          }]);
-        }
-        // Set the overall result to "failed"
-        setTestResult("failed");
+        console.error("Error running code:", error);
+        handleError(error);
       });
   };
 
-  // Replace fixed problem description with dynamic one
-  const problemDescription = problemDescriptions["add"];
-  
+  const submitCode = async () => {
+    try {
+      await saveUserCode(problemId, code);
+      alert("Code submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting code:", error);
+      alert("Failed to submit code. Please try again.");
+    }
+  };
+
+  const handleError = (error) => {
+    if (error.response) {
+      setResults([{ error: error.response.data.error || "An error occurred while running your code." }]);
+    } else if (error.request) {
+      setResults([{ error: "Unable to reach the server. Please check your connection and try again." }]);
+    } else {
+      setResults([{ error: "An unexpected error occurred. Please try again." }]);
+    }
+    setTestResult("failed");
+  };
+
   return (
-    <div>
-      <h1>Python Code Tester</h1>
-      <div>{problemDescription}</div>
+    <div className="problem-page">
+      <Link to="/" className="back-link">
+        &larr; Back to problem selection
+      </Link>
       
-      {/* CodeMirror editor for Python code input */}
+      <h2 className="problem-description">{problemDescriptions[problemId]}</h2>
+      
       <CodeMirror
         value={code}
         height="200px"
         theme="dark"
         extensions={[python({ jsx: true })]}
         onChange={handleChange}
+        className="code-editor"
       />
       
-      {/* Button to submit the code */}
-      <button onClick={submitCode}>
-        Submit
-      </button>
+      <div className="button-container">
+        <button 
+          className="btn btn-primary" 
+          onClick={runCode}
+        >
+          Run
+        </button>
+        <button 
+          className="btn btn-success" 
+          onClick={submitCode}
+        >
+          Submit
+        </button>
+      </div>
       
-      {/* Display test results if available */}
       {results.length > 0 && (
-        <div>
-          <h2>Test Results:</h2>
+        <div className="results-container">
+          <h2 className="results-title">Test Results:</h2>
           {results.map((result, index) => (
-            <div key={index}>
+            <div key={index} className={`result-item ${result.passed ? 'result-passed' : 'result-failed'}`}>
               {result.error ? (
                 <div>
                   <strong>Error:</strong> {result.error}
                   {result.traceback && (
-                    <pre>{result.traceback}</pre> // Display traceback if available
+                    <pre className="error-traceback">{result.traceback}</pre>
                   )}
                 </div>
               ) : (
@@ -113,9 +124,8 @@ export default function App() {
         </div>
       )}
       
-      {/* Display the overall result */}
       {testResult && (
-        <div>
+        <div className={`test-result ${testResult === 'passed' ? 'test-passed' : 'test-failed'}`}>
           Overall Result: {testResult}
         </div>
       )}
