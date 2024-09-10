@@ -4,28 +4,28 @@ import { python } from "@codemirror/lang-python";
 import axios from "axios";
 
 export default function App() {
-  // State to store the user's code
+  // State to store the user's Python code
   const [code, setCode] = useState("def add(a, b):\n    return a + b");
   
-  // State to store the results from the backend
+  // State to store the results of the test cases
   const [results, setResults] = useState([]);
   
-  // State to store the overall result of the test
+  // State to store the overall test result (pass/fail)
   const [testResult, setTestResult] = useState("");
 
   // Function to handle code submission
   const submitCode = () => {
     axios.post("http://localhost:80/python", { code })
       .then((res) => {
-        // Update the results and test result state with the response data
+        // Update the state with the test results and overall test result
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
       })
       .catch((error) => {
         console.error("Error submitting code:", error);
-        // Handle errors by updating results with an appropriate message
+        // Handle different types of errors and update the results state accordingly
         if (error.response) {
-          // Error response from the server
+          // Server responded with an error
           setResults([{ 
             error: error.response.data.error || "An error occurred while running your code.",
             traceback: error.response.data.traceback
@@ -41,6 +41,7 @@ export default function App() {
             error: "An unexpected error occurred. Please try again." 
           }]);
         }
+        // Set the test result to "failed" in case of an error
         setTestResult("failed");
       });
   };
@@ -50,21 +51,21 @@ export default function App() {
       <h1>Python Code Tester</h1>
       <div>Create a function that adds two numbers in Python</div>
       
-      {/* CodeMirror editor for Python code */}
+      {/* CodeMirror editor for editing Python code */}
       <CodeMirror
-        value={code} // Set the current code
+        value={code} // The current value of the editor
         height="200px" // Height of the editor
         theme="dark" // Theme of the editor
-        extensions={[python({ jsx: true })]} // Python language support
+        extensions={[python({ jsx: true })]} // Extension for Python language support
         onChange={(value) => setCode(value)} // Update state when the code changes
       />
       
-      {/* Button to submit the code */}
+      {/* Button to submit the code for testing */}
       <button onClick={submitCode}>
         Submit
       </button>
       
-      {/* Display test results if available */}
+      {/* Display test results if any results are available */}
       {results.length > 0 && (
         <div>
           <h2>Test Results:</h2>
