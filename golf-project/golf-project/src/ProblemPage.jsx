@@ -4,6 +4,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
 import { saveUserCode } from "./firebase";
+import "./ProblemPage.css";
 
 const problemDescriptions = {
   add: "Create a function that adds two numbers in Python",
