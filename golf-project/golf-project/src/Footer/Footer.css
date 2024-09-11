@@ -1,0 +1,17 @@
+/* src/components/Footer.css */
+.footer {
+    background-color: #1b851b; /* Dark green background color */
+    color: white; /* White text color */
+    text-align: center; /* Center-align text */
+    padding: 1rem; /* Padding around the footer content */
+    position: fixed; /* Fix the footer to the bottom */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for styling */
+    z-index: 1000; /* Ensure the footer is above other content */
+}
+
+.footer-text {
+    margin: 0; /* Remove default margin */
+}

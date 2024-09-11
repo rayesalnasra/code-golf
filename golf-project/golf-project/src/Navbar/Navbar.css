@@ -1,0 +1,157 @@
+/* src/Navbar.css */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between logo and dropdown menu */
+    padding: 0.5rem 1rem; /* Padding around navbar content */
+    background-color: #000000;
+    color: #fff;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 60px; /* Height of the navbar */
+    box-sizing: border-box;
+  }
+  
+  .logo {
+    flex-shrink: 0; /* Prevent the logo from shrinking */
+    margin-top: 50px; /* Move the logo slightly down */
+  }
+  
+  .logo-img {
+    height: 40px; /* Adjust the height of the logo image */
+    width: auto; /* Maintain aspect ratio */
+  }
+  
+  .search-bar {
+    flex: 1; /* Allows the search bar to take available space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 1rem; /* Space between search bar and logo/dropdown */
+  }
+  
+  .search-bar input {
+    width: 100%;
+    max-width: 400px; /* Max width of the search bar */
+    padding: 0.5rem; /* Padding inside input */
+    font-size: 1rem; /* Font size of input text */
+    height: 35px; /* Height of the input field */
+    box-sizing: border-box;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropbtn {
+    background-color: transparent; /* No background for button */
+    border: none; /* Remove border */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem; /* Padding around button */
+  }
+  
+  .hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Space between bars */
+  }
+  
+  .hamburger-icon .bar {
+    width: 25px; /* Width of each bar */
+    height: 3px; /* Thickness of each bar */
+    background-color: #fff; /* Color of the bars */
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    text-align: left;
+    right: 0;
+    top: 100%; /* Align dropdown menu below the button */
+    background-color: #f9f9f9;
+    min-width: 160px; /* Minimum width of dropdown */
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 14px; /* Padding around dropdown items */
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .dropdown-content .dark-mode-toggle {
+    background-color: #000; /* Black background for dark mode toggle */
+    color: white; /* White text color */
+    font-weight: bold; /* Make text bold */
+  }
+  
+  .dropdown-content .dark-mode-toggle:hover {
+    color: #0afa1a; /* Dark green text on hover */
+    background-color: black;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  /* Add padding to the top of the page content to avoid overlap with the fixed navbar */
+  body {
+    padding-top: 60px; /* Space to prevent overlap with navbar */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      padding: 0.5rem; /* Padding for smaller screens */
+      height: auto; /* Height adjusts based on content */
+      align-items: flex-start; /* Align items to the start for smaller screens */
+    }
+  
+    .search-bar {
+      width: 100%;
+      margin: 0.5rem 0; /* Space around search bar */
+    }
+  
+    .dropdown {
+      width: 100%;
+      margin-top: 0.5rem; /* Space above dropdown */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .logo-img {
+      height: 30px; /* Adjust logo size for very small screens */
+    }
+  
+    .search-bar input {
+      font-size: 0.9rem; /* Adjust input font size */
+    }
+  
+    .dropbtn {
+      font-size: 0.9rem; /* Adjust dropdown button font size */
+    }
+  
+    .dropdown-content {
+      min-width: 140px; /* Adjust dropdown width for small screens */
+    }
+  }
