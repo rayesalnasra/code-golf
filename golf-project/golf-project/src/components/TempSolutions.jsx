@@ -1,35 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { readData, updateData } from "./databaseUtils";
+import { updateData, readData } from "./databaseUtils";
 
-// ToDo:
-// 1. Fix code so that user score is update in the database.
-// 2. Separate into pages.
-
-function TempSolutions({ incrementScore }) {
+function TempSolutions() {
   const ans = "a + b = c";
   const [inputValue, setInputValue] = useState("");
   const [resultMessage, setResultMessage] = useState("");
-  const [currentScore, setCurrentScore] = useState(0);
+  const [userData, setUserData] = useState({ score: 0, level: 0, xp: 0 });
 
-  const userId = "user2";
+  const userId = "user5";
 
   useEffect(() => {
-    // Fetch the current score from the database
+    // Fetch the current user data from the database
     readData(`users/${userId}`, (data) => {
-      if (data && data.score !== undefined) {
-        setCurrentScore(data.score);
+      if (data) {
+        setUserData({
+          score: data.score || 0,
+          level: data.level || 0,
+          xp: data.xp || 0,
+        });
       }
     });
   }, [userId]);
 
+  const isAnswerCorrect = (answer) => {
+    return answer.trim() === ans;
+  };
+
+  const xpForNextLevel = (level) => 100 + level * 50;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (inputValue.trim() === ans) {
-      setResultMessage("Correct");
-      incrementScore();
-      const newScore = currentScore + 1;
-      setCurrentScore(newScore);
-      updateData(`users/${userId}`, { score: newScore });
+    if (isAnswerCorrect(inputValue)) {
+      let newXP = userData.xp + 10;
+      let newLevel = userData.level;
+      let newScore = userData.score + 10;
+
+      while (newXP >= xpForNextLevel(newLevel)) {
+        newXP -= xpForNextLevel(newLevel);
+        newLevel += 1;
+      }
+
+      const updatedUserData = {
+        score: newScore,
+        level: newLevel,
+        xp: newXP,
+      };
+      setUserData(updatedUserData);
+      updateData(`users/${userId}`, updatedUserData)
+        .then(() => setResultMessage("Correct"))
+        .catch((error) => {
+          console.error("Error updating data:", error);
+          setResultMessage("Error updating data");
+        });
     } else {
       setResultMessage("Incorrect");
     }

@@ -1,5 +1,6 @@
-import { ref, set, push, onValue } from "firebase/database";
-import { database } from "./firebase";
+// databaseUtils.js
+import { ref, set, push, onValue, update } from "firebase/database";
+import { database } from "./firebase"; // Ensure the path is correct
 
 // Function to add data to the database
 export const addData = (path, data) => {
