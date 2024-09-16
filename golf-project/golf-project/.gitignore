@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Files with API Keys
+/backend/config/login-auth-*
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -24,3 +28,4 @@ dist-ssr
 *.sw?
 .env
 .env.local
+.DS_Store

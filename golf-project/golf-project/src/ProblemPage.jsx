@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
-import { saveUserCode } from "./firebase";
+import { saveUserCode } from "./firebaseCodeRunner";
 import "./ProblemPage.css";
 
 const problemDescriptions = {
