@@ -1,0 +1,33 @@
+.problem-selection-page {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .problem-list-title {
+    color: #2c974b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .problem-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .problem-item {
+    margin-bottom: 0.75rem;
+  }
+  
+  .problem-link {
+    color: #2c974b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .problem-link:hover {
+    color: #22753a;
+  }

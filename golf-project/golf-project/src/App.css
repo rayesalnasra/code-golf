@@ -1,0 +1,101 @@
+  body {
+    background-color: #e6f7e9;
+    font-family: Arial, sans-serif;
+  }
+
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .app-title {
+    color: #2c974b;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  nav {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  nav ul li a {
+    color: #2c974b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  nav ul li a:hover {
+    color: #22753a;
+  }
+
+  /* Profile Icon and Dropdown */
+  .profile-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    position: relative;
+  }
+
+  .profile-icon img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #2c974b;  
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+
+  .dropdown ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .dropdown ul li {
+    padding: 10px;
+    text-align: left;
+  }
+
+  /* Normalize button and link styles */
+  .dropdown ul li button, 
+  .dropdown ul li a {
+    background: none;
+    border: none;
+    color: #2c974b;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px; /* Add padding to normalize appearance */
+    width: 100%;  /* Make both fill the available width */
+    text-align: left;
+    display: block;
+  }
+
+  .dropdown ul li button:hover,
+  .dropdown ul li a:hover {
+    color: #22753a;
+  }
