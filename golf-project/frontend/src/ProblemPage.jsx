@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
-import { saveUserCode, getTestCases } from "./firebaseCodeRunner";
+import { saveUserCode, getTestCases, getUserSubmission } from "./firebaseCodeRunner";
 import "./ProblemPage.css";
 
 const problemDescriptions = {
@@ -44,18 +44,35 @@ const initialCodes = {
 
 export default function ProblemPage() {
   const { problemId } = useParams();
-  const [code, setCode] = useState(initialCodes[problemId] || "");
+  const navigate = useNavigate();
+  const [code, setCode] = useState("");
   const [results, setResults] = useState([]);
   const [testResult, setTestResult] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [testCases, setTestCases] = useState([]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
-    setCode(initialCodes[problemId] || "");
-    setResults([]);
-    setTestResult("");
     fetchTestCases();
+    fetchUserSubmission();
   }, [problemId]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges]);
 
   const fetchTestCases = async () => {
     try {
@@ -66,8 +83,35 @@ export default function ProblemPage() {
     }
   };
 
-  const handleChange = React.useCallback((value) => {
+  const fetchUserSubmission = async () => {
+    setIsLoading(true);
+    setLoadError("");
+    const userId = localStorage.getItem('userUID');
+    if (userId) {
+      try {
+        const userCode = await getUserSubmission(userId, problemId);
+        if (userCode) {
+          setCode(userCode);
+        } else {
+          setCode(initialCodes[problemId] || "");
+        }
+      } catch (error) {
+        console.error("Error fetching user submission:", error);
+        setLoadError("Failed to load your saved code. Using initial code instead.");
+        setCode(initialCodes[problemId] || "");
+      }
+    } else {
+      setCode(initialCodes[problemId] || "");
+    }
+    setResults([]);
+    setTestResult("");
+    setIsLoading(false);
+    setHasUnsavedChanges(false);
+  };
+
+  const handleChange = useCallback((value) => {
     setCode(value);
+    setHasUnsavedChanges(true);
   }, []);
 
   const runCode = () => {
@@ -82,16 +126,28 @@ export default function ProblemPage() {
       });
   };
 
-  const submitCode = async () => {
+  const saveCode = async () => {
     setIsSaving(true);
     try {
-      await saveUserCode(problemId, code);
-      alert("Code submitted successfully!");
+      const userId = localStorage.getItem('userUID');
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      await saveUserCode(userId, problemId, code);
+      alert("Code saved successfully!");
+      setHasUnsavedChanges(false);
     } catch (error) {
-      console.error("Error submitting code:", error);
-      alert("Failed to submit code. Please try again.");
+      console.error("Error saving code:", error);
+      alert("Failed to save code. Please try again.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const resetCode = () => {
+    if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
+      setCode(initialCodes[problemId] || "");
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -106,40 +162,75 @@ export default function ProblemPage() {
     setTestResult("failed");
   };
 
+  const handleNavigateAway = (to) => {
+    if (hasUnsavedChanges) {
+      const confirmNavigation = window.confirm(
+        "You have unsaved changes. Do you want to save before leaving?"
+      );
+      if (confirmNavigation) {
+        saveCode().then(() => navigate(to));
+      } else {
+        navigate(to);
+      }
+    } else {
+      navigate(to);
+    }
+  };
+
   return (
     <div className="problem-page">
-      <Link to="/problems" className="back-link">
+      <button onClick={() => handleNavigateAway("/problems")} className="back-link">
         &larr; Back to problem selection
-      </Link>
+      </button>
       
       <h2 className="problem-description">{problemDescriptions[problemId]}</h2>
       
       <div className="code-editor-container">
-        <CodeMirror
-          value={code}
-          height="200px"
-          theme="light"
-          extensions={[python({ jsx: true })]}
-          onChange={handleChange}
-          className="code-editor"
-        />
+        {isLoading ? (
+          <div className="loading-message">Loading your saved code...</div>
+        ) : loadError ? (
+          <div className="error-message">{loadError}</div>
+        ) : (
+          <CodeMirror
+            value={code}
+            height="200px"
+            theme="light"
+            extensions={[python({ jsx: true })]}
+            onChange={handleChange}
+            className="code-editor"
+          />
+        )}
       </div>
       
       <div className="button-container">
         <button 
           className="btn btn-primary" 
           onClick={runCode}
+          disabled={isLoading}
         >
           Run
         </button>
         <button 
           className="btn btn-success" 
-          onClick={submitCode}
-          disabled={isSaving}
+          onClick={saveCode}
+          disabled={isSaving || isLoading}
         >
-          {isSaving ? "Submitting..." : "Submit"}
+          {isSaving ? "Saving..." : "Save Code"}
+        </button>
+        <button 
+          className="btn btn-warning" 
+          onClick={resetCode}
+          disabled={isLoading}
+        >
+          Reset Code
         </button>
       </div>
+      
+      {hasUnsavedChanges && (
+        <div className="unsaved-changes-warning">
+          You have unsaved changes. Remember to save your code!
+        </div>
+      )}
       
       {results.length > 0 && (
         <div className="results-container">
