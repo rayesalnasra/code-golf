@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -12,6 +13,7 @@ import ProblemPage from './ProblemPage';
 import ProblemSelectionPage from './ProblemSelectionPage';
 import Login from './Login';
 import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -21,28 +23,50 @@ function App() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // Force reload to get the latest user data
+        await user.reload();
+  
+        // Use user.displayName or fallback to localStorage value
+        const displayName = user.displayName || localStorage.getItem('userDisplayName') || user.email;
+        
         setIsAuthenticated(true);
-        setUserDisplayName(user.displayName || user.email);
+        setUserDisplayName(displayName); // Set displayName
+        
+        // Update localStorage with the latest displayName
+        localStorage.setItem('userDisplayName', displayName);
       } else {
         setIsAuthenticated(false);
         setUserDisplayName('');
+        localStorage.setItem('isAuthenticated', 'false');
       }
       setIsLoading(false);
     });
-
+  
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    auth.signOut().then(() => {
-      setIsAuthenticated(false);
-      setUserDisplayName('');
-    }).catch((error) => {
-      console.error("Logout error:", error);
-    });
-  };
+
+const handleLogout = () => {
+  auth.signOut().then(() => {
+    // Clear authentication state
+    setIsAuthenticated(false);
+    setUserDisplayName('');
+
+    // Clear all user-related information from localStorage
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userUID');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userDisplayName');
+
+    // Navigate to login page
+    window.location.href = '/login'; // Use window.location.href to force a full page reload to clear any cached states
+  }).catch((error) => {
+    console.error("Logout error:", error);
+  });
+};
+
 
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
@@ -86,7 +110,14 @@ function App() {
         <Routes>
           <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />} />
           <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
-          <Route path="/home" element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />} />
+          <Route 
+            path="/home" 
+            element={
+              <HomePage 
+                isAuthenticated={isAuthenticated}
+              />
+            } 
+          />
           <Route path="/profile" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/leaderboard" element={isAuthenticated ? <LeaderboardPage /> : <Navigate to="/login" />} />
           <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
