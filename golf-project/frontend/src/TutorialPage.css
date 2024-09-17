@@ -1,0 +1,109 @@
+.tutorial-page {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+  }
+  
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .page-title {
+    color: #2c974b;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .tutorial-section {
+    background-color: #f6f8fa;
+    border-radius: 8px;
+    padding: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tutorial-section h2 {
+    color: #2c974b;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #2c974b;
+    padding-bottom: 0.5rem;
+  }
+  
+  .tutorial-section h3 {
+    color: #22753a;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tutorial-section p, .tutorial-section li {
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .tutorial-section ul {
+    padding-left: 1.5rem;
+  }
+  
+  .strategy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .strategy-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .code-example {
+    background-color: #f0f0f0;
+    border-left: 4px solid #2c974b;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    overflow-x: auto;
+  }
+  
+  .code-example pre {
+    margin: 0;
+  }
+  
+  .code-example code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+  }
+  
+  .conclusion {
+    background-color: #e6f7e9;
+    text-align: center;
+  }
+  
+  @media (max-width: 768px) {
+    .tutorial-page {
+      padding: 20px;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .tutorial-section {
+      padding: 1rem;
+    }
+    
+    .code-example {
+      padding: 0.8rem;
+    }
+    
+    .code-example code {
+      font-size: 0.8rem;
+    }
+  }
