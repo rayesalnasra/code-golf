@@ -1,2 +1,2 @@
-def add(a, b):
-    return a + b
+def is_palindrome(s):
+    # Your code here

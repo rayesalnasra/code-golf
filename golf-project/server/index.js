@@ -14,14 +14,9 @@ app.post('/python', async (req, res) => {
     const { code, problem } = req.body;
 
     try {
-        // Get test cases from Firebase
-        const allTestCases = await getTestCases();
-        console.log('Fetched test cases:', allTestCases);
-
-        // Filter test cases based on the problem
-        const testCases = problem === 'add' 
-            ? allTestCases.filter(tc => Array.isArray(tc.inputs) && tc.inputs.length === 2)
-            : allTestCases.filter(tc => Array.isArray(tc.inputs) && tc.inputs.length === 1);
+        // Get test cases from Firebase for the specific problem
+        const testCases = await getTestCases(problem);
+        console.log('Fetched test cases:', testCases);
 
         if (!testCases || testCases.length === 0) {
             throw new Error('No test cases fetched for the selected problem');
