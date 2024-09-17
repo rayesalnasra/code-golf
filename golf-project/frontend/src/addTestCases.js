@@ -17,6 +17,20 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const newProblems = {
+  add: [
+    { inputs: [2, 3], expected_output: 5 },
+    { inputs: [-1, 1], expected_output: 0 },
+    { inputs: [0, 0], expected_output: 0 },
+    { inputs: [100, 200], expected_output: 300 },
+    { inputs: [-50, 50], expected_output: 0 }
+  ],
+  reverse: [
+    { inputs: ["hello"], expected_output: "olleh" },
+    { inputs: ["Python"], expected_output: "nohtyP" },
+    { inputs: [""], expected_output: "" },
+    { inputs: ["a"], expected_output: "a" },
+    { inputs: ["racecar"], expected_output: "racecar" }
+  ],
   palindrome: [
     { inputs: ["racecar"], expected_output: true },
     { inputs: ["hello"], expected_output: false },
@@ -85,33 +99,43 @@ const newProblems = {
   ]
 };
 
-async function addTestCases(problemId, testCases) {
-    const batch = writeBatch(db);
-    const testCasesCol = collection(db, 'testCases');
-  
-    testCases.forEach((testCase) => {
-      const newTestCaseRef = doc(testCasesCol);
-      batch.set(newTestCaseRef, {
-        problemId,
-        inputs: testCase.inputs,
-        expected_output: testCase.expected_output
-      });
-    });
-  
-    await batch.commit();
+function flattenOrStringify(value) {
+  if (Array.isArray(value)) {
+    return JSON.stringify(value);
   }
-  
-  async function addAllTestCases() {
-    for (const [problemId, testCases] of Object.entries(newProblems)) {
-      try {
-        await addTestCases(problemId, testCases);
-        console.log(`Test cases added successfully for problem: ${problemId}`);
-      } catch (error) {
-        console.error(`Error adding test cases for problem ${problemId}:`, error);
-      }
+  return value;
+}
+
+async function addTestCases(problemId, testCases) {
+  const batch = writeBatch(db);
+  const testCasesCol = collection(db, 'testCases');
+
+  testCases.forEach((testCase) => {
+    const newTestCaseRef = doc(testCasesCol);
+    const flattenedInputs = testCase.inputs.map(flattenOrStringify);
+    const flattenedExpectedOutput = flattenOrStringify(testCase.expected_output);
+
+    batch.set(newTestCaseRef, {
+      problemId,
+      inputs: flattenedInputs,
+      expected_output: flattenedExpectedOutput
+    });
+  });
+
+  await batch.commit();
+}
+
+async function addAllTestCases() {
+  for (const [problemId, testCases] of Object.entries(newProblems)) {
+    try {
+      await addTestCases(problemId, testCases);
+      console.log(`Test cases added successfully for problem: ${problemId}`);
+    } catch (error) {
+      console.error(`Error adding test cases for problem ${problemId}:`, error);
     }
   }
-  
-  addAllTestCases().then(() => {
-    console.log('All test cases added.');
-  });
+}
+
+addAllTestCases().then(() => {
+  console.log('All test cases added.');
+});

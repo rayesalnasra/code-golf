@@ -17,7 +17,27 @@ export async function getTestCases(problemId) {
   const testCasesCol = collection(dbCodeRunner, 'testCases');
   const q = query(testCasesCol, where("problemId", "==", problemId));
   const testCasesSnapshot = await getDocs(q);
-  return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return testCasesSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      inputs: data.inputs.map(input => {
+        try {
+          return JSON.parse(input);
+        } catch {
+          return input;
+        }
+      }),
+      expected_output: (() => {
+        try {
+          return JSON.parse(data.expected_output);
+        } catch {
+          return data.expected_output;
+        }
+      })()
+    };
+  });
 }
 
 export async function saveUserCode(userId, problemId, code) {
@@ -50,10 +70,17 @@ export async function addTestCases(problemId, testCases) {
 
   testCases.forEach((testCase) => {
     const newTestCaseRef = doc(testCasesCol);
+    const flattenedInputs = testCase.inputs.map(input => 
+      Array.isArray(input) ? JSON.stringify(input) : input
+    );
+    const flattenedExpectedOutput = Array.isArray(testCase.expected_output) 
+      ? JSON.stringify(testCase.expected_output) 
+      : testCase.expected_output;
+
     batch.set(newTestCaseRef, {
       problemId,
-      inputs: testCase.inputs,
-      expected_output: testCase.expected_output
+      inputs: flattenedInputs,
+      expected_output: flattenedExpectedOutput
     });
   });
 
