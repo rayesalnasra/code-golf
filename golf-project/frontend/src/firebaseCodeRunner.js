@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, addDoc, query, where } from 'firebase/firestore/lite';
 
 const firebaseConfigCodeRunner = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,9 +13,10 @@ const firebaseConfigCodeRunner = {
 const appCodeRunner = initializeApp(firebaseConfigCodeRunner, 'CODE_RUNNER');
 const dbCodeRunner = getFirestore(appCodeRunner);
 
-export async function getTestCases() {
+export async function getTestCases(problemId) {
   const testCasesCol = collection(dbCodeRunner, 'testCases');
-  const testCasesSnapshot = await getDocs(testCasesCol);
+  const q = query(testCasesCol, where("problemId", "==", problemId));
+  const testCasesSnapshot = await getDocs(q);
   return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
@@ -29,4 +30,21 @@ export async function saveUserCode(problemId, code) {
   return docRef.id;
 }
 
-export { appCodeRunner, dbCodeRunner }; 
+// Function to add test cases for new problems
+export async function addTestCases(problemId, testCases) {
+  const testCasesCol = collection(dbCodeRunner, 'testCases');
+  const batch = dbCodeRunner.batch();
+
+  testCases.forEach((testCase) => {
+    const newTestCaseRef = doc(testCasesCol);
+    batch.set(newTestCaseRef, {
+      problemId,
+      inputs: testCase.inputs,
+      expected_output: testCase.expected_output
+    });
+  });
+
+  await batch.commit();
+}
+
+export { appCodeRunner, dbCodeRunner };
