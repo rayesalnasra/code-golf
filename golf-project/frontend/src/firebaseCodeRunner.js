@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, query, where } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc, setDoc } from 'firebase/firestore/lite';
 
 const firebaseConfigCodeRunner = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,17 +20,30 @@ export async function getTestCases(problemId) {
   return testCasesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-export async function saveUserCode(problemId, code) {
+export async function saveUserCode(userId, problemId, code) {
   const userSubmissionsCol = collection(dbCodeRunner, 'userSubmissions');
-  const docRef = await addDoc(userSubmissionsCol, {
+  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}`);
+  await setDoc(docRef, {
+    userId,
     problemId,
     code,
     timestamp: new Date()
-  });
+  }, { merge: true });
   return docRef.id;
 }
 
-// Function to add test cases for new problems
+export async function getUserSubmission(userId, problemId) {
+  const userSubmissionsCol = collection(dbCodeRunner, 'userSubmissions');
+  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().code;
+  } else {
+    return null;
+  }
+}
+
 export async function addTestCases(problemId, testCases) {
   const testCasesCol = collection(dbCodeRunner, 'testCases');
   const batch = dbCodeRunner.batch();
