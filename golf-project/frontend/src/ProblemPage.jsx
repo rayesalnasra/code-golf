@@ -3,17 +3,43 @@ import { useParams, Link } from "react-router-dom";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import axios from "axios";
-import { saveUserCode } from "./firebaseCodeRunner";
+import { saveUserCode, getTestCases } from "./firebaseCodeRunner";
 import "./ProblemPage.css";
 
 const problemDescriptions = {
   add: "Create a function that adds two numbers in Python",
   reverse: "Create a function that reverses a given string in Python",
+  palindrome: "Create a function that checks if a given string is a palindrome.",
+  factorial: "Create a function that calculates the factorial of a given non-negative integer.",
+  fizzbuzz: "Create a function that returns 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, 'FizzBuzz' for multiples of both, and the number for other cases.",
+  twosum: "Given an array of integers and a target sum, return indices of the two numbers such that they add up to the target.",
+  validparentheses: "Create a function that determines if the input string has valid parentheses.",
+  longestsubstring: "Find the length of the longest substring without repeating characters.",
+  mergeintervals: "Merge all overlapping intervals and return an array of the non-overlapping intervals.",
+  groupanagrams: "Group anagrams together from an array of strings.",
+  mediansortedarrays: "Find the median of two sorted arrays.",
+  regularexpressionmatching: "Implement regular expression matching with support for '.' and '*'.",
+  trapwater: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
+  mergeklargelists: "Merge k sorted linked lists and return it as one sorted list.",
+  longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
 };
 
 const initialCodes = {
   add: "def add(a, b):\n    return a + b",
   reverse: "def reverse_string(s):\n    return s[::-1]",
+  palindrome: "def is_palindrome(s):\n    # Your code here",
+  factorial: "def factorial(n):\n    # Your code here",
+  fizzbuzz: "def fizzbuzz(n):\n    # Your code here",
+  twosum: "def two_sum(nums, target):\n    # Your code here",
+  validparentheses: "def is_valid_parentheses(s):\n    # Your code here",
+  longestsubstring: "def length_of_longest_substring(s):\n    # Your code here",
+  mergeintervals: "def merge_intervals(intervals):\n    # Your code here",
+  groupanagrams: "def group_anagrams(strs):\n    # Your code here",
+  mediansortedarrays: "def find_median_sorted_arrays(nums1, nums2):\n    # Your code here",
+  regularexpressionmatching: "def is_match(s, p):\n    # Your code here",
+  trapwater: "def trap(height):\n    # Your code here",
+  mergeklargelists: "def merge_k_lists(lists):\n    # Your code here",
+  longestvalidparentheses: "def longest_valid_parentheses(s):\n    # Your code here",
 };
 
 export default function ProblemPage() {
@@ -22,19 +48,30 @@ export default function ProblemPage() {
   const [results, setResults] = useState([]);
   const [testResult, setTestResult] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [testCases, setTestCases] = useState([]);
 
   useEffect(() => {
     setCode(initialCodes[problemId] || "");
     setResults([]);
     setTestResult("");
+    fetchTestCases();
   }, [problemId]);
+
+  const fetchTestCases = async () => {
+    try {
+      const cases = await getTestCases(problemId);
+      setTestCases(cases);
+    } catch (error) {
+      console.error("Error fetching test cases:", error);
+    }
+  };
 
   const handleChange = React.useCallback((value) => {
     setCode(value);
   }, []);
 
   const runCode = () => {
-    axios.post("http://localhost:3000/python", { code, problem: problemId })
+    axios.post("http://localhost:3000/python", { code, problem: problemId, testCases })
       .then((res) => {
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
