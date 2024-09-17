@@ -1,33 +1,56 @@
 .problem-selection-page {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .problem-list-title {
-    color: #2c974b;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
-  .problem-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .problem-item {
-    margin-bottom: 0.75rem;
-  }
-  
-  .problem-link {
-    color: #2c974b;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  
-  .problem-link:hover {
-    color: #22753a;
-  }
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.problem-list-title {
+  color: #2c974b;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.difficulty-selector {
+  margin-bottom: 1rem;
+}
+
+.difficulty-selector label {
+  margin-right: 0.5rem;
+  color: #2c974b;
+}
+
+.difficulty-selector select {
+  padding: 0.5rem;
+  border: 1px solid #2c974b;
+  border-radius: 4px;
+  color: #2c974b;
+  background-color: #ffffff;
+}
+
+.difficulty-description {
+  margin-bottom: 1rem;
+  color: #555;
+  font-style: italic;
+}
+
+.problem-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.problem-item {
+  margin-bottom: 0.75rem;
+}
+
+.problem-link {
+  color: #2c974b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.problem-link:hover {
+  color: #22753a;
+}
