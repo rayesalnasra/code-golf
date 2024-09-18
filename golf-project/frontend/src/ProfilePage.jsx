@@ -22,7 +22,7 @@
 // export default ProfilePage
 
 import React, { useState, useEffect } from 'react';
-import './Profile.css'; // Import the CSS file for styling
+import './ProfilePage.css'; // Import the CSS file for styling
 
 const Profile = () => {
   // Load profile data from localStorage if available, else use default values
