@@ -40,21 +40,25 @@ export async function getTestCases(problemId) {
   });
 }
 
-export async function saveUserCode(userId, problemId, code) {
+export async function saveUserCode(userId, problemId, language, code) {
   const userSubmissionsCol = collection(dbCodeRunner, 'userSubmissions');
-  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}`);
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}_${languageId}`);
   await setDoc(docRef, {
     userId,
     problemId,
+    language,
+    languageId,
     code,
     timestamp: new Date()
   }, { merge: true });
   return docRef.id;
 }
 
-export async function getUserSubmission(userId, problemId) {
+export async function getUserSubmission(userId, problemId, language) {
   const userSubmissionsCol = collection(dbCodeRunner, 'userSubmissions');
-  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}`);
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userSubmissionsCol, `${userId}_${problemId}_${languageId}`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -62,6 +66,29 @@ export async function getUserSubmission(userId, problemId) {
   } else {
     return null;
   }
+}
+
+export async function getUserSolutions(userId) {
+  const userSubmissionsCol = collection(dbCodeRunner, 'userSubmissions');
+  const q = query(userSubmissionsCol, where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  
+  const solutions = {};
+  querySnapshot.docs.forEach(doc => {
+    const data = doc.data();
+    if (!solutions[data.problemId]) {
+      solutions[data.problemId] = {
+        problemId: data.problemId,
+        languages: {}
+      };
+    }
+    solutions[data.problemId].languages[data.language] = {
+      code: data.code,
+      timestamp: data.timestamp
+    };
+  });
+  
+  return Object.values(solutions);
 }
 
 export async function addTestCases(problemId, testCases) {

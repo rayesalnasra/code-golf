@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2"
+  }
+}
