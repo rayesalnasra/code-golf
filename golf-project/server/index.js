@@ -10,23 +10,30 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post('/python', async (req, res) => { 
-    const { code, problem } = req.body;
+app.post('/run-code', async (req, res) => { 
+    const { code, problem, language, testCases } = req.body;
 
     try {
-        // Get test cases from Firebase for the specific problem
-        const testCases = await getTestCases(problem);
-        console.log('Fetched test cases:', testCases);
-
         if (!testCases || testCases.length === 0) {
             throw new Error('No test cases fetched for the selected problem');
         }
 
-        // Write the user's code to a file
-        fs.writeFileSync('user_code.py', code);
+        let fileName, command;
+        if (language === 'python') {
+            fileName = 'user_code.py';
+            command = `python3 test.py '${JSON.stringify(testCases)}'`;
+        } else if (language === 'javascript') {
+            fileName = 'user_code.js';
+            command = `node test.js '${JSON.stringify(testCases)}'`;
+        } else {
+            throw new Error('Unsupported language');
+        }
 
-        // Execute the Python script using child_process.exec
-        exec(`python3 test.py '${JSON.stringify(testCases)}'`, (error, stdout, stderr) => {
+        // Write the user's code to a file
+        fs.writeFileSync(fileName, code);
+
+        // Execute the script using child_process.exec
+        exec(command, (error, stdout, stderr) => {
             let results;
             try {
                 results = JSON.parse(stdout);
@@ -53,5 +60,5 @@ app.post('/python', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Server listening on port ${port}`);
 });
