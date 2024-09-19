@@ -160,7 +160,7 @@ body.dark-mode .stat-item p {
   border-radius: 5px;
 }
 
-.edit-button, .save-button, .cancel-button {
+.edit-button, .save-button, .cancel-button, .privatize-button {
   margin: 5px;
   padding: 10px 20px;
   border: none;
@@ -179,4 +179,8 @@ body.dark-mode .stat-item p {
 
 .cancel-button {
   background-color: #dc3545; /* Red */
+}
+
+.privatize-button {
+  background-color: #ffc107; /* Yellow */
 }
