@@ -4,7 +4,15 @@ Welcome to our Code Golf website! 🎉 Join a fun, competitive platform where co
 
 ## Team
 Product Owner - Rayes Adnan Mustafa Alnasra
+
+
 Scrum Master - David Sumang
+
+
 Developer 2 - Billal Ghambarie
+
+
 Developer 1 - William Sukjaem
+
+
 Developer 3 - Ryan Chung
