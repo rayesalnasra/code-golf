@@ -4,7 +4,7 @@ Welcome to our Code Golf website! 🎉 Join a fun, competitive platform where co
 
 
 ## Team
-Product Owner - Rayes Adnan Mustafa Alnasra
+Product Owner - Rayes Alnasra
 
 
 Scrum Master - David Sumang
