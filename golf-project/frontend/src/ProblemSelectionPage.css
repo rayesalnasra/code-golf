@@ -1,8 +1,43 @@
+/* Default Light Mode */
+:root {
+  --background-page: #ffffff; /* White background for light mode */
+  --background-section: #f6f8fa; /* Light gray for sections */
+  --background-item: #ffffff; /* White background for items */
+  --color-title: #2c974b; /* Dark green for titles */
+  --color-heading: #2c974b; /* Dark green for headings */
+  --color-label: #2c974b; /* Dark green for labels */
+  --color-border: #2c974b; /* Dark green for borders */
+  --color-text: #333; /* Dark text for general use */
+  --color-text-italic: #555; /* Gray text for italic */
+  --color-link: #2c974b; /* Dark green for links */
+  --color-link-hover: #22753a; /* Darker green for link hover */
+  --background-hover: #e6f7e9; /* Light green for item hover */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+/* Dark Mode */
+body.dark-mode {
+  --background-page: #121212; /* Very dark background for dark mode */
+  --background-section: #1e1e1e; /* Darker background for sections */
+  --background-item: #2c2c2c; /* Dark background for items */
+  --color-title: #9be89d; /* Light green for titles */
+  --color-heading: #8cbf6e; /* Lighter green for headings */
+  --color-label: #9be89d; /* Light green for labels */
+  --color-border: #9be89d; /* Light green for borders */
+  --color-text: #f1f1f1; /* Light text for general use */
+  --color-text-italic: #ccc; /* Light gray text for italic */
+  --color-link: #9be89d; /* Light green for links */
+  --color-link-hover: #8cbf6e; /* Lighter green for link hover */
+  --background-hover: #333333; /* Darker background for item hover */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+/* Apply variables to elements */
 .problem-selection-page {
-  background-color: #ffffff;
+  background-color: var(--background-page);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
   margin: 0 auto;
 }
 
@@ -13,7 +48,7 @@
 }
 
 .page-title {
-  color: #2c974b;
+  color: var(--color-title);
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -23,7 +58,7 @@
 .difficulty-section,
 .problem-list-section,
 .problem-selection-info {
-  background-color: #f6f8fa;
+  background-color: var(--background-section);
   border-radius: 8px;
   padding: 1.2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -32,10 +67,10 @@
 .difficulty-section h2,
 .problem-list-section h2,
 .problem-selection-info h2 {
-  color: #2c974b;
+  color: var(--color-heading);
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #2c974b;
+  border-bottom: 2px solid var(--color-heading);
   padding-bottom: 0.5rem;
 }
 
@@ -45,22 +80,22 @@
 
 .difficulty-selector label {
   margin-right: 0.5rem;
-  color: #2c974b;
+  color: var(--color-label);
   font-weight: 500;
 }
 
 .difficulty-selector select {
   padding: 0.5rem;
-  border: 1px solid #2c974b;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  color: #2c974b;
-  background-color: #ffffff;
+  color: var(--color-label);
+  background-color: var(--background-page);
   font-size: 1rem;
 }
 
 .difficulty-description {
   margin-bottom: 1rem;
-  color: #555;
+  color: var(--color-text-italic);
   font-style: italic;
 }
 
@@ -72,17 +107,17 @@
 .problem-item {
   margin-bottom: 0.75rem;
   padding: 0.5rem;
-  background-color: #ffffff;
+  background-color: var(--background-item);
   border-radius: 4px;
   transition: background-color 0.3s ease;
 }
 
 .problem-item:hover {
-  background-color: #e6f7e9;
+  background-color: var(--background-hover);
 }
 
 .problem-link {
-  color: #2c974b;
+  color: var(--color-link);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -90,7 +125,7 @@
 }
 
 .problem-link:hover {
-  color: #22753a;
+  color: var(--color-link-hover);
 }
 
 .problem-selection-info ul {
@@ -98,7 +133,7 @@
 }
 
 .problem-selection-info li {
-  color: #333;
+  color: var(--color-text);
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
@@ -106,16 +141,16 @@
 
 @media (max-width: 768px) {
   .problem-selection-page {
-    padding: 20px;
+      padding: 20px;
   }
   
   .page-title {
-    font-size: 2rem;
+      font-size: 2rem;
   }
   
   .difficulty-section,
   .problem-list-section,
   .problem-selection-info {
-    padding: 1rem;
+      padding: 1rem;
   }
 }

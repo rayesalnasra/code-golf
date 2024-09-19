@@ -22,8 +22,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userDisplayName, setUserDisplayName] = useState('');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
+    const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
+    setIsDarkMode(savedDarkMode);
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await user.reload();
@@ -60,6 +64,20 @@ function App() {
     setIsDropdownVisible(!isDropdownVisible);
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    localStorage.setItem('isDarkMode', !isDarkMode);
+    document.body.classList.toggle('dark-mode', !isDarkMode);
+  };
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -82,6 +100,7 @@ function App() {
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><button onClick={toggleDarkMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button></li>
                       <li><button onClick={handleLogout}>Logout</button></li>
                     </ul>
                   </div>

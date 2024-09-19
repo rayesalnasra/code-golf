@@ -1,91 +1,123 @@
+/* Default Light Mode */
+:root {
+  --background-page: #ffffff; /* White background for light mode */
+  --background-section: #f6f8fa; /* Light gray for sections */
+  --background-resource-item: #ffffff; /* White background for resource items */
+  --color-title: #2c974b; /* Dark green for titles */
+  --color-heading: #2c974b; /* Dark green for headings */
+  --color-text: #333; /* Dark text for general use */
+  --color-link: #2c974b; /* Dark green for links */
+  --color-link-hover: #22753a; /* Darker green for link hover */
+  --color-paragraph: #555; /* Gray for paragraph text */
+  --background-conclusion: #e6f7e9; /* Light green for conclusion */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+/* Dark Mode */
+body.dark-mode {
+  --background-page: #000000; /* Black background for dark mode */
+  --background-section: #1c1c1c; /* Dark background for sections */
+  --background-resource-item: #1c1c1c; /* Dark background for resource items */
+  --color-title: #9be89d; /* Light green for titles */
+  --color-heading: #8cbf6e; /* Lighter green for headings */
+  --color-text: #f1f1f1; /* Light text for general use */
+  --color-link: #9be89d; /* Light green for links */
+  --color-link-hover: #8cbf6e; /* Lighter green for link hover */
+  --color-paragraph: #ccc; /* Light gray for paragraph text */
+  --background-conclusion: #333333; /* Dark gray for conclusion */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+/* Apply variables to elements */
 .documentation-page {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-  }
-  
-  .content-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  background-color: var(--background-page);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--box-shadow);
+  margin: 0 auto;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-title {
+  color: var(--color-title);
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.documentation-section {
+  background-color: var(--background-section);
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.documentation-section h2 {
+  color: var(--color-title);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--color-title);
+  padding-bottom: 0.5rem;
+}
+
+.documentation-section p {
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.resource-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.resource-list li {
+  margin-bottom: 1rem;
+  background-color: var(--background-resource-item);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.resource-list li a {
+  color: var(--color-link);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.resource-list li a:hover {
+  color: var(--color-link-hover);
+}
+
+.resource-list li p {
+  margin-top: 0.5rem;
+  color: var(--color-paragraph);
+}
+
+.conclusion {
+  background-color: var(--background-conclusion);
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .documentation-page {
+      padding: 20px;
   }
   
   .page-title {
-    color: #2c974b;
-    font-size: 2.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
+      font-size: 2rem;
   }
   
   .documentation-section {
-    background-color: #f6f8fa;
-    border-radius: 8px;
-    padding: 1.2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .documentation-section h2 {
-    color: #2c974b;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #2c974b;
-    padding-bottom: 0.5rem;
-  }
-  
-  .documentation-section p {
-    color: #333;
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-  
-  .resource-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .resource-list li {
-    margin-bottom: 1rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .resource-list li a {
-    color: #2c974b;
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .resource-list li a:hover {
-    color: #22753a;
-  }
-  
-  .resource-list li p {
-    margin-top: 0.5rem;
-    color: #555;
-  }
-  
-  .conclusion {
-    background-color: #e6f7e9;
-    text-align: center;
-  }
-  
-  @media (max-width: 768px) {
-    .documentation-page {
-      padding: 20px;
-    }
-    
-    .page-title {
-      font-size: 2rem;
-    }
-    
-    .documentation-section {
       padding: 1rem;
-    }
   }
+}
