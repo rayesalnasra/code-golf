@@ -4,7 +4,7 @@ import { auth } from "./firebaseAuth";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { database } from "./firebase";
 import { ref, get, set } from "firebase/database";
-import "./AuthPages.css";
+import "./AuthPages.css"; // Updated to use the unified AuthPages.css
 
 function Register() {
   const [email, setEmail] = useState("");

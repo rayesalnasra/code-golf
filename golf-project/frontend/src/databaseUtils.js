@@ -1,5 +1,5 @@
 import { ref, set, push, onValue, update } from "firebase/database";
-import { database } from "./firebase";
+import { database } from "./firebase"; // Ensure the path is correct
 
 // Function to add data to the database
 export const addData = (path, data) => {
@@ -27,3 +27,4 @@ export const updateData = (path, data) => {
   const dbRef = ref(database, path);
   return update(dbRef, data);
 };
+        
