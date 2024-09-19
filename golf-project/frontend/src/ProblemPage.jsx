@@ -4,9 +4,8 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
 import axios from "axios";
-import { saveUserCode, getTestCases, getUserSubmission } from "./firebaseCodeRunner";
+import { saveUserCode, getTestCases, getUserSubmission, getSolution } from "./firebaseCodeRunner";
 import "./ProblemPage.css";
-
 
 const problemDescriptions = {
   add: "Create a function that adds two numbers",
@@ -76,6 +75,10 @@ export default function ProblemPage() {
   const [loadError, setLoadError] = useState("");
   const [testCases, setTestCases] = useState([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+  const [solutionCode, setSolutionCode] = useState("");
+
+  
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -138,13 +141,14 @@ export default function ProblemPage() {
     setTestResult("");
     setIsLoading(false);
     setHasUnsavedChanges(false);
+    setShowSolution(false);
   };
 
   const handleChange = useCallback((value) => {
     setCode(value);
     setHasUnsavedChanges(true);
+    setShowSolution(false);
   }, []);
-
 
   const runCode = () => {
     axios.post("http://localhost:3000/run-code", { code, problem: problemId, language, testCases })
@@ -180,6 +184,7 @@ export default function ProblemPage() {
     if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
       setCode(initialCodes[language][problemId] || "");
       setHasUnsavedChanges(true);
+      setShowSolution(false);
     }
   };
 
@@ -222,6 +227,21 @@ export default function ProblemPage() {
     navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
   };
 
+  const handleViewSolution = async () => {
+    if (showSolution) {
+      setShowSolution(false);
+    } else {
+      try {
+        const solution = await getSolution(problemId, language);
+        setSolutionCode(solution);
+        setShowSolution(true);
+      } catch (error) {
+        console.error("Error fetching solution:", error);
+        alert("Failed to fetch solution. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="problem-page">
       <button onClick={() => handleNavigateAway("/problems")} className="back-link">
@@ -235,7 +255,7 @@ export default function ProblemPage() {
         <select 
           id="language-select" 
           value={language} 
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => handleLanguageChange(e.target.value)}
         >
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
@@ -281,11 +301,34 @@ export default function ProblemPage() {
         >
           Reset Code
         </button>
+        <button 
+          className="btn btn-info" 
+          onClick={handleViewSolution}
+          disabled={isLoading}
+        >
+          {showSolution ? "Hide Solution" : "View Solution"}
+        </button>
       </div>
       
       {hasUnsavedChanges && (
         <div className="unsaved-changes-warning">
           You have unsaved changes. Remember to save your code!
+        </div>
+      )}
+
+      {showSolution && (
+        <div className="solution-container">
+          <div className="solution-warning">
+            This is the solution. Make sure you understand it before submitting!
+          </div>
+          <CodeMirror
+            value={solutionCode}
+            height="200px"
+            theme="light"
+            extensions={[language === "python" ? python() : javascript()]}
+            readOnly={true}
+            className="solution-editor"
+          />
         </div>
       )}
       
