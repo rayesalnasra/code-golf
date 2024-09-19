@@ -94,3 +94,89 @@
     font-size: 1.2rem;
   }
 }
+
+/* Dark mode */
+body.dark-mode .profile-page {
+  background-color: #121212;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .page-title, 
+body.dark-mode .profile-section h2, 
+body.dark-mode .stat-value {
+  color: #76c043;
+}
+
+body.dark-mode .profile-section {
+  background-color: #1e1e1e;
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .info-item, 
+body.dark-mode .stat-item {
+  background-color: #1e1e1e;
+  box-shadow: 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .info-item h3, 
+body.dark-mode .stat-item h3, 
+body.dark-mode .info-item p, 
+body.dark-mode .stat-item p {
+  color: #bbbbbb;
+}
+
+
+
+
+
+
+
+.profile-page {
+  padding: 20px;
+}
+
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-title {
+  text-align: center;
+}
+
+.profile-section {
+  margin-bottom: 20px;
+}
+
+.info-grid, .stats-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.info-item, .stat-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.edit-button, .save-button, .cancel-button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #007bff; /* Blue */
+}
+
+.save-button {
+  background-color: #28a745; /* Green */
+}
+
+.cancel-button {
+  background-color: #dc3545; /* Red */
+}

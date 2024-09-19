@@ -128,3 +128,72 @@
     margin: 0.7rem 0;
     line-height: 1.5;
   }
+
+
+/* Dark Mode Styles */
+.dark-mode .home-page {
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text */
+  box-shadow: none; /* Remove shadow */
+}
+
+.dark-mode .page-title {
+  color: #8cff66; /* Brighter green for visibility */
+}
+
+.dark-mode .welcome-message {
+  color: #f0f0f0; /* Light gray text */
+}
+
+.dark-mode .typing-effect {
+  border-right: 2px solid #8cff66; /* Brighter caret color */
+}
+
+.dark-mode .btn-primary {
+  background-color: #333333; /* Darker background */
+  color: #8cff66; /* Brighter green text */
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #444444; /* Slightly lighter hover */
+}
+
+.dark-mode .btn-secondary {
+  background-color: #333333; /* Darker button background */
+  color: #8cff66; /* Brighter green text */
+  border: 1px solid #8cff66;
+}
+
+.dark-mode .btn-secondary:hover {
+  background-color: #444444; /* Hover effect */
+}
+
+.dark-mode .features {
+  color: #ffffff; /* White text for features section */
+}
+
+.dark-mode .feature-item {
+  background-color: #1a1a1a; /* Darker feature item background */
+  color: #f0f0f0; /* Light gray text */
+}
+
+.dark-mode .feature-item h3 {
+  color: #8cff66; /* Bright green headings */
+}
+
+.dark-mode .feature-item p {
+  color: #f0f0f0; /* Light gray text */
+}
+
+.dark-mode .extra-content {
+  background-color: #1a1a1a; /* Darker extra content background */
+  color: #f0f0f0; /* Light gray text */
+}
+
+.dark-mode .extra-content h2 {
+  color: #8cff66; /* Bright green heading */
+}
+
+.dark-mode .extra-content p {
+  color: #f0f0f0; /* Light gray text */
+}

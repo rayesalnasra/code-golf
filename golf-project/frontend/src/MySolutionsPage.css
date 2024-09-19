@@ -1,18 +1,44 @@
+/* Default Light Mode */
+:root {
+  --background-page: #ffffff; /* White background for light mode */
+  --background-item: #f6f8fa; /* Light gray background for items */
+  --color-title: #2c974b; /* Dark green for titles */
+  --color-heading: #22753a; /* Darker green for headings */
+  --color-text: #333; /* Dark text for general use */
+  --color-link: #2c974b; /* Dark green for links */
+  --color-link-hover: #22753a; /* Darker green for link hover */
+  --color-error: #cb2431; /* Red for errors */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+/* Dark Mode */
+body.dark-mode {
+  --background-page: #121212; /* Very dark background for dark mode */
+  --background-item: #1e1e1e; /* Darker background for items */
+  --color-title: #9be89d; /* Light green for titles */
+  --color-heading: #8cbf6e; /* Lighter green for headings */
+  --color-text: #f1f1f1; /* Light text for general use */
+  --color-link: #9be89d; /* Light green for links */
+  --color-link-hover: #8cbf6e; /* Lighter green for link hover */
+  --color-error: #e06c75; /* Light red for errors */
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Darker shadow */
+}
+
+/* Apply variables to elements */
 .my-solutions-page {
-  background-color: #ffffff;
+  background-color: var(--background-page);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
   margin: 0 auto;
 }
 
 .my-solutions-page h2 {
-  color: #2c974b;
-  font-size: 2rem; /* Match font size to TutorialPage */
+  color: var(--color-title);
+  font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 2rem; /* Increase space below title */
+  margin-bottom: 2rem;
   text-align: center;
-  /* Remove border and padding to eliminate underline */
   border: none;
   padding: 0;
 }
@@ -24,7 +50,7 @@
 }
 
 .solution-item {
-  background-color: #f6f8fa;
+  background-color: var(--background-item);
   border-radius: 8px;
   padding: 1.2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -32,20 +58,20 @@
 }
 
 .solution-item h3 {
-  color: #22753a;
+  color: var(--color-heading);
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
 .solution-item p {
-  color: #333;
+  color: var(--color-text);
   font-size: 1rem;
   margin-bottom: 0.5rem;
 }
 
 .view-problem-link {
   display: inline-block;
-  background-color: #2c974b;
+  background-color: var(--color-link);
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
@@ -55,7 +81,7 @@
 }
 
 .view-problem-link:hover {
-  background-color: #22753a;
+  background-color: var(--color-link-hover);
 }
 
 .loading,
@@ -66,25 +92,25 @@
 }
 
 .error {
-  color: #cb2431;
+  color: var(--color-error);
 }
 
 @media (max-width: 768px) {
   .my-solutions-page {
-    padding: 20px;
+      padding: 20px;
   }
 
   .my-solutions-page h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem; /* Adjust spacing for smaller screens */
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
   }
 
   .solution-item {
-    padding: 1rem;
+      padding: 1rem;
   }
 
   .view-problem-link {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
   }
 }
