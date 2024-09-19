@@ -4,6 +4,7 @@ import { collection, query, where, getDocs } from "firebase/firestore/lite";
 import { dbCodeRunner } from "./firebaseCodeRunner";
 import "./MySolutionsPage.css";
 
+// Problem titles
 const problemTitles = {
   add: "Add Two Numbers",
   reverse: "Reverse String",
@@ -31,6 +32,7 @@ export default function MySolutionsPage() {
     fetchUserSolutions();
   }, []);
 
+  // fetch user solutions from the database
   const fetchUserSolutions = async () => {
     setIsLoading(true);
     setError(null);
@@ -42,6 +44,7 @@ export default function MySolutionsPage() {
       return;
     }
 
+    // Fetch user submissions from the database
     try {
       const userSubmissionsCol = collection(dbCodeRunner, "userSubmissions");
       const q = query(userSubmissionsCol, where("userId", "==", userId));
@@ -54,6 +57,7 @@ export default function MySolutionsPage() {
           problemTitles[doc.data().problemId] || doc.data().problemId,
       }));
 
+      // Set the user solutions in the state
       setSolutions(userSolutions);
     } catch (err) {
       console.error("Error fetching user solutions:", err);
