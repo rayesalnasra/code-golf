@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { readData } from "./databaseUtils";
+import "./LeaderboardPage.css";
 
 function LeaderboardPage() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Fetch all users data from the database
     readData("users", (data) => {
       if (data) {
-        // Convert the data object to an array of users
         const usersArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
-        // Sort users by score in descending order
         usersArray.sort((a, b) => b.score - a.score);
         setUsers(usersArray);
       }
@@ -21,32 +19,41 @@ function LeaderboardPage() {
   }, []);
 
   return (
-    <div>
-      <h1>Leaderboard</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Rank</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Name</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <tr key={user.id}>
-              <td style={{ border: "1px solid black", padding: "8px" }}>
-                {index + 1}
-              </td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>
-                {user.displayName}
-              </td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>
-                {user.score}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="leaderboard-page">
+      <div className="content-container">
+        <h1 className="page-title">Leaderboard 🏆</h1>
+        
+        <section className="leaderboard-section">
+          <table className="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user, index) => (
+                <tr key={user.id}>
+                  <td>{index + 1}</td>
+                  <td>{user.displayName}</td>
+                  <td>{user.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section className="leaderboard-info">
+          <h2>How to Climb the Ranks 🚀</h2>
+          <ul>
+            <li>Solve more problems to earn points</li>
+            <li>Optimize your solutions for higher scores</li>
+            <li>Participate regularly to maintain your rank</li>
+            <li>Challenge yourself with harder problems</li>
+          </ul>
+        </section>
+      </div>
     </div>
   );
 }
