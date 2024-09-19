@@ -114,4 +114,17 @@ export async function addTestCases(problemId, testCases) {
   await batch.commit();
 }
 
+export async function getSolution(problemId, language) {
+  const solutionsCol = collection(dbCodeRunner, 'codeSolutions');
+  const docRef = doc(solutionsCol, problemId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    return data[language] || "No solution available for this language.";
+  } else {
+    return "No solution available for this problem.";
+  }
+}
+
 export { appCodeRunner, dbCodeRunner };
