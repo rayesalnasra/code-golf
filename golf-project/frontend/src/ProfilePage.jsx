@@ -25,7 +25,7 @@ function ProfilePage() {
           setUser({
             displayName: storedDisplayName || userData.displayName || 'Anonymous User',
             email: storedEmail || userData.email || 'No email provided',
-            level: userData.level || 1,
+            level: userData.level || 0,
             xp: userData.xp || 0,
             score: userData.score || 0,
           });
