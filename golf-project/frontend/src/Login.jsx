@@ -1,32 +1,57 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { auth } from './firebaseAuth';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import './AuthPages.css';  // Updated to use the unified AuthPages.css
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { auth } from "./firebaseAuth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ref, get, set } from "firebase/database";
+import { database } from "./firebase";
+import "./AuthPages.css"; // Updated to use the unified AuthPages.css
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       // Sign in with email and password
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Save authentication state in localStorage
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userUID', user.uid);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userDisplayName', user.displayName || user.email); // Use displayName or email as fallback
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userUID", user.uid);
+      localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("userDisplayName", user.displayName || user.email); // Use displayName or email as fallback
+
+      // will start
+
+      // Initialize Firebase Realtime Database
+      const userRef = ref(database, "users/" + user.uid);
+
+      // Check if user exists in the database
+      const snapshot = await get(userRef);
+      if (!snapshot.exists()) {
+        // User does not exist, add to database
+        await set(userRef, {
+          displayName: user.displayName || user.email,
+          score: 0,
+          xp: 0,
+          level: 0,
+        });
+      }
+
+      //will end
 
       // Navigate to home page after login
-      navigate('/home');
+      navigate("/home");
     } catch (error) {
-      setError('Invalid email or password. Please try again.');
+      setError("Invalid email or password. Please try again.");
     }
   };
 
@@ -51,7 +76,9 @@ function Login() {
             placeholder="Password"
             required
           />
-          <button type="submit" className="auth-button">Login</button>
+          <button type="submit" className="auth-button">
+            Login
+          </button>
           {error && <p className="auth-error">{error}</p>}
         </form>
         <p className="auth-link">
