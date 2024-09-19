@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -15,6 +14,7 @@ import MySolutionsPage from './MySolutionsPage';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
+import codeGolfLogo from './code-golf-icon.png';
 import './App.css';
 
 function App() {
@@ -69,19 +69,24 @@ function App() {
       <div className="app-container">
         {isAuthenticated && (
           <>
-            <div className="profile-container">
-              <div className="profile-icon" onClick={toggleDropdown} style={{ cursor: 'pointer', fontSize: '30px' }}>
-                👤
+            <div className="header-container">
+              <div className="logo-container">
+                <img src={codeGolfLogo} alt="Code Golf Logo" className="code-golf-logo" />
               </div>
-              {isDropdownVisible && (
-                <div className="dropdown">
-                  <ul>
-                    <li><Link to="/profile">Profile</Link></li>
-                    <li><Link to="/my-solutions">My Solutions</Link></li>
-                    <li><button onClick={handleLogout}>Logout</button></li>
-                  </ul>
+              <div className="profile-container">
+                <div className="profile-icon" onClick={toggleDropdown} style={{ cursor: 'pointer', fontSize: '30px' }}>
+                  👤
                 </div>
-              )}
+                {isDropdownVisible && (
+                  <div className="dropdown">
+                    <ul>
+                      <li><Link to="/profile">Profile</Link></li>
+                      <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><button onClick={handleLogout}>Logout</button></li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
             <nav>
               <ul>

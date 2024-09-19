@@ -1,3 +1,4 @@
-def is_palindrome(s):
-    s = ''.join(c.lower() for c in s if c.isalnum())
-    return s == s[::-1]
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
