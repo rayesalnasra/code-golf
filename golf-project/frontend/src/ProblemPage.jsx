@@ -4,7 +4,9 @@ import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
 import axios from "axios";
-import { saveUserCode, getTestCases, getUserSubmission, getSolution } from "./firebaseCodeRunner";
+import { getTestCases, saveUserCode } from "./firebase";
+import { ref, onValue, update } from "firebase/database";
+import { database } from "./firebase";
 import "./ProblemPage.css";
 
 const problemDescriptions = {
@@ -18,11 +20,6 @@ const problemDescriptions = {
   longestsubstring: "Find the length of the longest substring without repeating characters.",
   mergeintervals: "Merge all overlapping intervals and return an array of the non-overlapping intervals.",
   groupanagrams: "Group anagrams together from an array of strings.",
-  mediansortedarrays: "Find the median of two sorted arrays.",
-  regularexpressionmatching: "Implement regular expression matching with support for '.' and '*'.",
-  trapwater: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
-  mergeklargelists: "Merge k sorted linked lists and return it as one sorted list.",
-  longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
 };
 
 const initialCodes = {
@@ -37,11 +34,6 @@ const initialCodes = {
     longestsubstring: "def length_of_longest_substring(s):\n    # Your code here",
     mergeintervals: "def merge_intervals(intervals):\n    # Your code here",
     groupanagrams: "def group_anagrams(strs):\n    # Your code here",
-    mediansortedarrays: "def find_median_sorted_arrays(nums1, nums2):\n    # Your code here",
-    regularexpressionmatching: "def is_match(s, p):\n    # Your code here",
-    trapwater: "def trap(height):\n    # Your code here",
-    mergeklargelists: "def merge_k_lists(lists):\n    # Your code here",
-    longestvalidparentheses: "def longest_valid_parentheses(s):\n    # Your code here",
   },
   javascript: {
     add: "function add(a, b) {\n    return a + b;\n}",
@@ -54,11 +46,6 @@ const initialCodes = {
     longestsubstring: "function lengthOfLongestSubstring(s) {\n    // Your code here\n}",
     mergeintervals: "function mergeIntervals(intervals) {\n    // Your code here\n}",
     groupanagrams: "function groupAnagrams(strs) {\n    // Your code here\n}",
-    mediansortedarrays: "function findMedianSortedArrays(nums1, nums2) {\n    // Your code here\n}",
-    regularexpressionmatching: "function isMatch(s, p) {\n    // Your code here\n}",
-    trapwater: "function trap(height) {\n    // Your code here\n}",
-    mergeklargelists: "function mergeKLists(lists) {\n    // Your code here\n}",
-    longestvalidparentheses: "function longestValidParentheses(s) {\n    // Your code here\n}",
   }
 };
 
@@ -77,8 +64,7 @@ export default function ProblemPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [solutionCode, setSolutionCode] = useState("");
-
-  
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -91,27 +77,13 @@ export default function ProblemPage() {
   useEffect(() => {
     fetchTestCases();
     fetchUserSubmission();
+    fetchUserData();
   }, [problemId, language]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (hasUnsavedChanges) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [hasUnsavedChanges]);
 
   const fetchTestCases = async () => {
     try {
-      const cases = await getTestCases(problemId);
-      setTestCases(cases);
+      const cases = await getTestCases();
+      setTestCases(cases.filter(testCase => testCase.problemId === problemId));
     } catch (error) {
       console.error("Error fetching test cases:", error);
     }
@@ -123,12 +95,14 @@ export default function ProblemPage() {
     const userId = localStorage.getItem('userUID');
     if (userId) {
       try {
-        const userCode = await getUserSubmission(userId, problemId, language);
-        if (userCode) {
-          setCode(userCode);
-        } else {
-          setCode(initialCodes[language][problemId] || "");
-        }
+        // Implement getUserSubmission in firebase.js if needed
+        // const userCode = await getUserSubmission(userId, problemId, language);
+        // if (userCode) {
+        //   setCode(userCode);
+        // } else {
+        //   setCode(initialCodes[language][problemId] || "");
+        // }
+        setCode(initialCodes[language][problemId] || "");
       } catch (error) {
         console.error("Error fetching user submission:", error);
         setLoadError("Failed to load your saved code. Using initial code instead.");
@@ -144,17 +118,61 @@ export default function ProblemPage() {
     setShowSolution(false);
   };
 
+  const fetchUserData = () => {
+    const userId = localStorage.getItem('userUID');
+    if (userId) {
+      const userRef = ref(database, `users/${userId}`);
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          setUser(userData);
+        }
+      });
+    }
+  };
+
   const handleChange = useCallback((value) => {
     setCode(value);
     setHasUnsavedChanges(true);
     setShowSolution(false);
   }, []);
 
+  const updateUserProgress = () => {
+    if (!user) return;
+
+    const userId = localStorage.getItem('userUID');
+    const newScore = user.score + 10;
+    let newXP = user.xp + 10;
+    let newLevel = user.level;
+    let xpLimit = 100 + (user.level * 50);
+
+    if (newXP >= xpLimit) {
+      newLevel++;
+      newXP = newXP - xpLimit;
+    }
+
+    const updatedUser = {
+      ...user,
+      score: newScore,
+      xp: newXP,
+      level: newLevel
+    };
+
+    const userRef = ref(database, `users/${userId}`);
+    update(userRef, updatedUser);
+    setUser(updatedUser);
+
+    alert(`Congratulations! You've earned 10 points and 10 XP. Your new score is ${newScore} and you're at level ${newLevel} with ${newXP} XP.`);
+  };
+
   const runCode = () => {
     axios.post("http://localhost:3000/run-code", { code, problem: problemId, language, testCases })
       .then((res) => {
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
+        if (res.data.passOrFail === 'passed') {
+          updateUserProgress();
+        }
       })
       .catch((error) => {
         console.error("Error running code:", error);
@@ -169,7 +187,7 @@ export default function ProblemPage() {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      await saveUserCode(userId, problemId, language, code);
+      await saveUserCode(problemId, code);
       alert("Code saved successfully!");
       setHasUnsavedChanges(false);
     } catch (error) {
@@ -232,8 +250,10 @@ export default function ProblemPage() {
       setShowSolution(false);
     } else {
       try {
-        const solution = await getSolution(problemId, language);
-        setSolutionCode(solution);
+        // Implement getSolution in firebase.js if needed
+        // const solution = await getSolution(problemId, language);
+        // setSolutionCode(solution);
+        setSolutionCode("Solution not available.");
         setShowSolution(true);
       } catch (error) {
         console.error("Error fetching solution:", error);
@@ -262,6 +282,14 @@ export default function ProblemPage() {
         </select>
       </div>
       
+      {user && (
+        <div className="user-stats">
+          <p>Level: {user.level}</p>
+          <p>XP: {user.xp} / {100 + (user.level * 50)}</p>
+          <p>Score: {user.score}</p>
+        </div>
+      )}
+
       <div className="code-editor-container">
         {isLoading ? (
           <div className="loading-message">Loading your saved code...</div>
