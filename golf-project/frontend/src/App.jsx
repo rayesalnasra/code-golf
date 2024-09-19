@@ -9,7 +9,7 @@ import LeaderboardPage from './LeaderboardPage';
 import TutorialPage from './TutorialPage';
 import DocumentationPage from './DocumentationPage';
 import DiscussionPage from './DiscussionPage';
-import ProblemPage from './ProblemPage';
+import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './ProblemSelectionPage';
 import MySolutionsPage from './MySolutionsPage';
 import Login from './Login';

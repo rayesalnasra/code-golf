@@ -1,13 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+// ProblemPage.jsx
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import CodeMirror from "@uiw/react-codemirror";
-import { python } from "@codemirror/lang-python";
-import { javascript } from "@codemirror/lang-javascript";
-import axios from "axios";
-import { getTestCases, saveUserCode } from "./firebase";
+import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebaseCodeRunner";
 import { ref, onValue, update } from "firebase/database";
-import { database } from "./firebase";
+import { database } from "../firebase";
 import "./ProblemPage.css";
+
+import CodeEditor from "./CodeEditor";
+import TestResults from "./TestResults.jsx";
+import UserStats from "./UserStats";
+import ProblemDescription from "./ProblemDescription";
+import ActionButtons from "./ActionButtons";
+import LanguageSelector from "./LanguageSelector";
+import axios from "axios";
 
 const problemDescriptions = {
   add: "Create a function that adds two numbers",
@@ -82,8 +87,8 @@ export default function ProblemPage() {
 
   const fetchTestCases = async () => {
     try {
-      const cases = await getTestCases();
-      setTestCases(cases.filter(testCase => testCase.problemId === problemId));
+      const cases = await getTestCases(problemId);
+      setTestCases(cases);
     } catch (error) {
       console.error("Error fetching test cases:", error);
     }
@@ -95,14 +100,12 @@ export default function ProblemPage() {
     const userId = localStorage.getItem('userUID');
     if (userId) {
       try {
-        // Implement getUserSubmission in firebase.js if needed
-        // const userCode = await getUserSubmission(userId, problemId, language);
-        // if (userCode) {
-        //   setCode(userCode);
-        // } else {
-        //   setCode(initialCodes[language][problemId] || "");
-        // }
-        setCode(initialCodes[language][problemId] || "");
+        const userCode = await getUserSubmission(userId, problemId, language);
+        if (userCode) {
+          setCode(userCode);
+        } else {
+          setCode(initialCodes[language][problemId] || "");
+        }
       } catch (error) {
         console.error("Error fetching user submission:", error);
         setLoadError("Failed to load your saved code. Using initial code instead.");
@@ -131,11 +134,11 @@ export default function ProblemPage() {
     }
   };
 
-  const handleChange = useCallback((value) => {
+  const handleChange = (value) => {
     setCode(value);
     setHasUnsavedChanges(true);
     setShowSolution(false);
-  }, []);
+  };
 
   const updateUserProgress = () => {
     if (!user) return;
@@ -187,7 +190,7 @@ export default function ProblemPage() {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      await saveUserCode(problemId, code);
+      await saveUserCode(userId, problemId, language, code);
       alert("Code saved successfully!");
       setHasUnsavedChanges(false);
     } catch (error) {
@@ -250,10 +253,8 @@ export default function ProblemPage() {
       setShowSolution(false);
     } else {
       try {
-        // Implement getSolution in firebase.js if needed
-        // const solution = await getSolution(problemId, language);
-        // setSolutionCode(solution);
-        setSolutionCode("Solution not available.");
+        const solution = await getSolution(problemId, language);
+        setSolutionCode(solution);
         setShowSolution(true);
       } catch (error) {
         console.error("Error fetching solution:", error);
@@ -268,75 +269,32 @@ export default function ProblemPage() {
         &larr; Back to problem selection
       </button>
       
-      <h2 className="problem-description">{problemDescriptions[problemId]}</h2>
+      <ProblemDescription description={problemDescriptions[problemId]} />
       
-      <div className="language-selector">
-        <label htmlFor="language-select">Language: </label>
-        <select 
-          id="language-select" 
-          value={language} 
-          onChange={(e) => handleLanguageChange(e.target.value)}
-        >
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-        </select>
-      </div>
+      <LanguageSelector 
+        language={language} 
+        onLanguageChange={handleLanguageChange} 
+      />
       
-      {user && (
-        <div className="user-stats">
-          <p>Level: {user.level}</p>
-          <p>XP: {user.xp} / {100 + (user.level * 50)}</p>
-          <p>Score: {user.score}</p>
-        </div>
-      )}
+      {user && <UserStats user={user} />}
 
-      <div className="code-editor-container">
-        {isLoading ? (
-          <div className="loading-message">Loading your saved code...</div>
-        ) : loadError ? (
-          <div className="error-message">{loadError}</div>
-        ) : (
-          <CodeMirror
-            value={code}
-            height="200px"
-            theme="light"
-            extensions={[language === "python" ? python() : javascript()]}
-            onChange={handleChange}
-            className="code-editor"
-          />
-        )}
-      </div>
+      <CodeEditor
+        code={code}
+        language={language}
+        isLoading={isLoading}
+        loadError={loadError}
+        onChange={handleChange}
+      />
       
-      <div className="button-container">
-        <button 
-          className="btn btn-primary" 
-          onClick={runCode}
-          disabled={isLoading}
-        >
-          Run
-        </button>
-        <button 
-          className="btn btn-success" 
-          onClick={saveCode}
-          disabled={isSaving || isLoading}
-        >
-          {isSaving ? "Saving..." : "Save Code"}
-        </button>
-        <button 
-          className="btn btn-warning" 
-          onClick={resetCode}
-          disabled={isLoading}
-        >
-          Reset Code
-        </button>
-        <button 
-          className="btn btn-info" 
-          onClick={handleViewSolution}
-          disabled={isLoading}
-        >
-          {showSolution ? "Hide Solution" : "View Solution"}
-        </button>
-      </div>
+      <ActionButtons
+        onRun={runCode}
+        onSave={saveCode}
+        onReset={resetCode}
+        onViewSolution={handleViewSolution}
+        isSaving={isSaving}
+        isLoading={isLoading}
+        showSolution={showSolution}
+      />
       
       {hasUnsavedChanges && (
         <div className="unsaved-changes-warning">
@@ -345,54 +303,18 @@ export default function ProblemPage() {
       )}
 
       {showSolution && (
-        <div className="solution-container">
-          <div className="solution-warning">
-            This is the solution. Make sure you understand it before submitting!
-          </div>
-          <CodeMirror
-            value={solutionCode}
-            height="200px"
-            theme="light"
-            extensions={[language === "python" ? python() : javascript()]}
-            readOnly={true}
-            className="solution-editor"
-          />
-        </div>
+        <CodeEditor
+          code={solutionCode}
+          language={language}
+          readOnly={true}
+          title="Solution"
+        />
       )}
       
-      {results.length > 0 && (
-        <div className="results-container">
-          <h3 className="results-title">Test Results:</h3>
-          {results.map((result, index) => (
-            <div key={index} className={`result-item ${result.passed ? 'result-passed' : 'result-failed'}`}>
-              {result.error ? (
-                <div>
-                  <strong>Error:</strong> {result.error}
-                  {result.traceback && (
-                    <pre className="error-traceback">{result.traceback}</pre>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <div><strong>Inputs:</strong> {JSON.stringify(result.inputs)}</div>
-                  <div><strong>Expected Output:</strong> {JSON.stringify(result.expected_output)}</div>
-                  <div><strong>Actual Output:</strong> {JSON.stringify(result.actual_output)}</div>
-                  {result.printed_output && (
-                    <div><strong>Printed Output:</strong> <pre>{result.printed_output}</pre></div>
-                  )}
-                  <div><strong>Passed:</strong> {result.passed ? 'Yes' : 'No'}</div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {testResult && (
-        <div className={`test-result ${testResult === 'passed' ? 'test-passed' : 'test-failed'}`}>
-          Overall Result: {testResult}
-        </div>
-      )}
+      <TestResults 
+        results={results}
+        testResult={testResult}
+      />
     </div>
   );
 }

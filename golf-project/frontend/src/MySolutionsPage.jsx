@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore/lite";
-import { dbCodeRunner } from "./firebaseCodeRunner";
-import "./MySolutionsPage.css";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getUserSolutions } from './firebaseCodeRunner';
+import './MySolutionsPage.css';
 
 const problemTitles = {
   add: "Add Two Numbers",
@@ -19,7 +18,7 @@ const problemTitles = {
   regularexpressionmatching: "Regular Expression Matching",
   trapwater: "Trapping Rain Water",
   mergeklargelists: "Merge k Sorted Lists",
-  longestvalidparentheses: "Longest Valid Parentheses",
+  longestvalidparentheses: "Longest Valid Parentheses"
 };
 
 export default function MySolutionsPage() {
@@ -34,8 +33,8 @@ export default function MySolutionsPage() {
   const fetchUserSolutions = async () => {
     setIsLoading(true);
     setError(null);
-    const userId = localStorage.getItem("userUID");
-
+    const userId = localStorage.getItem('userUID');
+    
     if (!userId) {
       setError("User not authenticated");
       setIsLoading(false);
@@ -43,18 +42,11 @@ export default function MySolutionsPage() {
     }
 
     try {
-      const userSubmissionsCol = collection(dbCodeRunner, "userSubmissions");
-      const q = query(userSubmissionsCol, where("userId", "==", userId));
-      const querySnapshot = await getDocs(q);
-
-      const userSolutions = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        problemTitle:
-          problemTitles[doc.data().problemId] || doc.data().problemId,
-      }));
-
-      setSolutions(userSolutions);
+      const userSolutions = await getUserSolutions(userId);
+      setSolutions(userSolutions.map(solution => ({
+        ...solution,
+        problemTitle: problemTitles[solution.problemId] || solution.problemId
+      })));
     } catch (err) {
       console.error("Error fetching user solutions:", err);
       setError("Failed to load your solutions. Please try again later.");
@@ -79,18 +71,20 @@ export default function MySolutionsPage() {
       ) : (
         <ul className="solutions-list">
           {solutions.map((solution) => (
-            <li key={solution.id} className="solution-item">
+            <li key={solution.problemId} className="solution-item">
               <h3>{solution.problemTitle}</h3>
-              <p>
-                Last updated:{" "}
-                {new Date(solution.timestamp.seconds * 1000).toLocaleString()}
-              </p>
-              <Link
-                to={`/problems/${solution.problemId}`}
-                className="view-problem-link"
-              >
-                View Problem
-              </Link>
+              {Object.entries(solution.languages).map(([language, data]) => (
+                <div key={language} className="language-solution">
+                  <p>{language.charAt(0).toUpperCase() + language.slice(1)}</p>
+                  <p>Last updated: {new Date(data.timestamp.seconds * 1000).toLocaleString()}</p>
+                  <Link 
+                    to={`/problems/${solution.problemId}?language=${language}`} 
+                    className="view-problem-link"
+                  >
+                    View Problem
+                  </Link>
+                </div>
+              ))}
             </li>
           ))}
         </ul>
