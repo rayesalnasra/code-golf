@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { readData } from './databaseUtils';
-import './ProfilePage.css';
+import React, { useState, useEffect } from 'react'; // Import React
+import { readData } from './databaseUtils'; // Import a custom function to read data from the database
+import './ProfilePage.css'; // Import CSS for styling the profile page
 
+// Define the ProfilePage component
 function ProfilePage() {
+  // Define the initial state 'user' with useState to store user profile information
   const [user, setUser] = useState({
-    displayName: '',
-    email: '',
-    level: 0,
-    xp: 0,
-    score: 0,
+    displayName: '', // User's display name
+    email: '', // User's email
+    level: 0, // User's current level
+    xp: 0, // user's XP 
+    score: 0, // User's total score
   });
 
   useEffect(() => {
-    const userId = localStorage.getItem('userUID');
-    const storedEmail = localStorage.getItem('userEmail');
-    const storedDisplayName = localStorage.getItem('userDisplayName');
+    const userId = localStorage.getItem('userUID'); // Retrieve the user's UID
+    const storedEmail = localStorage.getItem('userEmail'); // Retrieve the stored email 
+    const storedDisplayName = localStorage.getItem('userDisplayName'); // Retrieve the stored display name
 
     if (userId) {
       readData(`users/${userId}`, (userData) => {
