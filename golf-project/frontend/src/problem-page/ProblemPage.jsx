@@ -25,6 +25,11 @@ const problemDescriptions = {
   longestsubstring: "Find the length of the longest substring without repeating characters.",
   mergeintervals: "Merge all overlapping intervals and return an array of the non-overlapping intervals.",
   groupanagrams: "Group anagrams together from an array of strings.",
+  mediansortedarrays: "Find the median of two sorted arrays.",
+  regularexpressionmatching: "Implement regular expression matching with support for '.' and '*'.",
+  trapwater: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
+  mergeklargelists: "Merge k sorted linked lists and return it as one sorted list.",
+  longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
 };
 
 const initialCodes = {
@@ -39,7 +44,13 @@ const initialCodes = {
     longestsubstring: "def length_of_longest_substring(s):\n    # Your code here",
     mergeintervals: "def merge_intervals(intervals):\n    # Your code here",
     groupanagrams: "def group_anagrams(strs):\n    # Your code here",
+    mediansortedarrays: "def find_median_sorted_arrays(nums1, nums2):\n    # Your code here",
+    regularexpressionmatching: "def is_match(s, p):\n    # Your code here",
+    trapwater: "def trap(height):\n    # Your code here",
+    mergeklargelists: "def merge_k_lists(lists):\n    # Your code here",
+    longestvalidparentheses: "def longest_valid_parentheses(s):\n    # Your code here",
   },
+      
   javascript: {
     add: "function add(a, b) {\n    return a + b;\n}",
     reverse: "function reverseString(s) {\n    return s.split('').reverse().join('');\n}",
@@ -51,6 +62,11 @@ const initialCodes = {
     longestsubstring: "function lengthOfLongestSubstring(s) {\n    // Your code here\n}",
     mergeintervals: "function mergeIntervals(intervals) {\n    // Your code here\n}",
     groupanagrams: "function groupAnagrams(strs) {\n    // Your code here\n}",
+    mediansortedarrays: "function findMedianSortedArrays(nums1, nums2) {\n    // Your code here\n}",
+    regularexpressionmatching: "function isMatch(s, p) {\n    // Your code here\n}",
+    trapwater: "function trap(height) {\n    // Your code here\n}",
+    mergeklargelists: "function mergeKLists(lists) {\n    // Your code here\n}",
+    longestvalidparentheses: "function longestValidParentheses(s) {\n    // Your code here\n}",
   }
 };
 
