@@ -1,169 +1,96 @@
-/* Profile container */
-.profile-container {
-    width: 60%;
-    margin: 0 auto;
+.profile-page {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-title {
+  color: #2c974b;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.profile-section {
+  background-color: #f6f8fa;
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section h2 {
+  color: #2c974b;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #2c974b;
+  padding-bottom: 0.5rem;
+}
+
+.info-grid, .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-item, .stat-item {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.info-item h3, .stat-item h3 {
+  color: #22753a;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-item p, .stat-item p {
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* New styles for larger name and email */
+.info-item p {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c974b;
+}
+
+@media (max-width: 768px) {
+  .profile-page {
     padding: 20px;
-    background-color: hsl(0, 0%, 100%);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  /* Profile header */
-  .profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+  .page-title {
+    font-size: 2rem;
   }
   
-  .profile-picture {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
+  .profile-section {
+    padding: 1rem;
   }
   
-  .profile-info {
-    text-align: center;
+  .info-grid, .stats-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .profile-name {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 0;
+
+  /* Adjust font size for smaller screens */
+  .info-item p {
+    font-size: 1.2rem;
   }
-  
-  .profile-bio {
-    font-size: 14px;
-    margin: 5px 0;
-  }
-  
-  /* Profile details */
-  .profile-details {
-    margin: 20px 0;
-  }
-  
-  .profile-details h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .profile-details p {
-    margin: 5px 0;
-  }
-  
-  /* Profile actions */
-  .profile-actions {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-    gap: 10px; /* Add a gap between buttons */
-  }
-  
-  .action-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .action-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Edit modal */
-  .edit-modal {
-    padding: 20px 80px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 55%;
-    margin: 20px auto;
-    color: #009924;
-  }
-  
-  /* Form styles */
-  .form-group {
-    margin-bottom: 15px;
-    color: #009924;
-  }
-  
-  .form-group label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #5fc053;
-  }
-  
-  .input-field {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .textarea {
-    height: 80px;
-    resize: none;
-  }
-  
-  .profile-picture-preview {
-    display: block;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-top: 10px;
-    object-fit: cover;
-  }
-  
-  .edit-form-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .save-button {
-    background-color: #28a745;
-  }
-  
-  .cancel-button {
-    background-color: #dc3545;
-  }
-  
-  .save-button:hover {
-    background-color: #218838;
-  }
-  
-  .cancel-button:hover {
-    background-color: #c82333;
-  }
-  
-  /* Dark mode styles */
-  body.dark-mode .profile-container {
-    background-color: #333333; /* Darker background for profile container in dark mode */
-  }
-  
-  body.dark-mode .edit-modal {
-    background-color: #1e1e1e; /* Darker background for edit modal in dark mode */
-  }
-  
-  /* Add any additional dark mode styling for profile details, actions, etc. if needed */
-  body.dark-mode .profile-details h2,
-  body.dark-mode .profile-details p,
-  body.dark-mode .profile-info,
-  body.dark-mode .profile-name,
-  body.dark-mode .profile-bio {
-    color: #ffffff; /* White text for profile details in dark mode */
-  }
-  
-  body.dark-mode .action-button {
-    background-color: #0056b3; /* Adjust button color if needed in dark mode */
-  }
-  
-  body.dark-mode .action-button:hover {
-    background-color: #003d7a; /* Darker button hover color in dark mode */
-  }
-  
+}
