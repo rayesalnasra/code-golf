@@ -1,3 +1,4 @@
+/* Base Styles */
 body {
   background-color: #e6f7e9;
   font-family: Arial, sans-serif;
@@ -68,7 +69,7 @@ nav ul li a:hover {
   right: 10px;
   background-color: #ffffff;
   border-radius: 8px;
-  border: 1px solid #2c974b;  
+  border: 1px solid #2c974b;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
@@ -85,7 +86,7 @@ nav ul li a:hover {
 }
 
 /* Normalize button and link styles */
-.dropdown ul li button, 
+.dropdown ul li button,
 .dropdown ul li a {
   background: none;
   border: none;
@@ -93,8 +94,8 @@ nav ul li a:hover {
   text-decoration: none;
   cursor: pointer;
   font-size: 16px;
-  padding: 10px 20px; /* Add padding to normalize appearance */
-  width: 100%;  /* Make both fill the available width */
+  padding: 10px 20px;
+  width: 100%;
   text-align: left;
   display: block;
 }
@@ -103,7 +104,6 @@ nav ul li a:hover {
 .dropdown ul li a:hover {
   color: #22753a;
 }
-
 
 .header-container {
   display: flex;
@@ -149,30 +149,62 @@ body.dark-mode button {
   color: #fff;
 }
 
-.dark-mode .header-container {
-  background-color: #000;
+/* Enhanced Dark Mode Styles */
+body.dark-mode {
+  background-color: #202124; /* Softer dark gray background instead of pure black */
+  color: #e0e0e0; /* Lighter grey for text to increase readability */
 }
 
-.logo-container {
-  display: flex;
+body.dark-mode .header-container {
+  background-color: #282a2d; /* Lighter background for the header for contrast */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Darker, more prominent shadow */
 }
 
-.dark-mode .dropdown ul li button, 
-.dark-mode .dropdown ul li a {
-  color: #ffffff;
+body.dark-mode nav {
+  background-color: #282a2d; /* Dark grey for nav similar to header */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Elevated shadow for nav */
 }
 
-.dropdown ul li button:hover,
-.dropdown ul li a:hover {
-  color: #22753a;
+body.dark-mode nav ul li a {
+  color: #a5d6a7; /* Softer green for nav links */
 }
 
-.dark-mode .dropdown {
-  background-color: #333;
-  border: 1px solid #ffffff;
+body.dark-mode nav ul li a:hover {
+  color: #81c784; /* Slightly brighter hover effect */
 }
 
-.dark-mode {
-  background-color: #000000; /* Black background for everything in dark mode */
-  color: #ffffff; /* White text in dark mode */
+body.dark-mode .dropdown {
+  background-color: #333; /* Dark dropdown with enough contrast */
+  border: 1px solid #4caf50; /* Green border to highlight dropdown */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .dropdown ul li button,
+body.dark-mode .dropdown ul li a {
+  color: #b2ff59; /* Softer green for dropdown text */
+}
+
+body.dark-mode .dropdown ul li button:hover,
+body.dark-mode .dropdown ul li a:hover {
+  color: #76ff03; /* Bright green hover effect */
+}
+
+body.dark-mode .profile-icon img {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* Darker shadow for profile icon */
+}
+
+body.dark-mode .app-container {
+  background-color: #303134; /* Mid-tone grey background for content container */
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Soft shadow around content */
+}
+
+body.dark-mode .app-title {
+  color: #81c784; /* Softer green title text */
+}
+
+/* Smooth transitions for mode changes */
+body, nav, .header-container, .dropdown, nav ul li a, button, .app-container {
+  transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
 }

@@ -1,3 +1,4 @@
+/* Light Mode Styles for Problem Page */
 .problem-page {
   background-color: #ffffff;
   border-radius: 8px;
@@ -6,14 +7,17 @@
 }
 
 .back-link {
+  background-color: transparent;
+  border: none;
   color: #2c974b;
-  text-decoration: none;
-  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
   margin-bottom: 1rem;
 }
 
 .back-link:hover {
-  text-decoration: underline;
+  color: #1f7a39;
 }
 
 .problem-description {
@@ -147,4 +151,116 @@
 
 .btn-warning:hover {
   background-color: #e0a800;
+}
+
+
+/* Dark Mode Styles */
+body.dark-mode .problem-page {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .back-link {
+  background-color: transparent;
+  border: none;
+  color: #81c784; /* Softer green for dark mode */
+}
+
+body.dark-mode .back-link:hover {
+  color: #a5d6a7; /* Lighter green on hover for better visibility */
+}
+
+body.dark-mode .problem-description {
+  color: #b2ff59;
+}
+
+body.dark-mode .code-editor {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #388e3c;
+}
+
+body.dark-mode .btn-success {
+  background-color: #34d058;
+  color: white;
+}
+
+body.dark-mode .btn-success:hover {
+  background-color: #28a745;
+}
+
+body.dark-mode .result-passed {
+  background-color: #223522;
+  border: 1px solid #34d058;
+  color: #b2ff59;
+}
+
+body.dark-mode .result-failed {
+  background-color: #5e2226;
+  border: 1px solid #f97583;
+  color: #ff6f6f;
+}
+
+body.dark-mode .error-traceback {
+  background-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .test-passed {
+  background-color: #223522;
+  color: #b2ff59;
+}
+
+body.dark-mode .test-failed {
+  background-color: #5e2226;
+  color: #ff6f6f;
+}
+
+body.dark-mode .loading-message {
+  background-color: #0097a7;
+  color: #e0f7fa;
+}
+
+body.dark-mode .error-message {
+  background-color: #c62828;
+  color: #ffebee;
+}
+
+body.dark-mode .unsaved-changes-warning {
+  background-color: #856404;
+  color: #fff3cd;
+}
+
+body.dark-mode .btn-warning {
+  background-color: #ff9800;
+  color: #000;
+}
+
+body.dark-mode .btn-warning:hover {
+  background-color: #e65100;
+}
+
+/* Dark Mode Styles for Language Selector */
+body.dark-mode .language-selector label {
+  color: #81c784; /* Softer green for label */
+}
+
+body.dark-mode .language-selector select {
+  background-color: #444; /* Darker background for select */
+  color: #e0e0e0; /* Light text for select */
+  border: 1px solid #4caf50; /* Brighter green border */
+  border-radius: 4px;
+}
+
+body.dark-mode .language-selector select:hover {
+  border-color: #388e3c; /* Darker green on hover */
 }

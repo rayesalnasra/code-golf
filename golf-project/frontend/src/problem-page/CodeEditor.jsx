@@ -19,7 +19,7 @@ export default function CodeEditor({ code, language, isLoading, loadError, onCha
       <CodeMirror
         value={code}
         height="200px"
-        theme="light"
+        theme="dark"
         extensions={[language === "python" ? python() : javascript()]}
         onChange={onChange}
         readOnly={readOnly}
