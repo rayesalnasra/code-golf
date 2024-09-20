@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseAuth';
-import HomePage from './HomePage';
-import ProfilePage from './ProfilePage';
-import LeaderboardPage from './LeaderboardPage';
-import TutorialPage from './TutorialPage';
-import DocumentationPage from './DocumentationPage';
-import DiscussionPage from './DiscussionPage';
+import { auth } from './firebase/firebaseAuth';
+import HomePage from './home-page/HomePage';
+import ProfilePage from './profile-page/ProfilePage';
+import LeaderboardPage from './leaderboard-page/LeaderboardPage';
+import TutorialPage from './tutorial-page/TutorialPage';
+import DocumentationPage from './documentation-page/DocumentationPage';
 import ProblemPage from './problem-page/ProblemPage';
-import ProblemSelectionPage from './ProblemSelectionPage';
-import MySolutionsPage from './MySolutionsPage';
-import Login from './Login';
-import Register from './Register';
-import ProtectedRoute from './ProtectedRoute';
+import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
+import MySolutionsPage from './solutions-page/MySolutionsPage';
+import Login from './login-pages/Login';
+import Register from './login-pages/Register';
+import ProtectedRoute from './login-pages/ProtectedRoute';
 import codeGolfLogo from './code-golf-icon.png';
 import './App.css';
 
@@ -113,7 +112,6 @@ function App() {
                 <li><Link to="/leaderboard">Leaderboard</Link></li>
                 <li><Link to="/tutorial">Tutorial</Link></li>
                 <li><Link to="/documentation">Documentation</Link></li>
-                <li><Link to="/discussion">Discussion</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
               </ul>
             </nav>
@@ -129,7 +127,6 @@ function App() {
           <Route path="/leaderboard" element={isAuthenticated ? <LeaderboardPage /> : <Navigate to="/login" />} />
           <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
           <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
-          <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { auth } from "./firebaseAuth";
+import { auth } from "../firebase/firebaseAuth";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { database } from "./firebase";
+import { database } from "../firebase/firebase";
 import { ref, get, set } from "firebase/database";
 import "./AuthPages.css"; // Updated to use the unified AuthPages.css
 

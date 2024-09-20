@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
-import { readData, updateData } from "./databaseUtils";
-import { auth } from "./firebaseAuth";
+import { readData, updateData } from "../firebase/databaseUtils";
+import { auth } from "../firebase/firebaseAuth";
 import "./ProfilePage.css";
 
 function ProfilePage() {

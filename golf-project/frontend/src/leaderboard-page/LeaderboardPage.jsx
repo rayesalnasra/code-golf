@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { readData } from "./databaseUtils";
+import { readData } from "../firebase/databaseUtils";
 import "./LeaderboardPage.css";
 
 function LeaderboardPage() {

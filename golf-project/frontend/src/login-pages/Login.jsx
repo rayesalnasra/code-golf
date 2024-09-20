@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { auth } from "./firebaseAuth";
+import { auth } from "../firebase/firebaseAuth";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ref, get, set } from "firebase/database";
-import { database } from "./firebase";
+import { database } from "../firebase/firebase";
 import "./AuthPages.css"; // Updated to use the unified AuthPages.css
 
 function Login() {

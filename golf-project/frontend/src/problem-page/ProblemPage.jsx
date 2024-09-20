@@ -1,9 +1,9 @@
 // ProblemPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebaseCodeRunner";
+import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebase/firebaseCodeRunner.js";
 import { ref, onValue, update } from "firebase/database";
-import { database } from "../firebase";
+import { database } from "../firebase/firebase.js";
 import "./ProblemPage.css";
 
 import CodeEditor from "./CodeEditor";
