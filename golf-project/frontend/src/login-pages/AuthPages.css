@@ -7,12 +7,12 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #e6f7e9;
+  background-color: #e6f7e9; /* Light mode background */
 }
 
 /* Rounded square background for the form */
 .auth-form-container {
-  background-color: white;
+  background-color: white; /* Light mode form background */
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -36,13 +36,13 @@
 
 /* Button-specific styling */
 .auth-button {
-  background-color: #2c974b;
+  background-color: #2c974b; /* Button color */
   color: white;
   cursor: pointer;
 }
 
 .auth-button:hover {
-  background-color: #22753a;
+  background-color: #22753a; /* Button hover color */
 }
 
 /* Error message styling */
@@ -54,4 +54,36 @@
 .auth-link {
   margin-top: 10px;
   text-align: center;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .auth-container {
+  background-color: #1a1a1a; /* Dark mode background */
+}
+
+body.dark-mode .auth-form-container {
+  background-color: #2c2c2c; /* Dark mode form background */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger shadow in dark mode */
+}
+
+body.dark-mode .auth-input {
+  background-color: #444; /* Dark mode input background */
+  color: #e0e0e0; /* Light text for inputs */
+  border: 1px solid #555; /* Darker border */
+}
+
+body.dark-mode .auth-button {
+  background-color: #4caf50; /* Darker button color */
+}
+
+body.dark-mode .auth-button:hover {
+  background-color: #388e3c; /* Darker button hover color */
+}
+
+body.dark-mode .auth-error {
+  color: #ff6f6f; /* Error color in dark mode */
+}
+
+body.dark-mode .auth-link {
+  color: #81c784; /* Softer green link color in dark mode */
 }
