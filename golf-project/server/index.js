@@ -1,24 +1,26 @@
-import fs from 'fs';
-import express from 'express';
-import cors from 'cors';
-import { exec } from 'child_process';
-import { getTestCases } from './firebase.js';
+import fs from 'fs'; // File system operations
+import express from 'express'; // Web framework
+import cors from 'cors'; // CORS middleware
+import { exec } from 'child_process'; // To execute shell commands
+import { getTestCases } from './firebase.js'; // Importing function to fetch test cases
 
 const app = express();
 const port = 3000;
 
-app.use(cors());
-app.use(express.json());
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse JSON bodies
 
 app.post('/run-code', async (req, res) => { 
     const { code, problem, language, testCases } = req.body;
 
     try {
+        // Check if test cases are provided
         if (!testCases || testCases.length === 0) {
             throw new Error('No test cases fetched for the selected problem');
         }
 
         let fileName, command;
+        // Determine the file name and command based on the programming language
         if (language === 'python') {
             fileName = 'user_code.py';
             command = `python3 test.py '${JSON.stringify(testCases)}'`;
@@ -35,6 +37,7 @@ app.post('/run-code', async (req, res) => {
         // Execute the script using child_process.exec
         exec(command, (error, stdout, stderr) => {
             let results;
+            // Try to parse the output from the executed command
             try {
                 results = JSON.parse(stdout);
             } catch (e) {
@@ -45,6 +48,7 @@ app.post('/run-code', async (req, res) => {
 
             const allPassed = results.every(result => result.passed);
             
+            // Respond with the results and overall pass/fail status
             res.json({ 
                 results: results,
                 passOrFail: allPassed ? 'passed' : 'failed'
@@ -59,6 +63,7 @@ app.post('/run-code', async (req, res) => {
     }
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });

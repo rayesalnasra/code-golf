@@ -1,4 +1,6 @@
-function isPalindrome(s) {
-    s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return s === s.split('').reverse().join('');
+function fizzbuzz(n) {
+    if (n % 3 === 0 && n % 5 === 0) return "FizzBuzz";
+    if (n % 3 === 0) return "Fizz";
+    if (n % 5 === 0) return "Buzz";
+    return n.toString();
 }
