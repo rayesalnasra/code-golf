@@ -1,7 +1,9 @@
+// ProblemSelectionPage.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./ProblemSelectionPage.css";
 
+// Difficulty levels with corresponding problems
 const difficulties = {
   easy: {
     description: "Ideal for beginners. These problems cover basic programming concepts and simple algorithms.",
@@ -39,6 +41,7 @@ const difficulties = {
 };
 
 export default function ProblemSelectionPage() {
+  // State to track the selected difficulty level
   const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
 
   return (

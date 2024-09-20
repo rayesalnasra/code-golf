@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore/lite";
 import { getDatabase } from "firebase/database";
 
-// Access environment variables
+// Firebase configuration, accessing environment variables for security
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -18,24 +18,40 @@ const firebaseConfig = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_ID,
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore database
 const db = getFirestore(app);
 
+/**
+ * Fetches test cases from the Firestore database.
+ * @returns {Promise<Array>} An array of test case objects.
+ */
 export async function getTestCases() {
-  const testCasesCol = collection(db, "testCases");
-  const testCasesSnapshot = await getDocs(testCasesCol);
-  return testCasesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const testCasesCol = collection(db, "testCases"); // Reference to the testCases collection
+  const testCasesSnapshot = await getDocs(testCasesCol); // Retrieve documents from the collection
+  return testCasesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })); // Map documents to include their IDs
 }
 
+/**
+ * Saves user code submission to the Firestore database.
+ * @param {string} problemId - The ID of the problem associated with the submission.
+ * @param {string} code - The code submitted by the user.
+ * @returns {Promise<string>} The ID of the newly created document.
+ */
 export async function saveUserCode(problemId, code) {
-  const userSubmissionsCol = collection(db, "userSubmissions");
+  const userSubmissionsCol = collection(db, "userSubmissions"); // Reference to the userSubmissions collection
   const docRef = await addDoc(userSubmissionsCol, {
     problemId,
     code,
-    timestamp: new Date(),
+    timestamp: new Date(), // Store the submission timestamp
   });
-  return docRef.id;
+  return docRef.id; // Return the document ID of the newly created submission
 }
 
+// Initialize Firebase Realtime Database
 export const database = getDatabase(app);
+
+// Export the initialized app for further use
 export default app;

@@ -1,17 +1,23 @@
 import React from 'react';
 import './DocumentationPage.css';
 
+/**
+ * DocumentationPage component that provides resources for learning coding,
+ * with a focus on JavaScript and Python.
+ */
 const DocumentationPage = () => {
   return (
     <div className="documentation-page">
       <div className="content-container">
         <h1 className="page-title">Coding Resources 📚</h1>
         
+        {/* Section for getting started with documentation */}
         <section className="documentation-section">
           <h2>Getting Started</h2>
           <p>Welcome to the documentation page! Here you'll find resources to help you learn and improve your coding skills, with a focus on JavaScript and Python.</p>
         </section>
 
+        {/* Section dedicated to JavaScript resources */}
         <section className="documentation-section">
           <h2>JavaScript Resources</h2>
           <ul className="resource-list">
@@ -36,6 +42,7 @@ const DocumentationPage = () => {
           </ul>
         </section>
 
+        {/* Section dedicated to Python resources */}
         <section className="documentation-section">
           <h2>Python Resources</h2>
           <ul className="resource-list">
@@ -60,6 +67,7 @@ const DocumentationPage = () => {
           </ul>
         </section>
 
+        {/* Section for additional learning resources */}
         <section className="documentation-section">
           <h2>Additional Learning Resources</h2>
           <ul className="resource-list">
@@ -84,6 +92,7 @@ const DocumentationPage = () => {
           </ul>
         </section>
 
+        {/* Conclusion section encouraging users to practice coding */}
         <section className="documentation-section conclusion">
           <h2>Ready to Code?</h2>
           <p>These resources will help you get started and improve your coding skills. Remember, practice is key to becoming a proficient programmer. Happy coding!</p>

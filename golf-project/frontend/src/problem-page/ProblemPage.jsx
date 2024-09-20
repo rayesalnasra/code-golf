@@ -14,6 +14,7 @@ import ActionButtons from "./ActionButtons";
 import LanguageSelector from "./LanguageSelector";
 import axios from "axios";
 
+// Problem descriptions for each problem ID
 const problemDescriptions = {
   add: "Create a function that adds two numbers",
   reverse: "Create a function that reverses a given string",
@@ -32,6 +33,7 @@ const problemDescriptions = {
   longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
 };
 
+// Initial code templates for each problem and language
 const initialCodes = {
   python: {
     add: "def add(a, b):\n    return a + b",
@@ -74,6 +76,8 @@ export default function ProblemPage() {
   const { problemId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // State variables
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [results, setResults] = useState([]);
@@ -87,6 +91,7 @@ export default function ProblemPage() {
   const [solutionCode, setSolutionCode] = useState("");
   const [user, setUser] = useState(null);
 
+  // Effect to get language from URL params
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const langParam = params.get('language');
@@ -95,12 +100,14 @@ export default function ProblemPage() {
     }
   }, [location]);
 
+  // Fetch test cases, user submission, and user data on component mount
   useEffect(() => {
     fetchTestCases();
     fetchUserSubmission();
     fetchUserData();
   }, [problemId, language]);
 
+  // Fetch test cases for the current problem
   const fetchTestCases = async () => {
     try {
       const cases = await getTestCases(problemId);
@@ -110,6 +117,7 @@ export default function ProblemPage() {
     }
   };
 
+  // Fetch user's previous submission for the current problem
   const fetchUserSubmission = async () => {
     setIsLoading(true);
     setLoadError("");
@@ -137,6 +145,7 @@ export default function ProblemPage() {
     setShowSolution(false);
   };
 
+  // Fetch user data from the database
   const fetchUserData = () => {
     const userId = localStorage.getItem('userUID');
     if (userId) {
@@ -150,12 +159,14 @@ export default function ProblemPage() {
     }
   };
 
+  // Handle code changes in the editor
   const handleChange = (value) => {
     setCode(value);
     setHasUnsavedChanges(true);
     setShowSolution(false);
   };
 
+  // Update user's progress after passing a test
   const updateUserProgress = () => {
     if (!user) return;
 
@@ -184,6 +195,7 @@ export default function ProblemPage() {
     alert(`Congratulations! You've earned 10 points and 10 XP. Your new score is ${newScore} and you're at level ${newLevel} with ${newXP} XP.`);
   };
 
+  // Run the user's code and check against test cases
   const runCode = () => {
     axios.post("http://localhost:3000/run-code", { code, problem: problemId, language, testCases })
       .then((res) => {
@@ -199,6 +211,7 @@ export default function ProblemPage() {
       });
   };
 
+  // Save user's code to the database
   const saveCode = async () => {
     setIsSaving(true);
     try {
@@ -217,6 +230,7 @@ export default function ProblemPage() {
     }
   };
 
+  // Reset the code editor to the initial state
   const resetCode = () => {
     if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
       setCode(initialCodes[language][problemId] || "");
@@ -225,6 +239,7 @@ export default function ProblemPage() {
     }
   };
 
+  // Handle errors from code execution
   const handleError = (error) => {
     if (error.response) {
       setResults([{ error: error.response.data.error || "An error occurred while running your code." }]);
@@ -236,6 +251,7 @@ export default function ProblemPage() {
     setTestResult("failed");
   };
 
+  // Handle navigation away from the page
   const handleNavigateAway = (to) => {
     if (hasUnsavedChanges) {
       const confirmNavigation = window.confirm(
@@ -251,6 +267,7 @@ export default function ProblemPage() {
     }
   };
 
+  // Change the programming language and reset the code
   const handleLanguageChange = (newLanguage) => {
     if (hasUnsavedChanges) {
       const confirmChange = window.confirm(
@@ -264,6 +281,7 @@ export default function ProblemPage() {
     navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
   };
 
+  // Toggle solution visibility
   const handleViewSolution = async () => {
     if (showSolution) {
       setShowSolution(false);

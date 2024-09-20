@@ -3,20 +3,24 @@ import { readData } from "../firebase/databaseUtils";
 import "./LeaderboardPage.css";
 
 function LeaderboardPage() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]); // State to hold the list of users
 
   useEffect(() => {
+    // Fetch user data from Firebase when the component mounts
     readData("users", (data) => {
       if (data) {
+        // Transform data into an array of user objects
         const usersArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
+
+        // Sort users by score in descending order
         usersArray.sort((a, b) => b.score - a.score);
-        setUsers(usersArray);
+        setUsers(usersArray); // Update state with sorted users
       }
     });
-  }, []);
+  }, []); // Empty dependency array means this effect runs once on mount
 
   return (
     <div className="leaderboard-page">
@@ -35,9 +39,9 @@ function LeaderboardPage() {
             <tbody>
               {users.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{index + 1}</td>
-                  <td>{user.displayName}</td>
-                  <td>{user.score}</td>
+                  <td>{index + 1}</td> {/* Rank (1-based index) */}
+                  <td>{user.displayName}</td> {/* User's display name */}
+                  <td>{user.score}</td> {/* User's score */}
                 </tr>
               ))}
             </tbody>

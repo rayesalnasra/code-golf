@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './HomePage.css';
 
 function HomePage({ isAuthenticated }) {
+  // Array of messages to be displayed in a typing effect
   const messages = [
     "🎯 Ready to ace the coding green?",
     "💻 Code your way to a hole-in-one!",
@@ -26,36 +27,39 @@ function HomePage({ isAuthenticated }) {
     "🏅 Golf your code to perfection!",
   ];
 
-  const [typedText, setTypedText] = useState("");
-  const [messageIndex, setMessageIndex] = useState(0);
-  const charIndexRef = useRef(0);
-  const timeoutIdRef = useRef(null);
+  const [typedText, setTypedText] = useState(""); // State for the current text being typed
+  const [messageIndex, setMessageIndex] = useState(0); // State for the index of the current message
+  const charIndexRef = useRef(0); // Ref to track the character index of the current message
+  const timeoutIdRef = useRef(null); // Ref to store the timeout ID for cleanup
 
   useEffect(() => {
     const typeMessage = () => {
-      const currentMessage = messages[messageIndex];
-      setTypedText(currentMessage.slice(0, charIndexRef.current + 1));
-      charIndexRef.current += 1;
+      const currentMessage = messages[messageIndex]; // Get the current message
+      setTypedText(currentMessage.slice(0, charIndexRef.current + 1)); // Update the typed text
+      charIndexRef.current += 1; // Move to the next character
 
+      // If there are more characters, continue typing
       if (charIndexRef.current < currentMessage.length) {
-        timeoutIdRef.current = setTimeout(typeMessage, 50);
+        timeoutIdRef.current = setTimeout(typeMessage, 50); // Adjust typing speed here
       } else {
-        timeoutIdRef.current = setTimeout(changeMessage, 3000);
+        timeoutIdRef.current = setTimeout(changeMessage, 3000); // Wait before changing message
       }
     };
 
+    // Reset typing effect
     setTypedText("");
     charIndexRef.current = 0;
     typeMessage();
 
+    // Cleanup function to clear timeouts on unmount
     return () => {
       clearTimeout(timeoutIdRef.current);
     };
-  }, [messageIndex]);
+  }, [messageIndex]); // Dependency on messageIndex to trigger effect when it changes
 
   const changeMessage = () => {
-    const newIndex = (messageIndex + 1) % messages.length;
-    setMessageIndex(newIndex);
+    const newIndex = (messageIndex + 1) % messages.length; // Cycle through messages
+    setMessageIndex(newIndex); // Update message index
   };
 
   return (
@@ -63,7 +67,7 @@ function HomePage({ isAuthenticated }) {
       <h1 className="page-title">Welcome to Code Golf 🏌️‍♂️</h1>
       <div className="content-container">
         <div className="welcome-message">
-          <p className="typing-effect">{typedText}</p>
+          <p className="typing-effect">{typedText}</p> {/* Display the typing effect */}
         </div>
         <div className="action-buttons">
           <Link to="/problems" className="btn btn-primary">Start Coding 🚀</Link>

@@ -2,6 +2,7 @@
 import React from "react";
 
 export default function TestResults({ results, testResult }) {
+  // If there are no results and no testResult, render nothing
   if (results.length === 0 && !testResult) {
     return null;
   }

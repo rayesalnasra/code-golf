@@ -1,8 +1,10 @@
+// MySolutionsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserSolutions } from '../firebase/firebaseCodeRunner';
 import './MySolutionsPage.css';
 
+// Mapping problem IDs to their titles
 const problemTitles = {
   add: "Add Two Numbers",
   reverse: "Reverse String",
@@ -22,10 +24,12 @@ const problemTitles = {
 };
 
 export default function MySolutionsPage() {
+  // State for storing solutions, loading status, and error message
   const [solutions, setSolutions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch user solutions when the component mounts
   useEffect(() => {
     fetchUserSolutions();
   }, []);
@@ -34,7 +38,8 @@ export default function MySolutionsPage() {
     setIsLoading(true);
     setError(null);
     const userId = localStorage.getItem('userUID');
-    
+
+    // Check if the user is authenticated
     if (!userId) {
       setError("User not authenticated");
       setIsLoading(false);
@@ -42,6 +47,7 @@ export default function MySolutionsPage() {
     }
 
     try {
+      // Fetch user solutions from the database
       const userSolutions = await getUserSolutions(userId);
       setSolutions(userSolutions.map(solution => ({
         ...solution,
@@ -55,14 +61,17 @@ export default function MySolutionsPage() {
     }
   };
 
+  // Loading state
   if (isLoading) {
     return <div className="loading">Loading your solutions...</div>;
   }
 
+  // Error state
   if (error) {
     return <div className="error">{error}</div>;
   }
 
+  // Render user solutions
   return (
     <div className="my-solutions-page">
       <h2>My Solutions 📝</h2>
