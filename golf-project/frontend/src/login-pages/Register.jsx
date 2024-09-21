@@ -13,6 +13,14 @@ function Register() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Custom error messages
+  const customErrorMessages = {
+    "auth/email-already-in-use": "This email is already in use. Please use a different email.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/operation-not-allowed": "Email/password accounts are not enabled.",
+    "auth/weak-password": "Password should be at least 6 characters long.",
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -64,8 +72,10 @@ function Register() {
       // Navigate to home after verification and localStorage updates
       navigate("/home");
     } catch (error) {
-      console.error("Registration error:", error); // Add error logging for debugging
-      setError(error.message);
+      console.error("Registration error:", error);
+      const errorCode = error.code;
+      const errorMessage = customErrorMessages[errorCode] || "An error occurred during registration.";
+      setError(errorMessage); // Set custom error message
     }
   };
 
