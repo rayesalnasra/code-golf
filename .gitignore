@@ -1,2 +1,31 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-golf-project/backend/config/login-auth-8e5a9-firebase-adminsdk-7i2ko-d75e01914c.json
+node_modules
+dist
+dist-ssr
+*.local
+
+# Files with API Keys
+/backend/config/login-auth-*
+.env
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+.env.local
+.DS_Store
