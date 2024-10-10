@@ -18,16 +18,19 @@ Open terminal in the backend folder
 ```bash
 Type "npm install"
 then "npm run dev"
+```
 
 Open another terminal in the frontend folder
 ```bash
 Type "npm install"
-then "node server.js:
+then "node server.js"
+```
 
 Open another terminal in the server folder
 ```bash
 Type "npm install"
 then "npm start code-golf"
+```
 
 **Meet the Team:**
 
