@@ -13,11 +13,12 @@ Join our fun and competitive platform where coding enthusiasts like you can test
 
 Whether you're looking to improve your coding skills, compete with friends, or simply enjoy the thrill of the challenge, Code Golf has something for everyone. 🚀
 
-***How to build***
+***How to build:***
 
 Open terminal in the backend folder
+
 ```bash
-Type "npm install" #install npm 
+Type"npm install" #install npm 
 then "npm run dev"
 ```
 
