@@ -6,6 +6,23 @@
   margin: 0 auto;
 }
 
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badge-image {
+  width: 100px;
+  height: auto;
+}
+
 .content-container {
   display: flex;
   flex-direction: column;
@@ -35,26 +52,30 @@
   padding-bottom: 0.5rem;
 }
 
-.info-grid, .stats-grid {
+.info-grid,
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-.info-item, .stat-item {
+.info-item,
+.stat-item {
   background-color: #ffffff;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.info-item h3, .stat-item h3 {
+.info-item h3,
+.stat-item h3 {
   color: #22753a;
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
 
-.info-item p, .stat-item p {
+.info-item p,
+.stat-item p {
   color: #333;
   font-size: 1rem;
   line-height: 1.5;
@@ -76,16 +97,17 @@
   .profile-page {
     padding: 20px;
   }
-  
+
   .page-title {
     font-size: 2rem;
   }
-  
+
   .profile-section {
     padding: 1rem;
   }
-  
-  .info-grid, .stats-grid {
+
+  .info-grid,
+  .stats-grid {
     grid-template-columns: 1fr;
   }
 
@@ -102,8 +124,8 @@ body.dark-mode .profile-page {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
-body.dark-mode .page-title, 
-body.dark-mode .profile-section h2, 
+body.dark-mode .page-title,
+body.dark-mode .profile-section h2,
 body.dark-mode .stat-value {
   color: #76c043;
 }
@@ -113,15 +135,15 @@ body.dark-mode .profile-section {
   box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
 }
 
-body.dark-mode .info-item, 
+body.dark-mode .info-item,
 body.dark-mode .stat-item {
   background-color: #1e1e1e;
   box-shadow: 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-body.dark-mode .info-item h3, 
-body.dark-mode .stat-item h3, 
-body.dark-mode .info-item p, 
+body.dark-mode .info-item h3,
+body.dark-mode .stat-item h3,
+body.dark-mode .info-item p,
 body.dark-mode .stat-item p {
   color: #bbbbbb;
 }
@@ -129,7 +151,6 @@ body.dark-mode .stat-item p {
 .profile-page {
   padding: 20px;
 }
-
 
 .page-title {
   text-align: center;
@@ -139,18 +160,22 @@ body.dark-mode .stat-item p {
   margin-bottom: 20px;
 }
 
-.info-grid, .stats-grid {
+.info-grid,
+.stats-grid {
   display: grid;
   gap: 20px;
 }
 
-.info-item, .stat-item {
+.info-item,
+.stat-item {
   border: 1px solid #ddd;
   padding: 10px;
   border-radius: 5px;
 }
 
-.edit-button, .save-button, .cancel-button {
+.edit-button,
+.save-button,
+.cancel-button {
   margin: 5px;
   padding: 10px 20px;
   border: none;

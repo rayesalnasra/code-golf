@@ -5,6 +5,25 @@ import { auth } from "../firebase/firebaseAuth";
 import "./ProfilePage.css";
 
 function ProfilePage() {
+  const getBadges = (score) => {
+    const badges = [];
+    if (score > 100) badges.push("100");
+    if (score > 1000) badges.push("1000");
+    if (score > 1500) badges.push("1500");
+    if (score > 2000) badges.push("2000");
+    return badges;
+  };
+
+  const getLevelBadges = (level) => {
+    const badges = [];
+    if (level >= 1) badges.push("1");
+    if (level >= 5) badges.push("5");
+    if (level >= 10) badges.push("10");
+    if (level >= 50) badges.push("50");
+    if (level >= 100) badges.push("100+");
+    return badges;
+  };
+
   const [user, setUser] = useState({
     displayName: "",
     email: "",
@@ -161,6 +180,34 @@ function ProfilePage() {
               <h3>Score</h3>
               <p className="stat-value">{user.score}</p>
             </div>
+          </div>
+        </section>
+
+        <section className="profile-section">
+          <h2>Badges</h2>
+          <div className="badges-grid">
+            {getBadges(user.score).map((badge, index) => (
+              <div key={index} className="badge-item">
+                <img
+                  className="badge-image"
+                  src={`./src/assets/badges/gold_medal.png`}
+                  alt={`Badge for ${badge} points`}
+                />
+                <p>{badge} Points</p>
+              </div>
+            ))}
+          </div>
+          <div className="badges-grid">
+            {getLevelBadges(user.level).map((badge, index) => (
+              <div key={index} className="badge-item">
+                <img
+                  className="badge-image"
+                  src={`./src/assets/badges/gold_medal.png`}
+                  alt={`Badge for Level ${badge}`}
+                />
+                <p>Level {badge}</p>
+              </div>
+            ))}
           </div>
         </section>
 
