@@ -11,6 +11,7 @@ function ProfilePage() {
     if (score > 1000) badges.push("1000");
     if (score > 1500) badges.push("1500");
     if (score > 2000) badges.push("2000");
+    if (score > 2500) badges.push("2500");
     return badges;
   };
 
@@ -186,10 +187,12 @@ function ProfilePage() {
         <section className="profile-section">
           <h2>Badges</h2>
           <div className="badges-grid">
-            {getBadges(user.score).map((badge, index) => (
+            {["100", "1000", "1500", "2000", "2500"].map((badge, index) => (
               <div key={index} className="badge-item">
                 <img
-                  className="badge-image"
+                  className={`badge-image ${
+                    user.score >= badge ? "" : "greyed-out"
+                  }`}
                   src={`./src/assets/badges/gold_medal.png`}
                   alt={`Badge for ${badge} points`}
                 />
@@ -198,10 +201,12 @@ function ProfilePage() {
             ))}
           </div>
           <div className="badges-grid">
-            {getLevelBadges(user.level).map((badge, index) => (
+            {["1", "5", "10", "50", "100+"].map((badge, index) => (
               <div key={index} className="badge-item">
                 <img
-                  className="badge-image"
+                  className={`badge-image ${
+                    user.level >= parseInt(badge) ? "" : "greyed-out"
+                  }`}
                   src={`./src/assets/badges/gold_medal.png`}
                   alt={`Badge for Level ${badge}`}
                 />

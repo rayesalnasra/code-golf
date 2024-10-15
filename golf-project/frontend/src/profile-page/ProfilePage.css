@@ -9,7 +9,7 @@
 .badges-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 150px;
 }
 
 .badge-item {
@@ -21,6 +21,11 @@
 .badge-image {
   width: 100px;
   height: auto;
+}
+
+.greyed-out {
+  filter: grayscale(100%) brightness(0);
+  opacity: 0.1;
 }
 
 .content-container {
