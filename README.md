@@ -15,6 +15,10 @@ Whether you're looking to improve your coding skills, compete with friends, or s
 
 ***How to build:***
 
+1. Add "config" folder to backend
+2. Add "env" to frontend and server folder & rename the file name env to .env
+3. In the .env file of the server folder, remove 'VITE_' from all lines
+
 Open terminal in the backend folder
 ```bash
 Type "npm install" #install npm
