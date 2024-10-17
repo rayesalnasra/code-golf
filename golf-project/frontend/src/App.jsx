@@ -10,6 +10,7 @@ import DocumentationPage from './documentation-page/DocumentationPage';
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
+import FriendsPage from './friends-page/FriendsPage'; 
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
 import ProtectedRoute from './login-pages/ProtectedRoute';
@@ -118,6 +119,7 @@ function App() {
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><Link to="/friends">Friends</Link></li>
                       <li><button onClick={toggleDarkMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button></li>
                       <li><button onClick={handleLogout}>Logout</button></li>
                     </ul>
@@ -149,6 +151,7 @@ function App() {
           <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/friends" element={isAuthenticated ? <FriendsPage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
         </Routes>
       </div>
