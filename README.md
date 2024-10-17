@@ -19,19 +19,19 @@ Whether you're looking to improve your coding skills, compete with friends, or s
 2. Add "env" to frontend and server folder & rename the file name env to .env
 3. In the .env file of the server folder, remove 'VITE_' from all lines
 
-Open terminal in the backend folder
+4. Open terminal in the backend folder
 ```bash
 Type "npm install" #install npm
 then "node server.js"
 ```
 
-Open another terminal in the frontend folder
+5. Open another terminal in the frontend folder
 ```bash
 Type"npm install" #install npm 
 then "npm run dev"
 ```
 
-Open another terminal in the server folder
+6. Open another terminal in the server folder
 ```bash
 Type "npm install" #install npm
 then "npm start code-golf"
