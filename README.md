@@ -16,16 +16,15 @@ Whether you're looking to improve your coding skills, compete with friends, or s
 ***How to build:***
 
 Open terminal in the backend folder
-
 ```bash
-Type"npm install" #install npm 
-then "npm run dev"
+Type "npm install" #install npm
+then "node server.js"
 ```
 
 Open another terminal in the frontend folder
 ```bash
-Type "npm install" #install npm
-then "node server.js"
+Type"npm install" #install npm 
+then "npm run dev"
 ```
 
 Open another terminal in the server folder
