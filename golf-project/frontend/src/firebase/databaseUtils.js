@@ -14,13 +14,24 @@ export const pushData = (path, data) => {
 };
 
 // Function to read data from the database
-export const readData = (path, callback) => {
+export const readData = async (path) => {
   const dbRef = ref(database, path);
-  onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
-    callback(data);
+  
+  return new Promise((resolve, reject) => {
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        resolve(data);
+      } else {
+        resolve(null); // Resolve with null if no data is found
+      }
+    }, (error) => {
+      reject(error);
+    });
   });
 };
+
+
 
 // Function to update data in the database
 export const updateData = (path, data) => {
