@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
 import { readData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
+import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
 
 function ProfilePage() {
@@ -17,6 +18,8 @@ function ProfilePage() {
     displayName: "",
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [pastDMs, setPastDMs] = useState([]); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const userId = localStorage.getItem("userUID");
@@ -24,22 +27,61 @@ function ProfilePage() {
     const storedDisplayName = localStorage.getItem("userDisplayName");
 
     if (userId) {
-      readData(`users/${userId}`, (userData) => {
-        if (userData) {
-          setUser({
-            displayName:
-              storedDisplayName || userData.displayName || "Anonymous User",
-            email: storedEmail || userData.email || "No email provided",
-            level: userData.level || 0,
-            xp: userData.xp || 0,
-            score: userData.score || 0,
-          });
-          setEditableUser({
-            displayName:
-              storedDisplayName || userData.displayName || "Anonymous User",
-          });
+      const fetchData = async () => {
+        try {
+          const userData = await readData(`users/${userId}`);
+          if (userData) {
+            setUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              email: storedEmail || userData.email || "No email provided",
+              level: userData.level || 0,
+              xp: userData.xp || 0,
+              score: userData.score || 0,
+            });
+            setEditableUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+            });
+          }
+
+          const directMessages = await readData(`directMessages`);
+          const userPastDMs = [];
+
+          for (const conversationKey in directMessages) {
+            if (conversationKey.includes(userId)) {
+              const otherUserId = conversationKey.split('_').find(id => id !== userId);
+
+              const otherUserData = await readData(`users/${otherUserId}`);
+              const displayName = otherUserData?.displayName || "Unknown User";
+
+              const messages = Object.values(directMessages[conversationKey]);
+
+              const latestMessageIndex = messages.length - 1;
+              const secondToLatestMessageIndex = messages.length - 2;
+
+              const latestMessage = messages[latestMessageIndex];
+              const secondToLatestMessage = messages.length > 1 ? messages[secondToLatestMessageIndex] : latestMessage;
+
+              const messageToDisplay = secondToLatestMessage || latestMessage; 
+
+              const messageTime = new Date(messageToDisplay.timestamp).toLocaleString();
+
+              userPastDMs.push({
+                id: otherUserId,
+                displayName: displayName,
+                latestMessage: messageToDisplay.message,
+                latestMessageTime: messageTime,
+                isFromUser: messageToDisplay.userId === userId, // Mark if the message is from the user
+              });
+            }
+          }
+
+          setPastDMs(userPastDMs);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      });
+      };
+
+      fetchData();
     }
   }, []);
 
@@ -69,23 +111,18 @@ function ProfilePage() {
       try {
         const authUser = auth.currentUser;
 
-        // --- Update Firebase Auth ---
         if (editableUser.displayName !== user.displayName) {
           await updateProfile(authUser, {
             displayName: editableUser.displayName,
           });
         }
 
-        // --- Update Firebase Realtime Database ---
-        // Update the display name in Realtime Database
         await updateData(`users/${userId}`, {
           displayName: editableUser.displayName,
         });
 
-        // --- Update Local Storage ---
         localStorage.setItem("userDisplayName", editableUser.displayName);
 
-        // Update user state and exit edit mode
         setUser((prevUser) => ({
           ...prevUser,
           displayName: editableUser.displayName,
@@ -100,6 +137,10 @@ function ProfilePage() {
     } else {
       console.error("No user ID found in localStorage");
     }
+  };
+
+  const handleReplyClick = (dmUserId) => {
+    navigate(`/direct-message/${dmUserId}`);
   };
 
   return (
@@ -125,7 +166,7 @@ function ProfilePage() {
             </div>
             <div className="info-item">
               <h3>Email</h3>
-              <p>{user.email}</p> {/* Email is displayed but not editable */}
+              <p>{user.email}</p>
             </div>
           </div>
           {isEditing ? (
@@ -145,31 +186,26 @@ function ProfilePage() {
         </section>
 
         <section className="profile-section">
-          <h2>Code Golf Stats</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <h3>Level</h3>
-              <p className="stat-value">{user.level}</p>
+          <h2>Direct Messages</h2>
+          {pastDMs.length > 0 ? (
+            <div className="dm-list">
+              {pastDMs.map((dmUser, index) => (
+                <div 
+                  key={`${dmUser.id}-${index}`} 
+                  className={`dm-box ${dmUser.isFromUser ? 'user-message' : 'other-user-message'}`}
+                >
+                  <div className="dm-username">{dmUser.displayName}</div>
+                  <div className="dm-latest-message">{dmUser.latestMessage}</div>
+                  <div className="dm-time">{dmUser.latestMessageTime}</div>
+                  <button className="reply-button" onClick={() => handleReplyClick(dmUser.id)}>
+                    Reply
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="stat-item">
-              <h3>XP</h3>
-              <p className="stat-value">
-                {user.xp} / {100 + user.level * 50}
-              </p>
-            </div>
-            <div className="stat-item">
-              <h3>Score</h3>
-              <p className="stat-value">{user.score}</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="profile-section">
-          <h2>Recent Activity</h2>
-          <p>
-            Coming soon: Your recent problem-solving activity will be displayed
-            here!
-          </p>
+          ) : (
+            <p>No past direct messages.</p>
+          )}
         </section>
       </div>
     </div>
