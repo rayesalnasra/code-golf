@@ -184,13 +184,25 @@ export async function getSolution(problemId, language) {
  * @param {number} attempts - The number of attempts made by the user.
  * @param {number} score - The score achieved by the user.
  * @param {number} timer - The timer value for the submission.
+ * @param {string} difficulty - The difficulty level of the problem.
  * @returns {Promise<string>} The ID of the newly created or updated document.
  */
-export async function saveCodeGolfSubmission(userId, problemId, language, code, characterCount, attempts, score, timer) {
-  console.log('Saving Code Golf submission:', { userId, problemId, language, code, characterCount, attempts, score, timer });
+export async function saveCodeGolfSubmission(userId, problemId, language, code, characterCount, attempts, score, timer, difficulty) {
+  if (!difficulty) {
+    console.error('Difficulty is undefined');
+    return;
+  }
+
+  console.log('Saving Code Golf submission:', { userId, problemId, language, code, characterCount, attempts, score, timer, difficulty });
   const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
   const languageId = language === 'python' ? 'py' : 'js';
-  const docRef = doc(userCodeGolfCol, `${userId}_${problemId}_${languageId}`);
+  const docRef = doc(userCodeGolfCol, `${difficulty}_${userId}_${problemId}_${languageId}`);
+  
+  // Ensure attempts, score, and timer are numbers
+  const numAttempts = Number(attempts) || 0;
+  const numScore = Number(score) || 0;
+  const numTimer = Number(timer) || 0;
+
   await setDoc(docRef, {
     userId,
     problemId,
@@ -198,9 +210,10 @@ export async function saveCodeGolfSubmission(userId, problemId, language, code, 
     languageId,
     code,
     characterCount,
-    attempts,
-    score,
-    timer,
+    attempts: numAttempts,
+    score: numScore,
+    timer: numTimer,
+    difficulty,
     timestamp: new Date()
   }, { merge: true });
   console.log('Code Golf submission saved successfully');

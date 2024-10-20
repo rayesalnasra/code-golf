@@ -5,8 +5,9 @@ import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import ProblemPage from '../problem-page/ProblemPage';
 import Timer from './Timer';
 import CodeGolfSummary from './CodeGolfSummary';
-import { saveCodeGolfSubmission, getUserSubmission } from '../firebase/firebaseCodeRunner';
+import { saveCodeGolfSubmission, getUserSubmission, getUserCodeGolfSubmission } from '../firebase/firebaseCodeRunner';
 import './PlayCodeGolf.css';
+import { auth } from '../firebase/firebaseAuth';
 
 // Scoring constants
 const SCORING = {
@@ -51,10 +52,17 @@ const PlayCodeGolf = () => {
   const [solvedProblems, setSolvedProblems] = useState({});
   const [showSummary, setShowSummary] = useState(false);
   const [userCode, setUserCode] = useState({});
+  const [problemAttempts, setProblemAttempts] = useState(0);
+  const [score, setScore] = useState(0); // Initialize score
+  const [problemTimer, setProblemTimer] = useState(0); // Initialize problemTimer
+  const [difficulty, setDifficulty] = useState('easy'); // Example initialization
+  const [gameId, setGameId] = useState('game123'); // Example game ID
 
   useEffect(() => {
     if (selectedDifficulty && selectedLanguage) {
-      fetchProblems();
+      fetchProblems().then(() => {
+        loadInitialUserCode();
+      });
     }
   }, [selectedDifficulty, selectedLanguage]);
 
@@ -66,6 +74,16 @@ const PlayCodeGolf = () => {
       }
     }
   }, [urlProblemId, problems]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate('/login');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const fetchProblems = async () => {
     setIsLoading(true);
@@ -148,7 +166,8 @@ const PlayCodeGolf = () => {
     }
   };
 
-  const handleAttempt = (problemId, isCorrect) => {
+  const handleAttempt = async (problemId, isCorrect) => {
+    await saveCurrentProblemState();
     if (isCorrect) {
       const currentAttempts = attempts[problemId] || 0;
       const newAttempts = currentAttempts + 1;
@@ -225,65 +244,51 @@ const PlayCodeGolf = () => {
   };
 
   const handleCodeChange = async (newCode) => {
+    const problemId = problems[currentProblemIndex].id;
     setCharacterCount(newCode.length);
     setUserCode(prevCode => ({
       ...prevCode,
-      [problems[currentProblemIndex].id]: newCode
+      [problemId]: newCode
     }));
 
-    const userId = localStorage.getItem('userUID');
-    if (!userId) {
-      console.error('User ID not found');
-      return;
-    }
-
-    const problemId = problems[currentProblemIndex].id;
-    const score = scores[problemId] || 0;
-    const problemAttempts = attempts[problemId] || 0;
-    const problemTimer = problemTimes[problemId] || 0;
-
-    try {
-      await saveCodeGolfSubmission(
-        userId,
-        problemId,
-        selectedLanguage,
-        newCode,
-        newCode.length,
-        problemAttempts,
-        score,
-        problemTimer
-      );
-      console.log('Code Golf submission saved successfully');
-    } catch (error) {
-      console.error('Error saving Code Golf submission:', error);
-    }
+    // Save the current state
+    await saveCurrentProblemState();
   };
 
   const saveCurrentProblemState = async () => {
-    if (!problems[currentProblemIndex]) return;
-
-    const userId = localStorage.getItem('userUID');
-    if (!userId) {
-      console.error('User ID not found');
+    const user = auth.currentUser;
+    if (!user || !problems[currentProblemIndex]) {
+      console.error('User is not authenticated or current problem is not defined');
       return;
     }
 
-    const problemId = problems[currentProblemIndex].id;
-    const code = userCode[problemId] || '';
-    const score = scores[problemId] || 0;
-    const problemAttempts = attempts[problemId] || 0;
-    const problemTimer = problemTimes[problemId] || 0;
+    const currentProblem = problems[currentProblemIndex];
+    const problemId = currentProblem.id;
+    const currentCode = userCode[problemId] || '';
+    const difficulty = currentProblem?.difficulty || 'unknown';
+
+    console.log('Current problem:', currentProblem);
+    console.log('Difficulty:', difficulty);
+
+    const currentAttempts = attempts[problemId] || 0;
+    const currentScore = scores[problemId] || 0;
+    const currentTimer = problemTimes[problemId] || 0;
+
+    console.log('Attempts:', currentAttempts);
+    console.log('Score:', currentScore);
+    console.log('Timer:', currentTimer);
 
     try {
       await saveCodeGolfSubmission(
-        userId,
+        user.uid,
         problemId,
         selectedLanguage,
-        code,
-        code.length,
-        problemAttempts,
-        score,
-        problemTimer
+        currentCode,
+        currentCode.length,
+        currentAttempts,
+        currentScore,
+        currentTimer,
+        difficulty
       );
       console.log('Code Golf submission saved successfully');
     } catch (error) {
@@ -292,23 +297,29 @@ const PlayCodeGolf = () => {
   };
 
   const navigateToProblem = async (index) => {
+    await saveCurrentProblemState();
     setCurrentProblemIndex(index);
     setIsTimerRunning(false);
     
-    const problemId = problems[index].id;
-    const submission = await fetchUserSubmission(problemId);
+    const problem = problems[index];
+    if (!problem) {
+      console.error('Problem not found');
+      return;
+    }
+
+    const submission = await fetchUserSubmission(problem.id);
     
     if (submission) {
       setUserCode(prevCode => ({
         ...prevCode,
-        [problemId]: submission
+        [problem.id]: submission
       }));
       setCharacterCount(submission.length);
     } else {
       setCharacterCount(0);
     }
     
-    navigate(`/play-code-golf/${selectedDifficulty}/${problemId}?language=${selectedLanguage}`);
+    navigate(`/play-code-golf/${selectedDifficulty}/${problem.id}?language=${selectedLanguage}`);
   };
 
   const navigateToPreviousProblem = () => {
@@ -344,13 +355,75 @@ const PlayCodeGolf = () => {
     }
 
     try {
-      const submission = await getUserSubmission(userId, problemId, selectedLanguage);
-      return submission;
+      const submission = await getUserCodeGolfSubmission(userId, problemId, selectedLanguage);
+      return submission ? submission.code : null;
     } catch (error) {
       console.error('Error fetching user submission:', error);
       return null;
     }
   };
+
+  const loadInitialUserCode = async () => {
+    const userId = localStorage.getItem('userUID');
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+
+    const initialUserCode = {};
+    for (const problem of problems) {
+      const submission = await fetchUserSubmission(problem.id);
+      if (submission) {
+        initialUserCode[problem.id] = submission;
+      }
+    }
+    setUserCode(initialUserCode);
+  };
+
+  const handleTimerUpdate = (newTime) => {
+    setProblemTimer(newTime);
+  };
+
+  // Example: Update score
+  const updateScore = (newScore) => {
+    setScore(newScore);
+  };
+
+  // Example: Increment attempts
+  const incrementAttempts = () => {
+    setProblemAttempts(prevAttempts => prevAttempts + 1);
+  };
+
+  // Example: Update timer
+  const updateTimer = (seconds) => {
+    const problemId = problems[currentProblemIndex].id;
+    setProblemTimes(prevTimes => ({
+      ...prevTimes,
+      [problemId]: (prevTimes[problemId] || 0) + 1
+    }));
+  };
+
+  useEffect(() => {
+    console.log('Score updated:', score);
+  }, [score]);
+
+  useEffect(() => {
+    console.log('Attempts updated:', problemAttempts);
+  }, [problemAttempts]);
+
+  useEffect(() => {
+    console.log('Timer updated:', problemTimer);
+  }, [problemTimer]);
+
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        updateTimer(1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, currentProblemIndex]);
 
   if (isLoading) return <div>Loading problems...</div>;
   if (error) return <div className="error-message">{error}</div>;
@@ -388,7 +461,10 @@ const PlayCodeGolf = () => {
         <div className="problem-container">
           <h2>Problem {currentProblemIndex + 1} of {problems.length}</h2>
           <div className="problem-stats">
-            <Timer isRunning={isTimerRunning} onTimeUpdate={handleTimeUpdate} />
+            <Timer
+              isRunning={isTimerRunning}
+              onTimerUpdate={handleTimeUpdate}
+            />
             <div className="character-count">Characters: {characterCount}</div>
             <div className="attempts">Attempts: {attempts[problems[currentProblemIndex].id] || 0}</div>
             <div className="score">
