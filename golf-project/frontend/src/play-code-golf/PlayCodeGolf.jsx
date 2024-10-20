@@ -4,6 +4,8 @@ import { collection, getDocs } from "firebase/firestore/lite";
 import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import ProblemPage from '../problem-page/ProblemPage';
 import Timer from './Timer';
+import CodeGolfSummary from './CodeGolfSummary';
+import { saveCodeGolfSubmission, getUserSubmission } from '../firebase/firebaseCodeRunner';
 import './PlayCodeGolf.css';
 
 // Scoring constants
@@ -47,6 +49,8 @@ const PlayCodeGolf = () => {
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [completionMessage, setCompletionMessage] = useState('');
   const [solvedProblems, setSolvedProblems] = useState({});
+  const [showSummary, setShowSummary] = useState(false);
+  const [userCode, setUserCode] = useState({});
 
   useEffect(() => {
     if (selectedDifficulty && selectedLanguage) {
@@ -220,15 +224,91 @@ const PlayCodeGolf = () => {
     }));
   };
 
-  const handleCodeChange = (newCode) => {
+  const handleCodeChange = async (newCode) => {
     setCharacterCount(newCode.length);
+    setUserCode(prevCode => ({
+      ...prevCode,
+      [problems[currentProblemIndex].id]: newCode
+    }));
+
+    const userId = localStorage.getItem('userUID');
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+
+    const problemId = problems[currentProblemIndex].id;
+    const score = scores[problemId] || 0;
+    const problemAttempts = attempts[problemId] || 0;
+    const problemTimer = problemTimes[problemId] || 0;
+
+    try {
+      await saveCodeGolfSubmission(
+        userId,
+        problemId,
+        selectedLanguage,
+        newCode,
+        newCode.length,
+        problemAttempts,
+        score,
+        problemTimer
+      );
+      console.log('Code Golf submission saved successfully');
+    } catch (error) {
+      console.error('Error saving Code Golf submission:', error);
+    }
   };
 
-  const navigateToProblem = (index) => {
+  const saveCurrentProblemState = async () => {
+    if (!problems[currentProblemIndex]) return;
+
+    const userId = localStorage.getItem('userUID');
+    if (!userId) {
+      console.error('User ID not found');
+      return;
+    }
+
+    const problemId = problems[currentProblemIndex].id;
+    const code = userCode[problemId] || '';
+    const score = scores[problemId] || 0;
+    const problemAttempts = attempts[problemId] || 0;
+    const problemTimer = problemTimes[problemId] || 0;
+
+    try {
+      await saveCodeGolfSubmission(
+        userId,
+        problemId,
+        selectedLanguage,
+        code,
+        code.length,
+        problemAttempts,
+        score,
+        problemTimer
+      );
+      console.log('Code Golf submission saved successfully');
+    } catch (error) {
+      console.error('Error saving Code Golf submission:', error);
+    }
+  };
+
+  const navigateToProblem = async (index) => {
     setCurrentProblemIndex(index);
     setIsTimerRunning(false);
-    setCharacterCount(0);
-    navigate(`/play-code-golf/${selectedDifficulty}/${problems[index].id}?language=${selectedLanguage}`);
+    
+    const problemId = problems[index].id;
+    const submission = await fetchUserSubmission(problemId);
+    
+    if (submission) {
+      setUserCode(prevCode => ({
+        ...prevCode,
+        [problemId]: submission
+      }));
+      setCharacterCount(submission.length);
+    } else {
+      setCharacterCount(0);
+    }
+    
+    navigate(`/play-code-golf/${selectedDifficulty}/${problemId}?language=${selectedLanguage}`);
   };
 
   const navigateToPreviousProblem = () => {
@@ -243,8 +323,50 @@ const PlayCodeGolf = () => {
     }
   };
 
+  const handleFinish = () => {
+    // Assign maximum score to unsolved problems
+    const finalScores = { ...scores };
+    problems.forEach((problem) => {
+      if (!finalScores[problem.id]) {
+        finalScores[problem.id] = 7; // Maximum score
+      }
+    });
+    setScores(finalScores);
+    setTotalScore(Object.values(finalScores).reduce((a, b) => a + b, 0));
+    setShowSummary(true);
+  };
+
+  const fetchUserSubmission = async (problemId) => {
+    const userId = localStorage.getItem('userUID');
+    if (!userId) {
+      console.error('User ID not found');
+      return null;
+    }
+
+    try {
+      const submission = await getUserSubmission(userId, problemId, selectedLanguage);
+      return submission;
+    } catch (error) {
+      console.error('Error fetching user submission:', error);
+      return null;
+    }
+  };
+
   if (isLoading) return <div>Loading problems...</div>;
   if (error) return <div className="error-message">{error}</div>;
+
+  if (showSummary) {
+    return (
+      <CodeGolfSummary
+        problems={problems}
+        scores={scores}
+        totalScore={totalScore}
+        problemTimes={problemTimes}
+        attempts={attempts}
+        userCode={userCode}
+      />
+    );
+  }
 
   return (
     <div className="play-code-golf">
@@ -308,7 +430,9 @@ const PlayCodeGolf = () => {
             isCodeGolfMode={true}
             isSolved={solvedProblems[problems[currentProblemIndex].id] || false}
             language={selectedLanguage}
+            initialCode={userCode[problems[currentProblemIndex].id] || ''}
           />
+          <button onClick={handleFinish} className="finish-button">Finish Game</button>
           {showCompletionMessage && (
             <div className="completion-message">
               <p>{completionMessage}</p>

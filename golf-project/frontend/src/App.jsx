@@ -162,7 +162,7 @@ function App() {
           <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
           <Route path="/play-code-golf" element={<PlayCodeGolf />} />
           <Route path="/play-code-golf/:difficulty" element={<PlayCodeGolf />} />
-          <Route path="/play-code-golf/:difficulty/:problemId" element={<PlayCodeGolf />} />
+          <Route path="/play-code-golf/:difficulty/:language" element={<PlayCodeGolf />} />
         </Routes>
       </div>
     </Router>

@@ -174,5 +174,38 @@ export async function getSolution(problemId, language) {
   }
 }
 
+/**
+ * Saves Code Golf submission to the Firestore database.
+ * @param {string} userId - The ID of the user submitting the code.
+ * @param {string} problemId - The ID of the problem being solved.
+ * @param {string} language - The programming language used for the submission.
+ * @param {string} code - The actual code submitted by the user.
+ * @param {number} characterCount - The character count of the submitted code.
+ * @param {number} attempts - The number of attempts made by the user.
+ * @param {number} score - The score achieved by the user.
+ * @param {number} timer - The timer value for the submission.
+ * @returns {Promise<string>} The ID of the newly created or updated document.
+ */
+export async function saveCodeGolfSubmission(userId, problemId, language, code, characterCount, attempts, score, timer) {
+  const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userCodeGolfCol, `${userId}_${problemId}_${languageId}`);
+
+  await setDoc(docRef, {
+    userId,
+    problemId,
+    language,
+    languageId,
+    code,
+    characterCount,
+    attempts,
+    score,
+    timer,
+    timestamp: new Date()
+  }, { merge: true });
+
+  return docRef.id;
+}
+
 // Export the initialized app and database for use in other parts of the application
 export { appCodeRunner, dbCodeRunner };
