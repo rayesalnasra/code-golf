@@ -10,10 +10,17 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
+  Tooltip,
 } from "chart.js"; // New import for Chart.js
 import "./ProfilePage.css";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement); // New Chart.js registration
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip
+); // New Chart.js registration
 
 function ProfilePage() {
   const getBadges = (score) => {
@@ -198,7 +205,7 @@ function ProfilePage() {
 
   // --- New code to prepare data for the line chart ---
   const data = {
-    labels: ["Day 7", "Day 6", "Day 5", "Day 4", "Day 3", "Day 2", "Today"],
+    labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
     datasets: [
       {
         label: "Weekly Progress",
@@ -208,6 +215,19 @@ function ProfilePage() {
         fill: true,
       },
     ],
+  };
+
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const score = context.raw;
+            return `Score: ${score}`;
+          },
+        },
+      },
+    },
   };
 
   return (
@@ -304,18 +324,9 @@ function ProfilePage() {
           </div>
         </section>
 
-        {/* New section for displaying the line chart */}
         <section className="profile-section">
           <h2>Weekly Progress</h2>
-          <Line data={data} />
-        </section>
-
-        <section className="profile-section">
-          <h2>Recent Activity</h2>
-          <p>
-            Coming soon: Your recent problem-solving activity will be displayed
-            here!
-          </p>
+          <Line data={data} options={options} />
         </section>
       </div>
     </div>
