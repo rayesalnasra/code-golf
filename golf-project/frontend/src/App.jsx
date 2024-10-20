@@ -11,6 +11,7 @@ import DiscussionPage from './discussion-page/DiscussionPage';
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
+import FriendsPage from './friends-page/FriendsPage'; 
 import DirectMessagePage from './dm-page/DirectMessagePage'; // Ensure this is imported
 import MyProblemsPage from './my-problems/MyProblemsPage';
 import Login from './login-pages/Login';
@@ -20,6 +21,7 @@ import CreateProblemPage from './CreateProblemPage';
 import './App.css';
 import EditProblemPage from './EditProblemPage';
 import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
+
 
 // Import the DeletableAdBanner component
 import DeletableAdBanner from './ads/DeletableAdBanner';
@@ -107,6 +109,7 @@ function App() {
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><Link to="/friends">Friends</Link></li>
                       <li><Link to="/my-problems">My Problems</Link></li>
                       <li><button onClick={toggleDarkMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button></li>
                       <li><button onClick={handleLogout}>Logout</button></li>
@@ -151,6 +154,7 @@ function App() {
           <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/friends" element={isAuthenticated ? <FriendsPage /> : <Navigate to="/login" />} />
           <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
           <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />

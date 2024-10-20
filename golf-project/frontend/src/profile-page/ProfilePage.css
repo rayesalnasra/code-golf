@@ -1,3 +1,4 @@
+/* Profile Page Styling */
 /* General Profile Page Styles */
 .profile-page {
   background-color: #ffffff;
@@ -64,12 +65,150 @@
   line-height: 1.5;
 }
 
+.info-item input[type="text"] {
+  width: 85%;
+  height: 10px;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.info-item textarea {
+  width: 85%;
+  height: 80px;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  resize: vertical;
+}
+
 .stat-value {
   font-size: 1.5rem;
   font-weight: bold;
   color: #2c974b;
 }
 
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light Mode Button Colors */
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #0069d9;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+/* Dark Mode Styling */
+body.dark-mode .profile-page {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+body.dark-mode .info-item, 
+body.dark-mode .stat-item {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  box-shadow: none;
+}
+
+body.dark-mode .profile-section {
+  background-color: #2b2b2b;
+}
+
+body.dark-mode .page-title {
+  color: #9fd8b9;
+}
+
+body.dark-mode .info-item p,
+body.dark-mode .stat-item p {
+  color: #ffffff; /*Text for username, email, bio, level, XP, and score turns white*/
+}
+
+body.dark-mode .save-button {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+body.dark-mode .save-button:hover {
+  background-color: #218838;
+}
+
+body.dark-mode .edit-button {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+body.dark-mode .edit-button:hover {
+  background-color: #0069d9;
+}
+
+body.dark-mode .cancel-button {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+body.dark-mode .cancel-button:hover {
+  background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .profile-section {
+    padding: 1rem;
+  }
+  
+  .info-grid, .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Privatize Button Styles */
+.private-button {
+  background-color: #ff9800; /* Orange color */
 /* Editable section */
 .editable-input {
   width: 100%;
@@ -90,89 +229,8 @@
   border: none;
   border-radius: 5px;
   color: white;
-  cursor: pointer;
 }
 
-.edit-button {
-  background-color: #007bff; /* Blue */
-}
-
-.save-button {
-  background-color: #28a745; /* Green */
-}
-
-.cancel-button {
-  background-color: #dc3545; /* Red */
-}
-
-/* Direct Message Section */
-.dm-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.dm-box {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  justify-content: space-between;
-}
-
-.dm-username {
-  font-weight: bold;
-  flex: 1;
-  text-align: left;
-  min-width: 150px;
-}
-
-.dm-latest-message {
-  flex: 3;
-  text-align: left;
-  margin-left: 2rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dm-time {
-  flex: 1;
-  text-align: right;
-  color: #888;
-  margin-right: 2rem;
-}
-
-.reply-button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.reply-button:hover {
-  background-color: #0056b3;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .profile-page {
-    padding: 20px;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .profile-section {
-    padding: 1rem;
-  }
-
-  .info-grid, .stats-grid {
-    grid-template-columns: 1fr;
-  }
+.private-button:hover {
+  background-color: #fb8c00; /* Darker shade of orange */
 }

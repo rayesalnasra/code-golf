@@ -12,12 +12,16 @@ function ProfilePage() {
     level: 0,
     xp: 0,
     score: 0,
+    bio: "", // Adding bio field
   });
 
   const [editableUser, setEditableUser] = useState({
     displayName: "",
+    bio: "", // Adding bio field
   });
+
   const [isEditing, setIsEditing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false); // State to toggle privacy
   const [pastDMs, setPastDMs] = useState([]); 
   const navigate = useNavigate(); 
 
@@ -25,6 +29,7 @@ function ProfilePage() {
     const userId = localStorage.getItem("userUID");
     const storedEmail = localStorage.getItem("userEmail");
     const storedDisplayName = localStorage.getItem("userDisplayName");
+    const storedBio = localStorage.getItem("userBio");
 
     if (userId) {
       const fetchData = async () => {
@@ -37,9 +42,11 @@ function ProfilePage() {
               level: userData.level || 0,
               xp: userData.xp || 0,
               score: userData.score || 0,
+              bio: storedBio || userData.bio || "No bio available", // Add bio handling
             });
             setEditableUser({
               displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              bio: storedBio || userData.bio || "", // Set initial bio
             });
           }
 
@@ -92,6 +99,7 @@ function ProfilePage() {
   const handleCancelClick = () => {
     setEditableUser({
       displayName: user.displayName,
+      bio: user.bio, // Reset bio on cancel
     });
     setIsEditing(false);
   };
@@ -117,15 +125,19 @@ function ProfilePage() {
           });
         }
 
+        // --- Update Firebase Realtime Database ---
         await updateData(`users/${userId}`, {
           displayName: editableUser.displayName,
+          bio: editableUser.bio, // Update bio
         });
 
         localStorage.setItem("userDisplayName", editableUser.displayName);
+        localStorage.setItem("userBio", editableUser.bio);
 
         setUser((prevUser) => ({
           ...prevUser,
           displayName: editableUser.displayName,
+          bio: editableUser.bio, // Update bio in state
         }));
         setIsEditing(false);
 
@@ -141,6 +153,10 @@ function ProfilePage() {
 
   const handleReplyClick = (dmUserId) => {
     navigate(`/direct-message/${dmUserId}`);
+  };
+
+  const togglePrivacy = () => {
+    setIsPrivate((prevIsPrivate) => !prevIsPrivate);
   };
 
   return (
@@ -161,12 +177,27 @@ function ProfilePage() {
                   onChange={handleInputChange}
                 />
               ) : (
-                <p>{user.displayName}</p>
+                <p>{isPrivate ? "Private" : user.displayName}</p>
+                // <p>{user.displayName}</p>
               )}
             </div>
             <div className="info-item">
               <h3>Email</h3>
-              <p>{user.email}</p>
+              <p>{isPrivate ? "Private" : user.email}</p>
+              {/* <p>{user.email}</p> */}
+            </div>
+            <div className="info-item">
+              <h3>Bio</h3> {/* New bio section */}
+              {isEditing ? (
+                <textarea
+                  name="bio"
+                  value={editableUser.bio}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <p>{isPrivate ? "Private" : user.bio}</p>
+                // <p>{user.bio}</p>
+              )}
             </div>
           </div>
           {isEditing ? (
@@ -179,9 +210,14 @@ function ProfilePage() {
               </button>
             </div>
           ) : (
+            <div className="button-group">
             <button className="edit-button" onClick={handleEditClick}>
               Edit
             </button>
+             <button className="private-button" onClick={togglePrivacy}>
+             {isPrivate ? "Make Public" : "Make Private"}
+           </button>
+           </div>
           )}
         </section>
 

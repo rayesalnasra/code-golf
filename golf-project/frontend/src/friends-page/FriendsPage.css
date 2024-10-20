@@ -1,0 +1,164 @@
+:root {
+    /* Light Mode Colors */
+    --background-color: #ffffff;
+    --section-background: #f6f8fa;
+    --text-color: #2c974b;
+    --list-item-background: #ffffff; /* Default */
+    /*--hover-color: #79d38e; /* Green for hover */
+    --selected-background: #28a745; /* Green when selected */
+    --button-background: #007bff; /* Button color */
+    --button-hover: #0056b3; /* Darker blue for button hover */
+    --send-invitation-background: #007bff; /* Default for send invitation button */
+    --send-invitation-hover: #0056b3; /* Darker blue for send invitation button hover */
+    --accept-button-background: #28a745;
+    --reject-button-background: #dc3545;
+}
+
+body.dark-mode {
+    /* Dark Mode Colors */
+    --background-color: #121212;
+    --section-background: #1e1e1e;
+    --text-color: #76c043;
+    --list-item-background: #1e1e1e;
+    --hover-color: #28a745; /* Green hover color */
+    --selected-background: #218838; /* Dark green when selected */
+    --button-background: #1371d5; /* Dark button color */
+    --button-hover: #0f47d4; /* Darker button hover */
+    --send-invitation-background: #1371d5; /* Dark button color for send invitation */
+    --send-invitation-hover: #0f47d4; /* Darker button hover for send invitation */
+    --accept-button-background: #218838;
+    --reject-button-background: #c82333;
+}
+
+.friends-page {
+    background-color: var(--background-color); /* Use variable */
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+.friends-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Space between sections */
+}
+
+.page-title {
+    color: var(--text-color); /* Use variable */
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.friends-section {
+    background-color: var(--section-background); /* Use variable */
+    border-radius: 8px;
+    padding: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.friends-section h2 {
+    color: var(--text-color); /* Use variable */
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--text-color); /* Use variable */
+    padding-bottom: 0.5rem;
+}
+
+.friends-page li {
+    border-radius: 8px;
+    padding: 1rem; /* Comfortable padding */
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+    background-color: var(--list-item-background); /* Use variable */
+}
+
+.friends-page li:hover {
+    background-color: var(--hover-color); /* Light mode hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.friends-page li.selected {
+    background-color: var(--selected-background); /* Use variable */
+    color: white; /* Text color when selected */
+}
+
+/* Dark mode styles for list items */
+body.dark-mode .friends-page li {
+    background-color: var(--list-item-background); /* Dark mode */
+    color: #bbbbbb; /* Text color for better contrast */
+}
+
+/* Dark mode hover: Remove dark color hover for friends names */
+body.dark-mode .friends-page li:hover {
+    background-color: var(--list-item-background); /* Maintain background on hover */
+    transform: translateY(-2px); /* Keep the lift effect */
+}
+
+input {
+    padding: 10px; /* Input field padding */
+    margin-right: 10px;
+    border-radius: 8px; /* Rounded corners for input */
+    border: 1px solid #ddd; /* Border for input */
+    width: 70%; /* Width for input field */
+}
+
+button {
+    padding: 10px 20px; /* Comfortable button padding */
+    border: none;
+    border-radius: 8px; /* Rounded button corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    background-color: var(--button-background); /* Use variable */
+    color: white; /* Text color for buttons */
+}
+
+button:hover {
+    background-color: var(--button-hover); /* Darker button on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Send Invitation Button Styles */
+.send-invitation button {
+    background-color: var(--send-invitation-background); /* Use variable */
+}
+
+.send-invitation button:hover {
+    background-color: var(--send-invitation-hover); /* Darker blue on hover */
+}
+
+/* Accept Button */
+li .accept-button {
+    background-color: var(--accept-button-background); /* Use variable */
+    margin-right: 5px;
+}
+
+li .accept-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Reject Button */
+li .reject-button {
+    background-color: var(--reject-button-background); /* Use variable */
+}
+
+li .reject-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+li .send-invitation:hover {
+    background-color: blue;
+}
+
+.send-invitation {
+    display: flex;
+    align-items: center; /* Center align input and button */
+    margin-top: 20px;
+}
+
+button:hover {
+    opacity: 0.9; /* Slight opacity change on hover */
+}
