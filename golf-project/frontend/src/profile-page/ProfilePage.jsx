@@ -2,7 +2,18 @@ import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
 import { readData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
+import { Line } from "react-chartjs-2"; // New import for Line chart
+import { getDatabase, ref, get, set } from "firebase/database"; // New import for Firebase Realtime Database
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from "chart.js"; // New import for Chart.js
 import "./ProfilePage.css";
+
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement); // New Chart.js registration
 
 function ProfilePage() {
   const getBadges = (score) => {
@@ -38,6 +49,9 @@ function ProfilePage() {
   });
   const [isEditing, setIsEditing] = useState(false);
 
+  // --- New state for weekly progress ---
+  const [weeklyProgress, setWeeklyProgress] = useState([]);
+
   useEffect(() => {
     const userId = localStorage.getItem("userUID");
     const storedEmail = localStorage.getItem("userEmail");
@@ -60,6 +74,66 @@ function ProfilePage() {
           });
         }
       });
+
+      // --- New code to fetch weekly progress ---
+      const fetchWeeklyProgress = async () => {
+        const db = getDatabase();
+        const progressData = [];
+        for (let i = 1; i <= 7; i++) {
+          const dayRef = ref(db, `weeklyProgress/${userId}/day${i}`);
+          const snapshot = await get(dayRef);
+          if (snapshot.exists()) {
+            progressData.push(snapshot.val());
+          } else {
+            progressData.push(0); // Default value if no data exists
+          }
+        }
+        setWeeklyProgress(progressData);
+      };
+
+      fetchWeeklyProgress();
+
+      // --- New code to update day7 value and shift previous values ---
+      const updateWeeklyProgress = async () => {
+        const db = getDatabase();
+        const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+        const lastAccessRef = ref(db, `users/${userId}/lastAccessDate`);
+        const lastAccessSnapshot = await get(lastAccessRef);
+        const lastAccessDate = lastAccessSnapshot.exists()
+          ? lastAccessSnapshot.val()
+          : null;
+
+        if (lastAccessDate === currentDate) {
+          // Update day7 value to current score
+          const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
+          const userScoreRef = ref(db, `users/${userId}/score`);
+          const userScoreSnapshot = await get(userScoreRef);
+          if (userScoreSnapshot.exists()) {
+            await set(day7Ref, userScoreSnapshot.val());
+          }
+        } else {
+          // Shift previous values to the left
+          for (let i = 1; i < 7; i++) {
+            const currentDayRef = ref(db, `weeklyProgress/${userId}/day${i}`);
+            const nextDayRef = ref(db, `weeklyProgress/${userId}/day${i + 1}`);
+            const nextDaySnapshot = await get(nextDayRef);
+            if (nextDaySnapshot.exists()) {
+              await set(currentDayRef, nextDaySnapshot.val());
+            }
+          }
+          // Update day7 value to current score
+          const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
+          const userScoreRef = ref(db, `users/${userId}/score`);
+          const userScoreSnapshot = await get(userScoreRef);
+          if (userScoreSnapshot.exists()) {
+            await set(day7Ref, userScoreSnapshot.val());
+          }
+          // Update last access date
+          await set(lastAccessRef, currentDate);
+        }
+      };
+
+      updateWeeklyProgress();
     }
   }, []);
 
@@ -120,6 +194,20 @@ function ProfilePage() {
     } else {
       console.error("No user ID found in localStorage");
     }
+  };
+
+  // --- New code to prepare data for the line chart ---
+  const data = {
+    labels: ["Day 7", "Day 6", "Day 5", "Day 4", "Day 3", "Day 2", "Today"],
+    datasets: [
+      {
+        label: "Weekly Progress",
+        data: weeklyProgress,
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+      },
+    ],
   };
 
   return (
@@ -214,6 +302,12 @@ function ProfilePage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* New section for displaying the line chart */}
+        <section className="profile-section">
+          <h2>Weekly Progress</h2>
+          <Line data={data} />
         </section>
 
         <section className="profile-section">
