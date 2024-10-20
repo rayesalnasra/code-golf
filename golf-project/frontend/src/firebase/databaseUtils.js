@@ -1,10 +1,16 @@
-import { ref, set, push, onValue, update } from "firebase/database";
+import { ref, set, push, onValue, update, remove } from "firebase/database";
 import { database } from "./firebase"; // Ensure the path is correct
 
 // Function to add data to the database
 export const addData = (path, data) => {
   const dbRef = ref(database, path);
   return set(dbRef, data);
+};
+
+// Function to remove data from the database
+export const removeData = (path) => {
+  const dbRef = ref(database, path);
+  return remove(dbRef);
 };
 
 // Function to push data to a list in the database

@@ -6,6 +6,7 @@ import {
   addDoc,
 } from "firebase/firestore/lite";
 import { getDatabase } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 // Firebase configuration, accessing environment variables for security
 const firebaseConfig = {
@@ -23,6 +24,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore database
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 /**
  * Fetches test cases from the Firestore database.
@@ -54,4 +56,10 @@ export async function saveUserCode(problemId, code) {
 export const database = getDatabase(app);
 
 // Export the initialized app for further use
+<<<<<<< Updated upstream
 export default app;
+=======
+export default app;
+
+export { auth, db };
+>>>>>>> Stashed changes

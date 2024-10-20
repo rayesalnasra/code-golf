@@ -1,7 +1,11 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, onValue, off, update, get } from 'firebase/database';
 
+<<<<<<< Updated upstream
 // Firebase configuration for the Discussions feature
+=======
+// Firebase configuration for the Discussions feature, accessing environment variables for security
+>>>>>>> Stashed changes
 const firebaseConfigDiscussions = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -9,7 +13,11 @@ const firebaseConfigDiscussions = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+<<<<<<< Updated upstream
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL
+=======
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL // Make sure this is set in your .env file
+>>>>>>> Stashed changes
 };
 
 // Initialize Firebase app for the Discussions feature
@@ -26,15 +34,26 @@ const dbDiscussions = getDatabase(appDiscussions);
  * @returns {Promise<string>} The ID of the newly created message.
  */
 export async function addMessage(userId, userName, message) {
+<<<<<<< Updated upstream
   const messagesRef = ref(dbDiscussions, 'messages'); // Reference to the 'messages' node
   const newMessageRef = push(messagesRef); // Push a new child to the 'messages' node
+=======
+  const messagesRef = ref(dbDiscussions, 'messages');
+  const newMessageRef = push(messagesRef);
+>>>>>>> Stashed changes
   await update(newMessageRef, {
     userId,
     userName,
     message,
+<<<<<<< Updated upstream
     timestamp: Date.now() // Record timestamp to track when the message was sent
   });
   return newMessageRef.key; // Return the unique key of the new message
+=======
+    timestamp: Date.now()
+  });
+  return newMessageRef.key;
+>>>>>>> Stashed changes
 }
 
 /**
@@ -45,6 +64,7 @@ export async function addMessage(userId, userName, message) {
 export function getMessages(callback) {
   const messagesRef = ref(dbDiscussions, 'messages');
   const handleNewMessages = (snapshot) => {
+<<<<<<< Updated upstream
     const data = snapshot.val(); // Retrieve the current data from the snapshot
     if (data) {
       const messageList = Object.entries(data).map(([key, value]) => ({
@@ -93,12 +113,15 @@ export async function addDirectMessage(conversationKey, userId, userName, messag
 export function getDirectMessages(conversationKey, callback) {
   const messagesRef = ref(dbDiscussions, `directMessages/${conversationKey}`);
   const handleNewMessages = (snapshot) => {
+=======
+>>>>>>> Stashed changes
     const data = snapshot.val();
     if (data) {
       const messageList = Object.entries(data).map(([key, value]) => ({
         id: key,
         ...value
       }));
+<<<<<<< Updated upstream
       callback(messageList); // Provide the message list to the callback function
     } else {
       callback([]);  // If no messages exist, return an empty list
@@ -121,3 +144,39 @@ export async function checkDMConversation(conversationKey) {
 
 // Export the initialized Firebase app and database for use elsewhere
 export { appDiscussions, dbDiscussions };
+=======
+      callback(messageList);
+    }
+  };
+  onValue(messagesRef, handleNewMessages);
+  return () => off(messagesRef, 'value', handleNewMessages);
+}
+
+/**
+ * Retrieves a single message by its ID.
+ * @param {string} messageId - The ID of the message to retrieve.
+ * @returns {Promise<Object|null>} The message object or null if not found.
+ */
+export async function getMessageById(messageId) {
+  const messageRef = ref(dbDiscussions, `messages/${messageId}`);
+  const snapshot = await get(messageRef);
+  if (snapshot.exists()) {
+    return { id: messageId, ...snapshot.val() };
+  }
+  return null;
+}
+
+/**
+ * Updates an existing message.
+ * @param {string} messageId - The ID of the message to update.
+ * @param {Object} updates - An object containing the fields to update.
+ * @returns {Promise<void>}
+ */
+export async function updateMessage(messageId, updates) {
+  const messageRef = ref(dbDiscussions, `messages/${messageId}`);
+  await update(messageRef, updates);
+}
+
+// Export the initialized app and database for use in other parts of the application
+export { appDiscussions, dbDiscussions };
+>>>>>>> Stashed changes

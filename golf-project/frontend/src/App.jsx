@@ -8,6 +8,12 @@ import LeaderboardPage from './leaderboard-page/LeaderboardPage';
 import TutorialPage from './tutorial-page/TutorialPage';
 import DocumentationPage from './documentation-page/DocumentationPage';
 import DiscussionPage from './discussion-page/DiscussionPage';
+<<<<<<< Updated upstream
+=======
+import QuizPage from './quiz/QuizPage';
+import TakeQuizPage from './quiz/TakeQuizPage';
+import QuizCreationPage from './quiz/QuizCreationPage'; 
+>>>>>>> Stashed changes
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
@@ -122,6 +128,10 @@ function App() {
                 <li><Link to="/tutorial">Tutorial</Link></li>
                 <li><Link to="/documentation">Documentation</Link></li>
                 <li><Link to="/discussion">Discussion</Link></li>
+<<<<<<< Updated upstream
+=======
+                <li><Link to="/quiz">Quiz</Link></li>
+>>>>>>> Stashed changes
                 <li><Link to="/problems">Problems</Link></li>
                 <li><Link to="/create-problem">Create Problem</Link></li>
                 <li><Link to="/play-code-golf">Play Code Golf</Link></li>
@@ -149,6 +159,12 @@ function App() {
           <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
           <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
           <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
+<<<<<<< Updated upstream
+=======
+          <Route path="/quiz" element={isAuthenticated ? <QuizPage /> : <Navigate to="/login" />} />
+          <Route path="/create-quiz" element={isAuthenticated ? <QuizCreationPage /> : <Navigate to="/login" />} /> {/* Added Quiz Creation Route */}
+          <Route path="/take-quiz/:quizId" element={isAuthenticated ? <TakeQuizPage /> : <Navigate to="/login" />} />
+>>>>>>> Stashed changes
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />

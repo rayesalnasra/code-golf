@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+<<<<<<< Updated upstream
 import { addMessage, getMessages, checkDMConversation } from '../firebase/firebaseDiscussions';
 import { useNavigate } from 'react-router-dom';
 import './DiscussionPage.css';
@@ -11,10 +12,21 @@ const DiscussionPage = () => {
   const textareaRef = useRef(null); // Reference for the textarea for auto-height adjustment
   const navigate = useNavigate(); // React Router hook for navigation
   const userUID = localStorage.getItem('userUID'); // Fetch the user's UID from local storage
+=======
+import { addMessage, getMessages } from '../firebase/firebaseDiscussions';
+import './DiscussionPage.css';
+
+const DiscussionPage = () => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [error, setError] = useState(null);
+  const textareaRef = useRef(null);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     let unsubscribe;
     try {
+<<<<<<< Updated upstream
       // Subscribe to messages and fetch them from Firebase
       unsubscribe = getMessages(async (messageList) => {
         setMessages(messageList);
@@ -52,29 +64,60 @@ const DiscussionPage = () => {
 
   useEffect(() => {
     adjustTextareaHeight(); // Adjust textarea height when the new message changes
+=======
+      unsubscribe = getMessages((messageList) => {
+        setMessages(messageList);
+      });
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+      setError(`Error fetching messages: ${err.message}`);
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    adjustTextareaHeight();
+>>>>>>> Stashed changes
   }, [newMessage]);
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
+<<<<<<< Updated upstream
       textarea.style.height = 'auto'; // Reset height to auto
       textarea.style.height = `${textarea.scrollHeight}px`; // Set height to the scroll height of the content
+=======
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+>>>>>>> Stashed changes
     }
   };
 
   const formatMessage = (text) => {
+<<<<<<< Updated upstream
     // Split message by '```' to format code blocks
     return text.split('```').map((part, index) => {
       if (index % 2 === 0) {
         return <span key={index}>{part}</span>; // Normal text
       } else {
         return <pre key={index}><code>{part}</code></pre>; // Code block
+=======
+    return text.split('```').map((part, index) => {
+      if (index % 2 === 0) {
+        return <span key={index}>{part}</span>;
+      } else {
+        return <pre key={index}><code>{part}</code></pre>;
+>>>>>>> Stashed changes
       }
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< Updated upstream
     
     const trimmedMessage = newMessage.trim(); // Remove any extra spaces from the message
     if (trimmedMessage === '') return; // Prevent sending empty messages
@@ -110,6 +153,33 @@ const DiscussionPage = () => {
 
   if (error) {
     return <div className="discussion-page__error">{error}</div>; // Display any errors
+=======
+    if (newMessage.trim() === '') return;
+
+    try {
+      const userDisplayName = localStorage.getItem('userDisplayName');
+      const userUID = localStorage.getItem('userUID');
+      
+      if (!userUID) {
+        throw new Error("User not authenticated");
+      }
+
+      await addMessage(
+        userUID,
+        userDisplayName || 'Anonymous',
+        newMessage
+      );
+      setNewMessage('');
+      setError(null);
+    } catch (err) {
+      console.error("Error sending message:", err);
+      setError(`Failed to send message: ${err.message}`);
+    }
+  };
+
+  if (error) {
+    return <div className="discussion-page__error">{error}</div>;
+>>>>>>> Stashed changes
   }
 
   return (
@@ -118,6 +188,7 @@ const DiscussionPage = () => {
       <div className="discussion-page__message-list">
         {messages.map((message) => (
           <div key={message.id} className="discussion-page__message">
+<<<<<<< Updated upstream
             <div className="discussion-page__header">
               <strong className="discussion-page__message-user">{message.userName}</strong> {/* Show the username */}
               {message.userId !== userUID && ( // Only show the DM button for other users' messages
@@ -135,12 +206,18 @@ const DiscussionPage = () => {
             </div>
             <span className="discussion-page__message-content">
               {formatMessage(message.message)} {/* Format the message content, including code blocks */}
+=======
+            <strong className="discussion-page__message-user">{message.userName}: </strong>
+            <span className="discussion-page__message-content">
+              {formatMessage(message.message)}
+>>>>>>> Stashed changes
             </span>
           </div>
         ))}
       </div>
       <form onSubmit={handleSubmit} className="discussion-page__form">
         <textarea
+<<<<<<< Updated upstream
           ref={textareaRef} // Reference to the textarea for height adjustment
           value={newMessage} // Controlled input for the new message
           onChange={(e) => setNewMessage(e.target.value)} // Update message on change
@@ -149,9 +226,23 @@ const DiscussionPage = () => {
           rows="1"
         />
         <button type="submit" className="discussion-page__button">Send</button> {/* Send button */}
+=======
+          ref={textareaRef}
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type your message..."
+          className="discussion-page__input"
+          rows="1"
+        />
+        <button type="submit" className="discussion-page__button">Send</button>
+>>>>>>> Stashed changes
       </form>
     </div>
   );
 };
 
+<<<<<<< Updated upstream
 export default DiscussionPage;
+=======
+export default DiscussionPage;
+>>>>>>> Stashed changes
