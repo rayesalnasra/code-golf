@@ -1,0 +1,152 @@
+.discussion-page {
+    background-color: var(--background-page);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: var(--box-shadow);
+    margin: 0 auto;
+  }
+  
+  .discussion-page__title {
+    color: var(--color-title);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .discussion-page__message-list {
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .discussion-page__message {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: var(--background-resource-item);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .discussion-page__message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .discussion-page__message-user {
+    color: var(--color-title);
+    font-weight: 600;
+  }
+  
+  .discussion-page__message-timestamp {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+  
+  .discussion-page__message-content {
+    color: var(--color-text);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .discussion-page__form {
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .discussion-page__input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    height: 25px;
+    resize: none;
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+
+  .discussion-page__input::placeholder {
+
+    font-family: 'Courier New', monospace;
+  
+    color: #888;
+  
+  }
+  
+  .discussion-page__input:focus {
+    outline: none;
+    box-shadow: 0 0 5px var(--color-link);
+  }
+  
+  .discussion-page__button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-link);
+    color: var(--background-page);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .discussion-page__button:hover {
+    background-color: var(--color-link-hover);
+  }
+
+  .discussion-page__message-content pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  
+  .discussion-page__message-content code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+  }
+  
+  .discussion-page__error {
+    color: var(--color-text);
+    font-size: 1rem;
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .discussion-page {
+      padding: 20px;
+    }
+    
+    .discussion-page__title {
+      font-size: 1.5rem;
+    }
+    
+    .discussion-page__message-list {
+      padding: 1rem;
+    }
+    
+    .discussion-page__form {
+      padding: 1
+    }
+
+}

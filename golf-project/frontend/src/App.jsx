@@ -7,6 +7,7 @@ import ProfilePage from './profile-page/ProfilePage';
 import LeaderboardPage from './leaderboard-page/LeaderboardPage';
 import TutorialPage from './tutorial-page/TutorialPage';
 import DocumentationPage from './documentation-page/DocumentationPage';
+import DiscussionPage from './discussion-page/DiscussionPage';
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
@@ -136,6 +137,7 @@ function App() {
                 <li><Link to="/leaderboard">Leaderboard</Link></li>
                 <li><Link to="/tutorial">Tutorial</Link></li>
                 <li><Link to="/documentation">Documentation</Link></li>
+                <li><Link to="/discussion">Discussion</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
                 <li><Link to="/create-problem">Create Problem</Link></li>
                 <li><Link to="/play-code-golf">Play Code Golf</Link></li>
@@ -154,6 +156,7 @@ function App() {
           <Route path="/leaderboard" element={isAuthenticated ? <LeaderboardPage /> : <Navigate to="/login" />} />
           <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
           <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
+          <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
