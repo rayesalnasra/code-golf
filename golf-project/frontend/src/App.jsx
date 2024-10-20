@@ -11,10 +11,9 @@ import DiscussionPage from './discussion-page/DiscussionPage';
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
-import MyProblemsPage from './my-problems/MyProblemsPage';
+import DirectMessagePage from './dm-page/DirectMessagePage'; // Ensure this is imported
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
-import ProtectedRoute from './login-pages/ProtectedRoute';
 import codeGolfLogo from './code-golf-icon.png';
 import CreateProblemPage from './CreateProblemPage';
 import './App.css';
@@ -49,7 +48,7 @@ function App() {
       }
       setIsLoading(false);
     });
-
+  
     return () => unsubscribe();
   }, []);
 
@@ -151,6 +150,7 @@ function App() {
           <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
           <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
           <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
