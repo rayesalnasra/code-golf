@@ -1,2 +1,2 @@
-def add(a, b):
-    return a + b fsdfsfsd svaed
+def reverse_string(s):
+    return s[::-1] 
