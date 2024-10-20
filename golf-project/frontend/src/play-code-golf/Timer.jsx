@@ -1,23 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-const Timer = ({ isRunning, onTimeUpdate }) => {
+const Timer = ({ isRunning, onTimerUpdate }) => {
   const [time, setTime] = useState(0);
+
+  const updateTimer = useCallback(() => {
+    if (typeof onTimerUpdate === 'function') {
+      onTimerUpdate(time + 1);
+    }
+    setTime(prevTime => prevTime + 1);
+  }, [time, onTimerUpdate]);
 
   useEffect(() => {
     let interval;
     if (isRunning) {
-      interval = setInterval(() => {
-        setTime((prevTime) => {
-          const newTime = prevTime + 1;
-          onTimeUpdate(newTime);
-          return newTime;
-        });
-      }, 1000);
+      interval = setInterval(updateTimer, 1000);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isRunning, onTimeUpdate]);
+  }, [isRunning, updateTimer]);
+
+  useEffect(() => {
+    if (!isRunning) {
+      setTime(0);
+    }
+  }, [isRunning]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -25,7 +32,7 @@ const Timer = ({ isRunning, onTimeUpdate }) => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  return <div className="timer">Time: {formatTime(time)}</div>;
+  return <div>{formatTime(time)}</div>;
 };
 
 export default Timer;

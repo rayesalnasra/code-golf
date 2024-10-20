@@ -187,10 +187,10 @@ export async function getSolution(problemId, language) {
  * @returns {Promise<string>} The ID of the newly created or updated document.
  */
 export async function saveCodeGolfSubmission(userId, problemId, language, code, characterCount, attempts, score, timer) {
+  console.log('Saving Code Golf submission:', { userId, problemId, language, code, characterCount, attempts, score, timer });
   const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
   const languageId = language === 'python' ? 'py' : 'js';
   const docRef = doc(userCodeGolfCol, `${userId}_${problemId}_${languageId}`);
-
   await setDoc(docRef, {
     userId,
     problemId,
@@ -203,8 +203,28 @@ export async function saveCodeGolfSubmission(userId, problemId, language, code, 
     timer,
     timestamp: new Date()
   }, { merge: true });
-
+  console.log('Code Golf submission saved successfully');
   return docRef.id;
+}
+
+/**
+ * Retrieves a user's Code Golf submission for a specific problem and language.
+ * @param {string} userId - The ID of the user whose submission is being retrieved.
+ * @param {string} problemId - The ID of the problem associated with the submission.
+ * @param {string} language - The programming language of the submission.
+ * @returns {Promise<string|null>} The submitted code or null if no submission exists.
+ */
+export async function getUserCodeGolfSubmission(userId, problemId, language) {
+  const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userCodeGolfCol, `${userId}_${problemId}_${languageId}`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    return null;
+  }
 }
 
 // Export the initialized app and database for use in other parts of the application
