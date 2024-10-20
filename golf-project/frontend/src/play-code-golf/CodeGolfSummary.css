@@ -1,0 +1,45 @@
+.code-golf-summary {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.summary-stats {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.problem-summary {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.code-preview {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.code-preview pre {
+  margin: 0;
+}
+
+.play-again-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.play-again-button:hover {
+  background-color: #45a049;
+}

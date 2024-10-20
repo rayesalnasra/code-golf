@@ -1,0 +1,134 @@
+:root {
+  --background-page: #ffffff;
+  --background-item: #f6f8fa;
+  --color-title: #2c974b;
+  --color-heading: #22753a;
+  --color-text: #333;
+  --color-link: #2c974b;
+  --color-link-hover: #22753a;
+  --color-error: #cb2431;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+  --background-page: #121212;
+  --background-item: #1e1e1e;
+  --color-title: #9be89d;
+  --color-heading: #8cbf6e;
+  --color-text: #f1f1f1;
+  --color-link: #9be89d;
+  --color-link-hover: #8cbf6e;
+  --color-error: #e06c75;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.my-problems-page {
+  background-color: var(--background-page);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--box-shadow);
+  margin: 0 auto;
+}
+
+.my-problems-page h1 {
+  color: var(--color-title);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  border: none;
+  padding: 0;
+}
+
+.problem-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.problem-item {
+  background-color: var(--background-item);
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.problem-title {
+  color: var(--color-heading);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.problem-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .delete-button, .create-problem-button {
+  display: inline-block;
+  background-color: var(--color-link);
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-button:hover, .create-problem-button:hover {
+  background-color: var(--color-link-hover);
+}
+
+.delete-button {
+  background-color: #f44336;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+.create-problem-button {
+  display: block;
+  width: fit-content;
+  margin: 1rem auto 0;
+  max-width: 10rem;
+}
+
+.error-message {
+  color: var(--color-error);
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .my-problems-page {
+    padding: 20px;
+  }
+
+  .my-problems-page h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .problem-item {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .problem-actions {
+    margin-top: 1rem;
+  }
+
+  .edit-button, .delete-button, .create-problem-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.5rem;
+  }
+}

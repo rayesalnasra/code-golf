@@ -1,0 +1,147 @@
+.dm-page {
+    background-color: var(--background-page);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: var(--box-shadow);
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.dm-page__title {
+    color: var(--color-title);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.dm-page__message-list {
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-height: 400px;
+    overflow-y: auto; /* Allow vertical scrolling */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Add space between each message */
+}
+
+/* Base styles for messages */
+.dm-page__message {
+    max-width: 60%; /* Limit width for better alignment */
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    display: inline-block;
+    word-wrap: break-word;
+    white-space: pre-wrap; /* Preserve white spaces in the message */
+}
+
+/* User's own messages aligned to the right */
+.dm-page__message--from-user {
+    background-color: #d1f7c4; /* Light green for user's messages */
+    align-self: flex-end; /* Align to the right */
+    text-align: right; /* Right-align text */
+    border-top-right-radius: 0px; /* Modify the border for a distinct style */
+}
+
+/* Other user's messages aligned to the left */
+.dm-page__message--from-other {
+    background-color: #f0f0f0; /* Light gray for other user's messages */
+    align-self: flex-start; /* Align to the left */
+    text-align: left; /* Left-align text */
+    border-top-left-radius: 0px; /* Modify the border for a distinct style */
+}
+
+.dm-page__form {
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 1rem;
+}
+
+.dm-page__input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    height: 25px;
+    resize: none; /* Disable resizing */
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.dm-page__input::placeholder {
+    font-family: 'Courier New', monospace;
+    color: #888;
+}
+
+.dm-page__input:focus {
+    outline: none;
+    box-shadow: 0 0 5px var(--color-link); /* Highlight the input when focused */
+}
+
+.dm-page__button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-link);
+    color: var(--background-page);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.dm-page__button:hover {
+    background-color: var(--color-link-hover); /* Change background color on hover */
+}
+
+.dm-page__error {
+    color: var(--color-text);
+    font-size: 1rem;
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background-color: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .dm-page {
+        padding: 20px;
+    }
+    
+    .dm-page__title {
+        font-size: 1.5rem;
+    }
+    
+    .dm-page__message-list {
+        padding: 1rem;
+    }
+    
+    .dm-page__form {
+        padding: 1rem;
+    }
+}
+
+/* Username display styles */
+.dm-page__message-user {
+    font-weight: bold;
+    margin-bottom: 0.3rem; /* Add some spacing below the username */
+}
+
+/* Content of the message */
+.dm-page__message-content {
+    color: var(--color-text);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    background-color: var(--background-message); /* Adjust if needed */
+    padding: 0.5rem; /* Add padding around the message */
+    border-radius: 8px;
+}

@@ -1,4 +1,5 @@
 /* Profile Page Styling */
+/* General Profile Page Styles */
 .profile-page {
   background-color: #ffffff;
   border-radius: 8px;
@@ -7,6 +8,7 @@
   margin: 0 auto;
   max-width: 1200px;
   transition: all 0.3s ease;
+  max-width: 900px;
 }
 
 .content-container {
@@ -23,6 +25,7 @@
   text-align: center;
 }
 
+/* Profile Section Styles */
 .profile-section {
   background-color: #f6f8fa;
   border-radius: 8px;
@@ -38,6 +41,7 @@
   padding-bottom: 0.5rem;
 }
 
+/* Grid for user information and stats */
 .info-grid, .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -207,6 +211,25 @@ body.dark-mode .cancel-button:hover {
 /* Privatize Button Styles */
 .private-button {
   background-color: #ff9800; /* Orange color */
+/* Editable section */
+.editable-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.8rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button, .save-button, .cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
   color: white;
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
 import { readData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
+import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
 
 function ProfilePage() {
@@ -21,6 +22,8 @@ function ProfilePage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false); // State to toggle privacy
+  const [pastDMs, setPastDMs] = useState([]); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const userId = localStorage.getItem("userUID");
@@ -75,7 +78,6 @@ function ProfilePage() {
       try {
         const authUser = auth.currentUser;
 
-        // --- Update Firebase Auth ---
         if (editableUser.displayName !== user.displayName) {
           await updateProfile(authUser, {
             displayName: editableUser.displayName,
@@ -88,11 +90,9 @@ function ProfilePage() {
           bio: editableUser.bio, // Update bio
         });
 
-        // --- Update Local Storage ---
         localStorage.setItem("userDisplayName", editableUser.displayName);
         localStorage.setItem("userBio", editableUser.bio);
 
-        // Update user state and exit edit mode
         setUser((prevUser) => ({
           ...prevUser,
           displayName: editableUser.displayName,
@@ -108,6 +108,10 @@ function ProfilePage() {
     } else {
       console.error("No user ID found in localStorage");
     }
+  };
+
+  const handleReplyClick = (dmUserId) => {
+    navigate(`/direct-message/${dmUserId}`);
   };
 
   const togglePrivacy = () => {
@@ -153,6 +157,7 @@ function ProfilePage() {
                 <p>{isPrivate ? "Private" : user.bio}</p>
                 // <p>{user.bio}</p>
               )}
+              <p>{user.email}</p>
             </div>
           </div>
           {isEditing ? (
@@ -177,31 +182,26 @@ function ProfilePage() {
         </section>
 
         <section className="profile-section">
-          <h2>Code Golf Stats</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <h3>Level</h3>
-              <p className="stat-value">{user.level}</p>
+          <h2>Direct Messages</h2>
+          {pastDMs.length > 0 ? (
+            <div className="dm-list">
+              {pastDMs.map((dmUser, index) => (
+                <div 
+                  key={`${dmUser.id}-${index}`} 
+                  className={`dm-box ${dmUser.isFromUser ? 'user-message' : 'other-user-message'}`}
+                >
+                  <div className="dm-username">{dmUser.displayName}</div>
+                  <div className="dm-latest-message">{dmUser.latestMessage}</div>
+                  <div className="dm-time">{dmUser.latestMessageTime}</div>
+                  <button className="reply-button" onClick={() => handleReplyClick(dmUser.id)}>
+                    Reply
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="stat-item">
-              <h3>XP</h3>
-              <p className="stat-value">
-                {user.xp} / {100 + user.level * 50}
-              </p>
-            </div>
-            <div className="stat-item">
-              <h3>Score</h3>
-              <p className="stat-value">{user.score}</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="profile-section">
-          <h2>Recent Activity</h2>
-          <p>
-            Coming soon: Your recent problem-solving activity will be displayed
-            here!
-          </p>
+          ) : (
+            <p>No past direct messages.</p>
+          )}
         </section>
       </div>
     </div>
