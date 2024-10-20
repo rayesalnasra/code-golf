@@ -92,6 +92,7 @@ function Register() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            autoComplete="off"
           />
           <label htmlFor="email">Email:</label>
           <input
@@ -101,6 +102,7 @@ function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="off"
           />
           <label htmlFor="password">Password:</label>
           <input
@@ -110,6 +112,7 @@ function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="off"
           />
           <button type="submit" className="auth-button">
             Sign Up
