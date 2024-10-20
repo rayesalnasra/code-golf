@@ -1,7 +1,7 @@
 // ProblemPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebase/firebaseCodeRunner.js";
+import { getTestCases, saveUserCode, getUserSubmission, getSolution, getUserCodeGolfSubmission } from "../firebase/firebaseCodeRunner.js";
 import { ref, onValue, update } from "firebase/database";
 import { database } from "../firebase/firebase.js";
 import { doc, getDoc } from "firebase/firestore/lite";
@@ -124,10 +124,19 @@ export default function ProblemPage({
     const userId = localStorage.getItem('userUID');
 
     try {
-      if (isCodeGolfMode) {
-        // For Code Golf mode, always use the initial code
-        setCode(problem?.initialCode[language] || "");
-      } else if (userId) {
+      if (isCodeGolfMode && userId) {
+        // For Code Golf mode, try to load user submission
+        const userCode = await getUserCodeGolfSubmission(userId, problemId, language, difficulty);
+        if (userCode) {
+          setCode(userCode.code);
+          // Update other state variables if needed
+          if (onCodeChange) {
+            onCodeChange(userCode.code);
+          }
+        } else {
+          setCode(problem?.initialCode[language] || "");
+        }
+      } else if (!isCodeGolfMode && userId) {
         // For regular mode, try to load user submission
         const userCode = await getUserSubmission(userId, problemId, language);
         if (userCode) {
@@ -136,7 +145,7 @@ export default function ProblemPage({
           setCode(problem?.initialCode[language] || "");
         }
       } else {
-        // If no user ID, use initial code
+        // If no user ID or not in Code Golf mode, use initial code
         setCode(problem?.initialCode[language] || "");
       }
     } catch (error) {

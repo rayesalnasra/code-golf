@@ -220,17 +220,10 @@ export async function saveCodeGolfSubmission(userId, problemId, language, code, 
   return docRef.id;
 }
 
-/**
- * Retrieves a user's Code Golf submission for a specific problem and language.
- * @param {string} userId - The ID of the user whose submission is being retrieved.
- * @param {string} problemId - The ID of the problem associated with the submission.
- * @param {string} language - The programming language of the submission.
- * @returns {Promise<string|null>} The submitted code or null if no submission exists.
- */
-export async function getUserCodeGolfSubmission(userId, problemId, language) {
+export async function getUserCodeGolfSubmission(userId, problemId, language, difficulty) {
   const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
   const languageId = language === 'python' ? 'py' : 'js';
-  const docRef = doc(userCodeGolfCol, `${userId}_${problemId}_${languageId}`);
+  const docRef = doc(userCodeGolfCol, `${difficulty}_${userId}_${problemId}_${languageId}`);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {

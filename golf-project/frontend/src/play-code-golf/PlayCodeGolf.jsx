@@ -338,7 +338,7 @@ const PlayCodeGolf = () => {
   };
 
   const loadInitialUserCode = async () => {
-    const userId = localStorage.getItem('userUID');
+    const userId = auth.currentUser?.uid;
     if (!userId) {
       console.error('User ID not found');
       return;
@@ -347,7 +347,7 @@ const PlayCodeGolf = () => {
     const initialUserCode = {};
     for (const problem of problems) {
       try {
-        const submission = await getUserCodeGolfSubmission(userId, problem.id, selectedLanguage);
+        const submission = await getUserCodeGolfSubmission(userId, problem.id, selectedLanguage, selectedDifficulty);
         if (submission) {
           initialUserCode[problem.id] = submission.code;
           
