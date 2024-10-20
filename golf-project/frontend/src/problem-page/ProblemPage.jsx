@@ -1,7 +1,7 @@
 // ProblemPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebase/firebaseCodeRunner.js";
+import { getTestCases, saveUserCode, getUserSubmission, getSolution, getUserCodeGolfSubmission } from "../firebase/firebaseCodeRunner.js";
 import { ref, onValue, update } from "firebase/database";
 import { database } from "../firebase/firebase.js";
 import { doc, getDoc } from "firebase/firestore/lite";
@@ -16,14 +16,25 @@ import ActionButtons from "./ActionButtons";
 import LanguageSelector from "./LanguageSelector";
 import axios from "axios";
 
-export default function ProblemPage() {
-  const { problemId } = useParams();
+export default function ProblemPage({ 
+  problemId: propProblemId, 
+  onComplete, 
+  onIncorrectAttempt, 
+  onStart, 
+  onCodeChange,
+  isCodeGolfMode = false,
+  isSolved = false,
+  language: propLanguage,
+  showBackLink = true
+}) {
+  const { problemId: paramProblemId, difficulty } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   
-  // State variables
+  const problemId = propProblemId || paramProblemId;
+  
+  const [language, setLanguage] = useState(propLanguage || 'python'); // Default to 'python' if not provided
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("python");
   const [results, setResults] = useState([]);
   const [testResult, setTestResult] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -37,18 +48,20 @@ export default function ProblemPage() {
   const [problem, setProblem] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Effect to get language from URL params
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const langParam = params.get('language');
-    if (langParam && (langParam === 'javascript' || langParam === 'python')) {
-      setLanguage(langParam);
+    if (!isCodeGolfMode) {
+      const params = new URLSearchParams(location.search);
+      const langParam = params.get('language');
+      if (langParam && (langParam === 'python' || langParam === 'javascript')) {
+        setLanguage(langParam);
+      }
     }
-  }, [location]);
+  }, [location.search, isCodeGolfMode]);
 
-  // Fetch problem, test cases, user submission, and user data on component mount
   useEffect(() => {
-    fetchProblem();
+    if (problemId) {
+      fetchProblem();
+    }
   }, [problemId]);
 
   useEffect(() => {
@@ -63,6 +76,9 @@ export default function ProblemPage() {
   const fetchProblem = async () => {
     setIsLoading(true);
     try {
+      if (!problemId) {
+        throw new Error("Problem ID is undefined");
+      }
       const problemDoc = await getDoc(doc(dbCodeRunner, 'problems', problemId));
       if (problemDoc.exists()) {
         setProblem(problemDoc.data());
@@ -107,28 +123,44 @@ export default function ProblemPage() {
     setIsLoading(true);
     setLoadError("");
     const userId = localStorage.getItem('userUID');
-    if (userId) {
-      try {
+
+    try {
+      if (isCodeGolfMode && userId) {
+        // For Code Golf mode, try to load user submission
+        const userCode = await getUserCodeGolfSubmission(userId, problemId, language, difficulty);
+        if (userCode) {
+          setCode(userCode.code);
+          // Update other state variables if needed
+          if (onCodeChange) {
+            onCodeChange(userCode.code);
+          }
+        } else {
+          setCode(problem?.initialCode[language] || "");
+        }
+      } else if (!isCodeGolfMode && userId) {
+        // For regular mode, try to load user submission
         const userCode = await getUserSubmission(userId, problemId, language);
         if (userCode) {
           setCode(userCode);
         } else {
           setCode(problem?.initialCode[language] || "");
         }
-      } catch (error) {
-        console.error("Error fetching user submission:", error);
-        setLoadError("Failed to load your saved code. Using initial code instead.");
+      } else {
+        // If no user ID or not in Code Golf mode, use initial code
         setCode(problem?.initialCode[language] || "");
       }
-    } else {
+    } catch (error) {
+      console.error("Error fetching user submission:", error);
+      setLoadError("Failed to load your saved code. Using initial code instead.");
       setCode(problem?.initialCode[language] || "");
+    } finally {
+      setResults([]);
+      setTestResult("");
+      setIsLoading(false);
+      setHasUnsavedChanges(false);
+      setShowSolution(false);
+      setIsInitialLoad(false);
     }
-    setResults([]);
-    setTestResult("");
-    setIsLoading(false);
-    setHasUnsavedChanges(false);
-    setShowSolution(false);
-    setIsInitialLoad(false);
   };
 
   // Fetch user data from the database
@@ -147,14 +179,19 @@ export default function ProblemPage() {
 
   // Handle code changes in the editor
   const handleChange = (value) => {
-    setCode(value);
-    setHasUnsavedChanges(true);
-    setShowSolution(false);
+    if (!isCodeGolfMode || !isSolved) {
+      setCode(value);
+      setHasUnsavedChanges(true);
+      setShowSolution(false);
+      if (onCodeChange) {
+        onCodeChange(value);
+      }
+    }
   };
 
   // Update user's progress after passing a test
   const updateUserProgress = () => {
-    if (!user) return;
+    if (!user || isCodeGolfMode) return;  // Don't update progress in Code Golf mode
 
     const userId = localStorage.getItem('userUID');
     const newScore = user.score + 10;
@@ -179,6 +216,10 @@ export default function ProblemPage() {
     setUser(updatedUser);
 
     alert(`Congratulations! You've earned 10 points and 10 XP. Your new score is ${newScore} and you're at level ${newLevel} with ${newXP} XP.`);
+    
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   // Run the user's code and check against test cases
@@ -188,17 +229,29 @@ export default function ProblemPage() {
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
         if (res.data.passOrFail === 'passed') {
-          updateUserProgress();
+          if (isCodeGolfMode) {
+            // In Code Golf mode, just call onComplete without updating user progress
+            if (onComplete) onComplete();
+          } else {
+            // In regular mode, update user progress and show congratulatory message
+            updateUserProgress();
+            if (onComplete) onComplete();
+          }
+        } else {
+          if (onIncorrectAttempt) onIncorrectAttempt();
         }
       })
       .catch((error) => {
         console.error("Error running code:", error);
         handleError(error);
+        if (onIncorrectAttempt) onIncorrectAttempt();
       });
   };
 
   // Save user's code to the database
   const saveCode = async () => {
+    if (isCodeGolfMode) return;
+
     setIsSaving(true);
     try {
       const userId = localStorage.getItem('userUID');
@@ -232,7 +285,7 @@ export default function ProblemPage() {
     } else if (error.request) {
       setResults([{ error: "Unable to reach the server. Please check your connection and try again." }]);
     } else {
-      setResults([{ error: "An unexpected error occurred. Please try again." }]);
+      setResults([{ error: `An unexpected error occurred: ${error.message}. Please try again.` }]);
     }
     setTestResult("failed");
   };
@@ -253,20 +306,6 @@ export default function ProblemPage() {
     }
   };
 
-  // Change the programming language and reset the code
-  const handleLanguageChange = (newLanguage) => {
-    if (hasUnsavedChanges) {
-      const confirmChange = window.confirm(
-        "You have unsaved changes. Changing the language will lose these changes. Do you want to continue?"
-      );
-      if (!confirmChange) {
-        return;
-      }
-    }
-    setLanguage(newLanguage);
-    navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
-  };
-
   // Toggle solution visibility
   const handleViewSolution = async () => {
     if (showSolution) {
@@ -283,20 +322,59 @@ export default function ProblemPage() {
     }
   };
 
+  // Call onStart when the problem is loaded
+  useEffect(() => {
+    if (problem && onStart) {
+      onStart();
+    }
+  }, [problem, onStart]);
+
+  const handleLanguageChange = (newLanguage) => {
+    if (hasUnsavedChanges) {
+      const confirmChange = window.confirm(
+        "You have unsaved changes. Changing the language will lose these changes. Do you want to continue?"
+      );
+      if (!confirmChange) {
+        return;
+      }
+    }
+    setLanguage(newLanguage);
+    
+    if (!isCodeGolfMode) {
+      navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
+    }
+    
+    setCode(problem?.initialCode[newLanguage] || "");
+    setHasUnsavedChanges(false);
+    setShowSolution(false);
+  };
+
+  useEffect(() => {
+    if (problem && !isCodeGolfMode) {
+      fetchUserSubmission();
+    } else if (problem && isCodeGolfMode) {
+      setCode(problem.initialCode[language] || "");
+    }
+  }, [problem, language, isCodeGolfMode]);
+
   return (
     <div className="problem-page">
-      <button onClick={() => handleNavigateAway("/problems")} className="back-link">
-        &larr; Back to problem selection
-      </button>
+      {showBackLink && (
+        <button onClick={() => handleNavigateAway("/problems")} className="back-link">
+          &larr; Back to problem selection
+        </button>
+      )}
       
       {problem && <ProblemDescription description={problem.description} />}
       
-      <LanguageSelector 
-        language={language} 
-        onLanguageChange={handleLanguageChange} 
-      />
+      {!isCodeGolfMode && (
+        <LanguageSelector
+          language={language}
+          onLanguageChange={handleLanguageChange}
+        />
+      )}
       
-      {user && <UserStats user={user} />}
+      {!isCodeGolfMode && user && <UserStats user={user} />}
 
       <CodeEditor
         code={code}
@@ -304,25 +382,29 @@ export default function ProblemPage() {
         isLoading={isLoading || isInitialLoad}
         loadError={loadError}
         onChange={handleChange}
+        readOnly={isCodeGolfMode && isSolved}
       />
       
       <ActionButtons
         onRun={runCode}
-        onSave={saveCode}
+        onSave={isCodeGolfMode ? null : saveCode}
         onReset={resetCode}
-        onViewSolution={handleViewSolution}
+        onViewSolution={isCodeGolfMode ? null : handleViewSolution}
         isSaving={isSaving}
         isLoading={isLoading}
         showSolution={showSolution}
+        disableRun={isCodeGolfMode && isSolved}
+        disableReset={isCodeGolfMode && isSolved}
+        isCodeGolfMode={isCodeGolfMode}
       />
       
-      {hasUnsavedChanges && (
+      {hasUnsavedChanges && !isCodeGolfMode && (
         <div className="unsaved-changes-warning">
           You have unsaved changes. Remember to save your code!
         </div>
       )}
 
-      {showSolution && (
+      {showSolution && !isCodeGolfMode && (
         <CodeEditor
           code={solutionCode}
           language={language}

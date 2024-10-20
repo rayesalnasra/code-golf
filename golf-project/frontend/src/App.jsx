@@ -18,6 +18,7 @@ import codeGolfLogo from './code-golf-icon.png';
 import CreateProblemPage from './CreateProblemPage';
 import './App.css';
 import EditProblemPage from './EditProblemPage';
+import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
 
 /**
  * Main application component that handles routing and authentication.
@@ -137,6 +138,7 @@ function App() {
                 <li><Link to="/documentation">Documentation</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
                 <li><Link to="/create-problem">Create Problem</Link></li>
+                <li><Link to="/play-code-golf">Play Code Golf</Link></li>
               </ul>
             </nav>
           </>
@@ -158,6 +160,9 @@ function App() {
           <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
           <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
           <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/play-code-golf" element={<PlayCodeGolf />} />
+          <Route path="/play-code-golf/:difficulty" element={<PlayCodeGolf />} />
+          <Route path="/play-code-golf/:difficulty/:language" element={<PlayCodeGolf />} />
         </Routes>
       </div>
     </Router>

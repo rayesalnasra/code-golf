@@ -43,28 +43,33 @@ function MyProblemsPage() {
     }
   };
 
-  if (isLoading) return <div>Loading your problems...</div>;
-  if (error) return <div className="error-message">{error}</div>;
-
   return (
     <div className="my-problems-page">
       <h1>My Problems</h1>
-      {problems.length === 0 ? (
-        <p>You haven't created any problems yet.</p>
+      {isLoading ? (
+        <div className="loading">Loading your problems...</div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
       ) : (
-        <ul className="problem-list">
-          {problems.map(problem => (
-            <li key={problem.id} className="problem-item">
-              <span className="problem-title">{problem.title}</span>
-              <div className="problem-actions">
-                <Link to={`/edit-problem/${problem.id}`} className="edit-button">Edit</Link>
-                <button onClick={() => handleDelete(problem.id)} className="delete-button">Delete</button>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <>
+          {problems.length === 0 ? (
+            <p>You haven't created any problems yet.</p>
+          ) : (
+            <ul className="problem-list">
+              {problems.map(problem => (
+                <li key={problem.id} className="problem-item">
+                  <span className="problem-title">{problem.title}</span>
+                  <div className="problem-actions">
+                    <Link to={`/edit-problem/${problem.id}`} className="edit-button">Edit</Link>
+                    <button onClick={() => handleDelete(problem.id)} className="delete-button">Delete</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <Link to="/create-problem" className="create-problem-button">Create New Problem</Link>
+        </>
       )}
-      <Link to="/create-problem" className="create-problem-button">Create New Problem</Link>
     </div>
   );
 }
