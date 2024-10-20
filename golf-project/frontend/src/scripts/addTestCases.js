@@ -95,10 +95,7 @@ const newProblems = {
 };
 
 function flattenOrStringify(value) {
-  if (Array.isArray(value)) {
-    return JSON.stringify(value);
-  }
-  return value;
+  // Remove this function as we won't need it anymore
 }
 
 async function addTestCases(problemId, testCases) {
@@ -107,13 +104,11 @@ async function addTestCases(problemId, testCases) {
 
   testCases.forEach((testCase) => {
     const newTestCaseRef = doc(testCasesCol);
-    const flattenedInputs = testCase.inputs.map(flattenOrStringify);
-    const flattenedExpectedOutput = flattenOrStringify(testCase.expected_output);
-
+    
     batch.set(newTestCaseRef, {
       problemId,
-      inputs: flattenedInputs,
-      expected_output: flattenedExpectedOutput
+      inputs: testCase.inputs,
+      expected_output: testCase.expected_output
     });
   });
 

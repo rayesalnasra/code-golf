@@ -1,9 +1,11 @@
 // ProblemPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebase/firebaseCodeRunner.js";
+import { getTestCases, saveUserCode, getUserSubmission, getSolution, getUserCodeGolfSubmission } from "../firebase/firebaseCodeRunner.js";
 import { ref, onValue, update } from "firebase/database";
 import { database } from "../firebase/firebase.js";
+import { doc, getDoc } from "firebase/firestore/lite";
+import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import "./ProblemPage.css";
 
 import CodeEditor from "./CodeEditor";
@@ -14,72 +16,25 @@ import ActionButtons from "./ActionButtons";
 import LanguageSelector from "./LanguageSelector";
 import axios from "axios";
 
-// Problem descriptions for each problem ID
-const problemDescriptions = {
-  add: "Create a function that adds two numbers",
-  reverse: "Create a function that reverses a given string",
-  palindrome: "Create a function that checks if a given string is a palindrome.",
-  factorial: "Create a function that calculates the factorial of a given non-negative integer.",
-  fizzbuzz: "Create a function that returns 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, 'FizzBuzz' for multiples of both, and the number for other cases.",
-  twosum: "Given an array of integers and a target sum, return indices of the two numbers such that they add up to the target.",
-  validparentheses: "Create a function that determines if the input string has valid parentheses.",
-  longestsubstring: "Find the length of the longest substring without repeating characters.",
-  mergeintervals: "Merge all overlapping intervals and return an array of the non-overlapping intervals.",
-  groupanagrams: "Group anagrams together from an array of strings.",
-  mediansortedarrays: "Find the median of two sorted arrays.",
-  regularexpressionmatching: "Implement regular expression matching with support for '.' and '*'.",
-  trapwater: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
-  mergeklargelists: "Merge k sorted linked lists and return it as one sorted list.",
-  longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
-};
-
-// Initial code templates for each problem and language
-const initialCodes = {
-  python: {
-    add: "def add(a, b):\n    return a + b",
-    reverse: "def reverse_string(s):\n    return s[::-1]",
-    palindrome: "def is_palindrome(s):\n    # Your code here",
-    factorial: "def factorial(n):\n    # Your code here",
-    fizzbuzz: "def fizzbuzz(n):\n    # Your code here",
-    twosum: "def two_sum(nums, target):\n    # Your code here",
-    validparentheses: "def is_valid_parentheses(s):\n    # Your code here",
-    longestsubstring: "def length_of_longest_substring(s):\n    # Your code here",
-    mergeintervals: "def merge_intervals(intervals):\n    # Your code here",
-    groupanagrams: "def group_anagrams(strs):\n    # Your code here",
-    mediansortedarrays: "def find_median_sorted_arrays(nums1, nums2):\n    # Your code here",
-    regularexpressionmatching: "def is_match(s, p):\n    # Your code here",
-    trapwater: "def trap(height):\n    # Your code here",
-    mergeklargelists: "def merge_k_lists(lists):\n    # Your code here",
-    longestvalidparentheses: "def longest_valid_parentheses(s):\n    # Your code here",
-  },
-      
-  javascript: {
-    add: "function add(a, b) {\n    return a + b;\n}",
-    reverse: "function reverseString(s) {\n    return s.split('').reverse().join('');\n}",
-    palindrome: "function isPalindrome(s) {\n    // Your code here\n}",
-    factorial: "function factorial(n) {\n    // Your code here\n}",
-    fizzbuzz: "function fizzbuzz(n) {\n    // Your code here\n}",
-    twosum: "function twoSum(nums, target) {\n    // Your code here\n}",
-    validparentheses: "function isValidParentheses(s) {\n    // Your code here\n}",
-    longestsubstring: "function lengthOfLongestSubstring(s) {\n    // Your code here\n}",
-    mergeintervals: "function mergeIntervals(intervals) {\n    // Your code here\n}",
-    groupanagrams: "function groupAnagrams(strs) {\n    // Your code here\n}",
-    mediansortedarrays: "function findMedianSortedArrays(nums1, nums2) {\n    // Your code here\n}",
-    regularexpressionmatching: "function isMatch(s, p) {\n    // Your code here\n}",
-    trapwater: "function trap(height) {\n    // Your code here\n}",
-    mergeklargelists: "function mergeKLists(lists) {\n    // Your code here\n}",
-    longestvalidparentheses: "function longestValidParentheses(s) {\n    // Your code here\n}",
-  }
-};
-
-export default function ProblemPage() {
-  const { problemId } = useParams();
+export default function ProblemPage({ 
+  problemId: propProblemId, 
+  onComplete, 
+  onIncorrectAttempt, 
+  onStart, 
+  onCodeChange,
+  isCodeGolfMode = false,
+  isSolved = false,
+  language: propLanguage,
+  showBackLink = true
+}) {
+  const { problemId: paramProblemId, difficulty } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   
-  // State variables
+  const problemId = propProblemId || paramProblemId;
+  
+  const [language, setLanguage] = useState(propLanguage || 'python'); // Default to 'python' if not provided
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("python");
   const [results, setResults] = useState([]);
   const [testResult, setTestResult] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -90,30 +45,76 @@ export default function ProblemPage() {
   const [showSolution, setShowSolution] = useState(false);
   const [solutionCode, setSolutionCode] = useState("");
   const [user, setUser] = useState(null);
+  const [problem, setProblem] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Effect to get language from URL params
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const langParam = params.get('language');
-    if (langParam && (langParam === 'javascript' || langParam === 'python')) {
-      setLanguage(langParam);
+    if (!isCodeGolfMode) {
+      const params = new URLSearchParams(location.search);
+      const langParam = params.get('language');
+      if (langParam && (langParam === 'python' || langParam === 'javascript')) {
+        setLanguage(langParam);
+      }
     }
-  }, [location]);
+  }, [location.search, isCodeGolfMode]);
 
-  // Fetch test cases, user submission, and user data on component mount
   useEffect(() => {
-    fetchTestCases();
-    fetchUserSubmission();
-    fetchUserData();
-  }, [problemId, language]);
+    if (problemId) {
+      fetchProblem();
+    }
+  }, [problemId]);
+
+  useEffect(() => {
+    if (problem) {
+      fetchTestCases();
+      fetchUserSubmission();
+      fetchUserData();
+    }
+  }, [problem, language]);
+
+  // Fetch problem details from Firestore
+  const fetchProblem = async () => {
+    setIsLoading(true);
+    try {
+      if (!problemId) {
+        throw new Error("Problem ID is undefined");
+      }
+      const problemDoc = await getDoc(doc(dbCodeRunner, 'problems', problemId));
+      if (problemDoc.exists()) {
+        setProblem(problemDoc.data());
+      } else {
+        setLoadError("Problem not found");
+      }
+    } catch (error) {
+      console.error("Error fetching problem:", error);
+      setLoadError("Failed to load problem details");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Fetch test cases for the current problem
   const fetchTestCases = async () => {
     try {
-      const cases = await getTestCases(problemId);
-      setTestCases(cases);
+      // First, try to fetch test cases from the new structure
+      const testCasesDocRef = doc(dbCodeRunner, 'testCases', problemId);
+      const testCasesDoc = await getDoc(testCasesDocRef);
+      
+      if (testCasesDoc.exists()) {
+        // New structure: test cases are in a 'cases' array
+        setTestCases(testCasesDoc.data().cases);
+      } else {
+        // If not found, try the old getTestCases function
+        const oldTestCases = await getTestCases(problemId);
+        if (oldTestCases && oldTestCases.length > 0) {
+          setTestCases(oldTestCases);
+        } else {
+          throw new Error("No test cases found for this problem");
+        }
+      }
     } catch (error) {
       console.error("Error fetching test cases:", error);
+      setLoadError("Failed to load test cases. Please try again.");
     }
   };
 
@@ -122,27 +123,44 @@ export default function ProblemPage() {
     setIsLoading(true);
     setLoadError("");
     const userId = localStorage.getItem('userUID');
-    if (userId) {
-      try {
+
+    try {
+      if (isCodeGolfMode && userId) {
+        // For Code Golf mode, try to load user submission
+        const userCode = await getUserCodeGolfSubmission(userId, problemId, language, difficulty);
+        if (userCode) {
+          setCode(userCode.code);
+          // Update other state variables if needed
+          if (onCodeChange) {
+            onCodeChange(userCode.code);
+          }
+        } else {
+          setCode(problem?.initialCode[language] || "");
+        }
+      } else if (!isCodeGolfMode && userId) {
+        // For regular mode, try to load user submission
         const userCode = await getUserSubmission(userId, problemId, language);
         if (userCode) {
           setCode(userCode);
         } else {
-          setCode(initialCodes[language][problemId] || "");
+          setCode(problem?.initialCode[language] || "");
         }
-      } catch (error) {
-        console.error("Error fetching user submission:", error);
-        setLoadError("Failed to load your saved code. Using initial code instead.");
-        setCode(initialCodes[language][problemId] || "");
+      } else {
+        // If no user ID or not in Code Golf mode, use initial code
+        setCode(problem?.initialCode[language] || "");
       }
-    } else {
-      setCode(initialCodes[language][problemId] || "");
+    } catch (error) {
+      console.error("Error fetching user submission:", error);
+      setLoadError("Failed to load your saved code. Using initial code instead.");
+      setCode(problem?.initialCode[language] || "");
+    } finally {
+      setResults([]);
+      setTestResult("");
+      setIsLoading(false);
+      setHasUnsavedChanges(false);
+      setShowSolution(false);
+      setIsInitialLoad(false);
     }
-    setResults([]);
-    setTestResult("");
-    setIsLoading(false);
-    setHasUnsavedChanges(false);
-    setShowSolution(false);
   };
 
   // Fetch user data from the database
@@ -161,14 +179,19 @@ export default function ProblemPage() {
 
   // Handle code changes in the editor
   const handleChange = (value) => {
-    setCode(value);
-    setHasUnsavedChanges(true);
-    setShowSolution(false);
+    if (!isCodeGolfMode || !isSolved) {
+      setCode(value);
+      setHasUnsavedChanges(true);
+      setShowSolution(false);
+      if (onCodeChange) {
+        onCodeChange(value);
+      }
+    }
   };
 
   // Update user's progress after passing a test
   const updateUserProgress = () => {
-    if (!user) return;
+    if (!user || isCodeGolfMode) return;  // Don't update progress in Code Golf mode
 
     const userId = localStorage.getItem('userUID');
     const newScore = user.score + 10;
@@ -193,6 +216,10 @@ export default function ProblemPage() {
     setUser(updatedUser);
 
     alert(`Congratulations! You've earned 10 points and 10 XP. Your new score is ${newScore} and you're at level ${newLevel} with ${newXP} XP.`);
+    
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   // Run the user's code and check against test cases
@@ -202,17 +229,29 @@ export default function ProblemPage() {
         setResults(res.data.results);
         setTestResult(res.data.passOrFail);
         if (res.data.passOrFail === 'passed') {
-          updateUserProgress();
+          if (isCodeGolfMode) {
+            // In Code Golf mode, just call onComplete without updating user progress
+            if (onComplete) onComplete();
+          } else {
+            // In regular mode, update user progress and show congratulatory message
+            updateUserProgress();
+            if (onComplete) onComplete();
+          }
+        } else {
+          if (onIncorrectAttempt) onIncorrectAttempt();
         }
       })
       .catch((error) => {
         console.error("Error running code:", error);
         handleError(error);
+        if (onIncorrectAttempt) onIncorrectAttempt();
       });
   };
 
   // Save user's code to the database
   const saveCode = async () => {
+    if (isCodeGolfMode) return;
+
     setIsSaving(true);
     try {
       const userId = localStorage.getItem('userUID');
@@ -233,7 +272,7 @@ export default function ProblemPage() {
   // Reset the code editor to the initial state
   const resetCode = () => {
     if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
-      setCode(initialCodes[language][problemId] || "");
+      setCode(problem?.initialCode[language] || "");
       setHasUnsavedChanges(true);
       setShowSolution(false);
     }
@@ -246,7 +285,7 @@ export default function ProblemPage() {
     } else if (error.request) {
       setResults([{ error: "Unable to reach the server. Please check your connection and try again." }]);
     } else {
-      setResults([{ error: "An unexpected error occurred. Please try again." }]);
+      setResults([{ error: `An unexpected error occurred: ${error.message}. Please try again.` }]);
     }
     setTestResult("failed");
   };
@@ -267,20 +306,6 @@ export default function ProblemPage() {
     }
   };
 
-  // Change the programming language and reset the code
-  const handleLanguageChange = (newLanguage) => {
-    if (hasUnsavedChanges) {
-      const confirmChange = window.confirm(
-        "You have unsaved changes. Changing the language will lose these changes. Do you want to continue?"
-      );
-      if (!confirmChange) {
-        return;
-      }
-    }
-    setLanguage(newLanguage);
-    navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
-  };
-
   // Toggle solution visibility
   const handleViewSolution = async () => {
     if (showSolution) {
@@ -297,46 +322,89 @@ export default function ProblemPage() {
     }
   };
 
+  // Call onStart when the problem is loaded
+  useEffect(() => {
+    if (problem && onStart) {
+      onStart();
+    }
+  }, [problem, onStart]);
+
+  const handleLanguageChange = (newLanguage) => {
+    if (hasUnsavedChanges) {
+      const confirmChange = window.confirm(
+        "You have unsaved changes. Changing the language will lose these changes. Do you want to continue?"
+      );
+      if (!confirmChange) {
+        return;
+      }
+    }
+    setLanguage(newLanguage);
+    
+    if (!isCodeGolfMode) {
+      navigate(`/problems/${problemId}?language=${newLanguage}`, { replace: true });
+    }
+    
+    setCode(problem?.initialCode[newLanguage] || "");
+    setHasUnsavedChanges(false);
+    setShowSolution(false);
+  };
+
+  useEffect(() => {
+    if (problem && !isCodeGolfMode) {
+      fetchUserSubmission();
+    } else if (problem && isCodeGolfMode) {
+      setCode(problem.initialCode[language] || "");
+    }
+  }, [problem, language, isCodeGolfMode]);
+
   return (
     <div className="problem-page">
-      <button onClick={() => handleNavigateAway("/problems")} className="back-link">
-        &larr; Back to problem selection
-      </button>
+      {showBackLink && (
+        <button onClick={() => handleNavigateAway("/problems")} className="back-link">
+          &larr; Back to problem selection
+        </button>
+      )}
       
-      <ProblemDescription description={problemDescriptions[problemId]} />
+      {problem && <ProblemDescription description={problem.description} />}
       
-      <LanguageSelector 
-        language={language} 
-        onLanguageChange={handleLanguageChange} 
-      />
+      {!isCodeGolfMode && (
+        <LanguageSelector
+          language={language}
+          onLanguageChange={handleLanguageChange}
+        />
+      )}
       
-      {user && <UserStats user={user} />}
+      {!isCodeGolfMode && user && <UserStats user={user} />}
 
       <CodeEditor
         code={code}
         language={language}
-        isLoading={isLoading}
+        isLoading={isLoading || isInitialLoad}
         loadError={loadError}
         onChange={handleChange}
+        readOnly={isCodeGolfMode && isSolved}
       />
       
       <ActionButtons
         onRun={runCode}
-        onSave={saveCode}
+        onSave={isCodeGolfMode ? null : saveCode}
         onReset={resetCode}
-        onViewSolution={handleViewSolution}
+        onViewSolution={isCodeGolfMode ? null : handleViewSolution}
         isSaving={isSaving}
         isLoading={isLoading}
         showSolution={showSolution}
+        disableRun={isCodeGolfMode && isSolved}
+        disableReset={isCodeGolfMode && isSolved}
+        isCodeGolfMode={isCodeGolfMode}
       />
       
-      {hasUnsavedChanges && (
+      {hasUnsavedChanges && !isCodeGolfMode && (
         <div className="unsaved-changes-warning">
           You have unsaved changes. Remember to save your code!
         </div>
       )}
 
-      {showSolution && (
+      {showSolution && !isCodeGolfMode && (
         <CodeEditor
           code={solutionCode}
           language={language}

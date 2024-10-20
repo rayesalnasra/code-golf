@@ -67,6 +67,7 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
+            autoComplete="off"
           />
           <input
             type="password"
@@ -75,6 +76,7 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
+            autoComplete="off"
           />
           <button type="submit" className="auth-button">
             Login

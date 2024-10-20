@@ -174,5 +174,64 @@ export async function getSolution(problemId, language) {
   }
 }
 
+/**
+ * Saves Code Golf submission to the Firestore database.
+ * @param {string} userId - The ID of the user submitting the code.
+ * @param {string} problemId - The ID of the problem being solved.
+ * @param {string} language - The programming language used for the submission.
+ * @param {string} code - The actual code submitted by the user.
+ * @param {number} characterCount - The character count of the submitted code.
+ * @param {number} attempts - The number of attempts made by the user.
+ * @param {number} score - The score achieved by the user.
+ * @param {number} timer - The timer value for the submission.
+ * @param {string} difficulty - The difficulty level of the problem.
+ * @returns {Promise<string>} The ID of the newly created or updated document.
+ */
+export async function saveCodeGolfSubmission(userId, problemId, language, code, characterCount, attempts, score, timer, difficulty) {
+  if (!difficulty) {
+    console.error('Difficulty is undefined');
+    return;
+  }
+
+  console.log('Saving Code Golf submission:', { userId, problemId, language, code, characterCount, attempts, score, timer, difficulty });
+  const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userCodeGolfCol, `${difficulty}_${userId}_${problemId}_${languageId}`);
+  
+  // Ensure attempts, score, and timer are numbers
+  const numAttempts = Number(attempts) || 0;
+  const numScore = Number(score) || 0;
+  const numTimer = Number(timer) || 0;
+
+  await setDoc(docRef, {
+    userId,
+    problemId,
+    language,
+    languageId,
+    code,
+    characterCount,
+    attempts: numAttempts,
+    score: numScore,
+    timer: numTimer,
+    difficulty,
+    timestamp: new Date()
+  }, { merge: true });
+  console.log('Code Golf submission saved successfully');
+  return docRef.id;
+}
+
+export async function getUserCodeGolfSubmission(userId, problemId, language, difficulty) {
+  const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
+  const languageId = language === 'python' ? 'py' : 'js';
+  const docRef = doc(userCodeGolfCol, `${difficulty}_${userId}_${problemId}_${languageId}`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    return null;
+  }
+}
+
 // Export the initialized app and database for use in other parts of the application
 export { appCodeRunner, dbCodeRunner };
