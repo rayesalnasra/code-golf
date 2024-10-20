@@ -8,38 +8,29 @@ export default function ActionButtons({
   onViewSolution,  // Function to toggle the solution view
   isSaving,        // Indicates if the code is currently being saved
   isLoading,       // Indicates if an action is in progress
-  showSolution     // Indicates if the solution is currently visible
+  showSolution,    // Indicates if the solution is currently visible
+  disableRun,       // Indicates if the run button should be disabled
+  disableReset,    // Indicates if the reset button should be disabled
+  isCodeGolfMode    // Indicates if the problem is in Code Golf mode
 }) {
   return (
-    <div className="button-container">
-      <button 
-        className="btn btn-primary" 
-        onClick={onRun} // Trigger the run action
-        disabled={isLoading} // Disable button while loading
-      >
-        Run
+    <div className="action-buttons">
+      <button onClick={onRun} disabled={isLoading || disableRun}>
+        Run Code
       </button>
-      <button 
-        className="btn btn-success" 
-        onClick={onSave} // Trigger the save action
-        disabled={isSaving || isLoading} // Disable if saving or loading
-      >
-        {isSaving ? "Saving..." : "Save Code"} 
-      </button>
-      <button 
-        className="btn btn-warning" 
-        onClick={onReset} // Trigger the reset action
-        disabled={isLoading} // Disable button while loading
-      >
+      {!isCodeGolfMode && onSave && (
+        <button onClick={onSave} disabled={isSaving || isLoading}>
+          {isSaving ? 'Saving...' : 'Save Code'}
+        </button>
+      )}
+      <button onClick={onReset} disabled={isLoading || disableReset}>
         Reset Code
       </button>
-      <button 
-        className="btn btn-info" 
-        onClick={onViewSolution} // Toggle view solution action
-        disabled={isLoading} // Disable button while loading
-      >
-        {showSolution ? "Hide Solution" : "View Solution"}
-      </button>
+      {!isCodeGolfMode && onViewSolution && (
+        <button onClick={onViewSolution} disabled={isLoading}>
+          {showSolution ? 'Hide Solution' : 'View Solution'}
+        </button>
+      )}
     </div>
   );
 }

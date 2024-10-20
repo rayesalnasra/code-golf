@@ -1,31 +1,11 @@
+/* Profile Page Styling */
 .profile-page {
   background-color: #ffffff;
   border-radius: 8px;
-  padding: 30px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
-}
-
-.badges-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 150px;
-}
-
-.badge-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.badge-image {
-  width: 100px;
-  height: auto;
-}
-
-.greyed-out {
-  filter: grayscale(100%) brightness(0);
-  opacity: 0.1;
+  max-width: 1200px;
 }
 
 .content-container {
@@ -42,11 +22,13 @@
   text-align: center;
 }
 
+/* Profile Section Styles */
 .profile-section {
   background-color: #f6f8fa;
   border-radius: 8px;
-  padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
 .profile-section h2 {
@@ -70,6 +52,7 @@
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ddd;
 }
 
 .info-item h3,
@@ -86,43 +69,120 @@
   line-height: 1.5;
 }
 
-/* New styles for larger name and email */
-.info-item p {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
 .stat-value {
   font-size: 1.5rem;
   font-weight: bold;
   color: #2c974b;
 }
 
-@media (max-width: 768px) {
-  .profile-page {
-    padding: 20px;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .profile-section {
-    padding: 1rem;
-  }
-
-  .info-grid,
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Adjust font size for smaller screens */
-  .info-item p {
-    font-size: 1.2rem;
-  }
+/* Editable Inputs */
+.editable-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.8rem;
+  transition: border-color 0.3s ease;
 }
 
-/* Dark mode */
+.editable-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+textarea.editable-input {
+  height: 80px;
+  resize: vertical;
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #0069d9;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.private-button {
+  background-color: #ff9800;
+  color: white;
+}
+
+.private-button:hover {
+  background-color: #fb8c00;
+}
+
+/* Badges */
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badge-image {
+  width: 100px;
+  height: auto;
+}
+
+.greyed-out {
+  filter: grayscale(100%) brightness(0.5);
+  opacity: 0.5;
+}
+
+/* Dark Mode Styling */
 body.dark-mode .profile-page {
   background-color: #121212;
   color: #ffffff;
@@ -142,8 +202,10 @@ body.dark-mode .profile-section {
 
 body.dark-mode .info-item,
 body.dark-mode .stat-item {
-  background-color: #1e1e1e;
+  background-color: #2b2b2b;
+  color: #e0e0e0;
   box-shadow: 0 1px 2px rgba(255, 255, 255, 0.05);
+  border-color: #444;
 }
 
 body.dark-mode .info-item h3,
@@ -153,50 +215,49 @@ body.dark-mode .stat-item p {
   color: #bbbbbb;
 }
 
-.profile-page {
-  padding: 20px;
+body.dark-mode .editable-input {
+  background-color: #333;
+  color: #fff;
+  border-color: #555;
 }
 
-.page-title {
-  text-align: center;
+body.dark-mode .editable-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.profile-section {
-  margin-bottom: 20px;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 15px;
+  }
 
-.info-grid,
-.stats-grid {
-  display: grid;
-  gap: 20px;
-}
+  .page-title {
+    font-size: 1.8rem;
+  }
 
-.info-item,
-.stat-item {
-  border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 5px;
-}
+  .profile-section {
+    padding: 1rem;
+  }
 
-.edit-button,
-.save-button,
-.cancel-button {
-  margin: 5px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-}
+  .info-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 
-.edit-button {
-  background-color: #007bff; /* Blue */
-}
+  .button-group {
+    flex-direction: column;
+  }
 
-.save-button {
-  background-color: #28a745; /* Green */
-}
+  button {
+    width: 100%;
+  }
 
-.cancel-button {
-  background-color: #dc3545; /* Red */
+  .badges-grid {
+    gap: 10px;
+  }
+
+  .badge-image {
+    width: 80px;
+  }
 }

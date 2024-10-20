@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
-import { readData, updateData } from "../firebase/databaseUtils";
+import { readProfileData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
-import { Line } from "react-chartjs-2"; // New import for Line chart
-import { getDatabase, ref, get, set } from "firebase/database"; // New import for Firebase Realtime Database
+import { Line } from "react-chartjs-2";
+import { getDatabase, ref, get, set } from "firebase/database";
 import {
   Chart as ChartJS,
   LineElement,
@@ -11,7 +11,8 @@ import {
   LinearScale,
   PointElement,
   Tooltip,
-} from "chart.js"; // New import for Chart.js
+} from "chart.js";
+import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
 
 ChartJS.register(
@@ -20,69 +21,92 @@ ChartJS.register(
   LinearScale,
   PointElement,
   Tooltip
-); // New Chart.js registration
+);
 
 function ProfilePage() {
-  const getBadges = (score) => {
-    const badges = [];
-    if (score > 100) badges.push("100");
-    if (score > 1000) badges.push("1000");
-    if (score > 1500) badges.push("1500");
-    if (score > 2000) badges.push("2000");
-    if (score > 2500) badges.push("2500");
-    return badges;
-  };
-
-  const getLevelBadges = (level) => {
-    const badges = [];
-    if (level >= 1) badges.push("1");
-    if (level >= 5) badges.push("5");
-    if (level >= 10) badges.push("10");
-    if (level >= 50) badges.push("50");
-    if (level >= 100) badges.push("100+");
-    return badges;
-  };
-
   const [user, setUser] = useState({
     displayName: "",
     email: "",
     level: 0,
     xp: 0,
     score: 0,
+    bio: "",
   });
 
   const [editableUser, setEditableUser] = useState({
     displayName: "",
+    bio: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
 
-  // --- New state for weekly progress ---
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [pastDMs, setPastDMs] = useState([]);
   const [weeklyProgress, setWeeklyProgress] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userId = localStorage.getItem("userUID");
     const storedEmail = localStorage.getItem("userEmail");
     const storedDisplayName = localStorage.getItem("userDisplayName");
+    const storedBio = localStorage.getItem("userBio");
 
     if (userId) {
-      readData(`users/${userId}`, (userData) => {
-        if (userData) {
-          setUser({
-            displayName:
-              storedDisplayName || userData.displayName || "Anonymous User",
-            email: storedEmail || userData.email || "No email provided",
-            level: userData.level || 0,
-            xp: userData.xp || 0,
-            score: userData.score || 0,
-          });
-          setEditableUser({
-            displayName:
-              storedDisplayName || userData.displayName || "Anonymous User",
-          });
-        }
-      });
+      const fetchData = async () => {
+        try {
+          const userData = await readProfileData(`users/${userId}`);
+          if (userData) {
+            setUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              email: storedEmail || userData.email || "No email provided",
+              level: userData.level || 0,
+              xp: userData.xp || 0,
+              score: userData.score || 0,
+              bio: storedBio || userData.bio || "No bio available",
+            });
+            setEditableUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              bio: storedBio || userData.bio || "",
+            });
+          }
 
-      // --- New code to fetch weekly progress ---
+          const directMessages = await readProfileData(`directMessages`);
+          const userPastDMs = [];
+
+          for (const conversationKey in directMessages) {
+            if (conversationKey.includes(userId)) {
+              const otherUserId = conversationKey.split('_').find(id => id !== userId);
+
+              const otherUserData = await readProfileData(`users/${otherUserId}`);
+              const displayName = otherUserData?.displayName || "Unknown User";
+
+              const messages = Object.values(directMessages[conversationKey]);
+
+              const latestMessageIndex = messages.length - 1;
+              const secondToLatestMessageIndex = messages.length - 2;
+
+              const latestMessage = messages[latestMessageIndex];
+              const secondToLatestMessage = messages.length > 1 ? messages[secondToLatestMessageIndex] : latestMessage;
+
+              const messageToDisplay = secondToLatestMessage || latestMessage; 
+
+              const messageTime = new Date(messageToDisplay.timestamp).toLocaleString();
+
+              userPastDMs.push({
+                id: otherUserId,
+                displayName: displayName,
+                latestMessage: messageToDisplay.message,
+                latestMessageTime: messageTime,
+                isFromUser: messageToDisplay.userId === userId,
+              });
+            }
+          }
+
+          setPastDMs(userPastDMs);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
       const fetchWeeklyProgress = async () => {
         const db = getDatabase();
         const progressData = [];
@@ -92,18 +116,15 @@ function ProfilePage() {
           if (snapshot.exists()) {
             progressData.push(snapshot.val());
           } else {
-            progressData.push(0); // Default value if no data exists
+            progressData.push(0);
           }
         }
         setWeeklyProgress(progressData);
       };
 
-      fetchWeeklyProgress();
-
-      // --- New code to update day7 value and shift previous values ---
       const updateWeeklyProgress = async () => {
         const db = getDatabase();
-        const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+        const currentDate = new Date().toISOString().split("T")[0];
         const lastAccessRef = ref(db, `users/${userId}/lastAccessDate`);
         const lastAccessSnapshot = await get(lastAccessRef);
         const lastAccessDate = lastAccessSnapshot.exists()
@@ -111,7 +132,6 @@ function ProfilePage() {
           : null;
 
         if (lastAccessDate === currentDate) {
-          // Update day7 value to current score
           const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
           const userScoreRef = ref(db, `users/${userId}/score`);
           const userScoreSnapshot = await get(userScoreRef);
@@ -119,7 +139,6 @@ function ProfilePage() {
             await set(day7Ref, userScoreSnapshot.val());
           }
         } else {
-          // Shift previous values to the left
           for (let i = 1; i < 7; i++) {
             const currentDayRef = ref(db, `weeklyProgress/${userId}/day${i}`);
             const nextDayRef = ref(db, `weeklyProgress/${userId}/day${i + 1}`);
@@ -128,18 +147,18 @@ function ProfilePage() {
               await set(currentDayRef, nextDaySnapshot.val());
             }
           }
-          // Update day7 value to current score
           const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
           const userScoreRef = ref(db, `users/${userId}/score`);
           const userScoreSnapshot = await get(userScoreRef);
           if (userScoreSnapshot.exists()) {
             await set(day7Ref, userScoreSnapshot.val());
           }
-          // Update last access date
           await set(lastAccessRef, currentDate);
         }
       };
 
+      fetchData();
+      fetchWeeklyProgress();
       updateWeeklyProgress();
     }
   }, []);
@@ -151,6 +170,7 @@ function ProfilePage() {
   const handleCancelClick = () => {
     setEditableUser({
       displayName: user.displayName,
+      bio: user.bio,
     });
     setIsEditing(false);
   };
@@ -170,26 +190,24 @@ function ProfilePage() {
       try {
         const authUser = auth.currentUser;
 
-        // --- Update Firebase Auth ---
         if (editableUser.displayName !== user.displayName) {
           await updateProfile(authUser, {
             displayName: editableUser.displayName,
           });
         }
 
-        // --- Update Firebase Realtime Database ---
-        // Update the display name in Realtime Database
         await updateData(`users/${userId}`, {
           displayName: editableUser.displayName,
+          bio: editableUser.bio,
         });
 
-        // --- Update Local Storage ---
         localStorage.setItem("userDisplayName", editableUser.displayName);
+        localStorage.setItem("userBio", editableUser.bio);
 
-        // Update user state and exit edit mode
         setUser((prevUser) => ({
           ...prevUser,
           displayName: editableUser.displayName,
+          bio: editableUser.bio,
         }));
         setIsEditing(false);
 
@@ -203,7 +221,6 @@ function ProfilePage() {
     }
   };
 
-  // --- New code to prepare data for the line chart ---
   const data = {
     labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
     datasets: [
@@ -230,6 +247,14 @@ function ProfilePage() {
     },
   };
 
+  const handleReplyClick = (dmUserId) => {
+    navigate(`/direct-message/${dmUserId}`);
+  };
+
+  const togglePrivacy = () => {
+    setIsPrivate((prevIsPrivate) => !prevIsPrivate);
+  };
+
   return (
     <div className="profile-page">
       <div className="content-container">
@@ -248,12 +273,24 @@ function ProfilePage() {
                   onChange={handleInputChange}
                 />
               ) : (
-                <p>{user.displayName}</p>
+                <p>{isPrivate ? "Private" : user.displayName}</p>
               )}
             </div>
             <div className="info-item">
               <h3>Email</h3>
-              <p>{user.email}</p> {/* Email is displayed but not editable */}
+              <p>{isPrivate ? "Private" : user.email}</p>
+            </div>
+            <div className="info-item">
+              <h3>Bio</h3>
+              {isEditing ? (
+                <textarea
+                  name="bio"
+                  value={editableUser.bio}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <p>{isPrivate ? "Private" : user.bio}</p>
+              )}
             </div>
           </div>
           {isEditing ? (
@@ -266,14 +303,42 @@ function ProfilePage() {
               </button>
             </div>
           ) : (
-            <button className="edit-button" onClick={handleEditClick}>
-              Edit
-            </button>
+            <div className="button-group">
+              <button className="edit-button" onClick={handleEditClick}>
+                Edit
+              </button>
+              <button className="private-button" onClick={togglePrivacy}>
+                {isPrivate ? "Make Public" : "Make Private"}
+              </button>
+            </div>
           )}
         </section>
 
         <section className="profile-section">
-          <h2>Code Golf Stats</h2>
+          <h2>Direct Messages</h2>
+          {pastDMs.length > 0 ? (
+            <div className="dm-list">
+              {pastDMs.map((dmUser, index) => (
+                <div 
+                  key={`${dmUser.id}-${index}`} 
+                  className={`dm-box ${dmUser.isFromUser ? 'user-message' : 'other-user-message'}`}
+                >
+                  <div className="dm-username">{dmUser.displayName}</div>
+                  <div className="dm-latest-message">{dmUser.latestMessage}</div>
+                  <div className="dm-time">{dmUser.latestMessageTime}</div>
+                  <button className="reply-button" onClick={() => handleReplyClick(dmUser.id)}>
+                    Reply
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No past direct messages.</p>
+          )}
+        </section>
+
+        <section className="profile-section">
+          <h2>Statistics</h2>
           <div className="stats-grid">
             <div className="stat-item">
               <h3>Level</h3>
@@ -299,7 +364,7 @@ function ProfilePage() {
               <div key={index} className="badge-item">
                 <img
                   className={`badge-image ${
-                    user.score >= badge ? "" : "greyed-out"
+                    user.score >= parseInt(badge) ? "" : "greyed-out"
                   }`}
                   src={`./src/assets/badges/gold_medal.png`}
                   alt={`Badge for ${badge} points`}
