@@ -122,6 +122,8 @@ function ProfilePage() {
         setWeeklyProgress(progressData);
       };
 
+      fetchWeeklyProgress();
+
       const updateWeeklyProgress = async () => {
         const db = getDatabase();
         const currentDate = new Date().toISOString().split("T")[0];
