@@ -119,6 +119,8 @@ export default function ProblemPage({
 
   // Fetch user's previous submission for the current problem
   const fetchUserSubmission = async () => {
+    if (isCodeGolfMode) return;
+
     setIsLoading(true);
     setLoadError("");
     const userId = localStorage.getItem('userUID');
@@ -233,6 +235,8 @@ export default function ProblemPage({
 
   // Save user's code to the database
   const saveCode = async () => {
+    if (isCodeGolfMode) return;
+
     setIsSaving(true);
     try {
       const userId = localStorage.getItem('userUID');
@@ -329,6 +333,14 @@ export default function ProblemPage({
     setHasUnsavedChanges(false);
     setShowSolution(false);
   };
+
+  useEffect(() => {
+    if (problem && !isCodeGolfMode) {
+      fetchUserSubmission();
+    } else if (problem && isCodeGolfMode) {
+      setCode(problem.initialCode[language] || "");
+    }
+  }, [problem, language, isCodeGolfMode]);
 
   return (
     <div className="problem-page">

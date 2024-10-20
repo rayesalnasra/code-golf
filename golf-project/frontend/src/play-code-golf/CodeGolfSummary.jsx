@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { collection, query, where, getDocs } from 'firebase/firestore/lite';
+import { dbCodeRunner } from '../firebase/firebaseCodeRunner';
 import './CodeGolfSummary.css';
 
-const CodeGolfSummary = ({ problems, scores, totalScore, problemTimes, attempts, userCode }) => {
+const CodeGolfSummary = ({ difficulty }) => {
   const navigate = useNavigate();
+  const [summaryData, setSummaryData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchSummaryData();
+  }, [difficulty]);
+
+  const fetchSummaryData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const userId = localStorage.getItem('userUID');
+      const userCodeGolfCol = collection(dbCodeRunner, 'userCodeGolf');
+      const q = query(userCodeGolfCol, where('userId', '==', userId), where('difficulty', '==', difficulty));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSummaryData(data);
+    } catch (err) {
+      console.error("Error fetching summary data:", err);
+      setError("Failed to load summary data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -15,22 +42,25 @@ const CodeGolfSummary = ({ problems, scores, totalScore, problemTimes, attempts,
     navigate('/play-code-golf', { replace: true });
   };
 
+  if (isLoading) return <div>Loading summary...</div>;
+  if (error) return <div className="error-message">{error}</div>;
+
   return (
     <div className="code-golf-summary">
       <h1>Code Golf Summary</h1>
       <div className="summary-stats">
-        <p>Total Score: {totalScore}</p>
+        <p>Total Score: {summaryData.reduce((total, problem) => total + problem.score, 0)}</p>
       </div>
-      {problems.map((problem, index) => (
+      {summaryData.map((problem) => (
         <div key={problem.id} className="problem-summary">
-          <h2>Problem {index + 1}: {problem.title}</h2>
-          <p>Score: {scores[problem.id]}</p>
-          <p>Time Spent: {formatTime(problemTimes[problem.id] || 0)}</p>
-          <p>Attempts: {attempts[problem.id] || 0}</p>
-          <p>Character Count: {userCode[problem.id]?.length || 0}</p>
+          <h2>Problem: {problem.problemId}</h2>
+          <p>Score: {problem.score}</p>
+          <p>Time Spent: {formatTime(problem.timer)}</p>
+          <p>Attempts: {problem.attempts}</p>
+          <p>Character Count: {problem.characterCount}</p>
           <div className="code-preview">
             <h3>Your Code:</h3>
-            <pre><code>{userCode[problem.id] || 'No code submitted'}</code></pre>
+            <pre><code>{problem.code || 'No code submitted'}</code></pre>
           </div>
         </div>
       ))}

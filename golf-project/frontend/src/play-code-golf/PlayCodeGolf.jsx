@@ -5,7 +5,7 @@ import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import ProblemPage from '../problem-page/ProblemPage';
 import Timer from './Timer';
 import CodeGolfSummary from './CodeGolfSummary';
-import { saveCodeGolfSubmission, getUserSubmission, getUserCodeGolfSubmission } from '../firebase/firebaseCodeRunner';
+import { saveCodeGolfSubmission, getUserCodeGolfSubmission } from '../firebase/firebaseCodeRunner';
 import './PlayCodeGolf.css';
 import { auth } from '../firebase/firebaseAuth';
 
@@ -243,16 +243,13 @@ const PlayCodeGolf = () => {
     }));
   };
 
-  const handleCodeChange = async (newCode) => {
+  const handleCodeChange = (newCode) => {
     const problemId = problems[currentProblemIndex].id;
     setCharacterCount(newCode.length);
     setUserCode(prevCode => ({
       ...prevCode,
       [problemId]: newCode
     }));
-
-    // Save the current state
-    await saveCurrentProblemState();
   };
 
   const saveCurrentProblemState = async () => {
@@ -296,8 +293,7 @@ const PlayCodeGolf = () => {
     }
   };
 
-  const navigateToProblem = async (index) => {
-    await saveCurrentProblemState();
+  const navigateToProblem = (index) => {
     setCurrentProblemIndex(index);
     setIsTimerRunning(false);
     
@@ -307,17 +303,11 @@ const PlayCodeGolf = () => {
       return;
     }
 
-    const submission = await fetchUserSubmission(problem.id);
-    
-    if (submission) {
-      setUserCode(prevCode => ({
-        ...prevCode,
-        [problem.id]: submission
-      }));
-      setCharacterCount(submission.length);
-    } else {
-      setCharacterCount(0);
-    }
+    setCharacterCount(0);
+    setUserCode(prevCode => ({
+      ...prevCode,
+      [problem.id]: problem.initialCode[selectedLanguage] || ''
+    }));
     
     navigate(`/play-code-golf/${selectedDifficulty}/${problem.id}?language=${selectedLanguage}`);
   };
@@ -345,22 +335,6 @@ const PlayCodeGolf = () => {
     setScores(finalScores);
     setTotalScore(Object.values(finalScores).reduce((a, b) => a + b, 0));
     setShowSummary(true);
-  };
-
-  const fetchUserSubmission = async (problemId) => {
-    const userId = localStorage.getItem('userUID');
-    if (!userId) {
-      console.error('User ID not found');
-      return null;
-    }
-
-    try {
-      const submission = await getUserCodeGolfSubmission(userId, problemId, selectedLanguage);
-      return submission ? submission.code : null;
-    } catch (error) {
-      console.error('Error fetching user submission:', error);
-      return null;
-    }
   };
 
   const loadInitialUserCode = async () => {
@@ -431,12 +405,7 @@ const PlayCodeGolf = () => {
   if (showSummary) {
     return (
       <CodeGolfSummary
-        problems={problems}
-        scores={scores}
-        totalScore={totalScore}
-        problemTimes={problemTimes}
-        attempts={attempts}
-        userCode={userCode}
+        difficulty={selectedDifficulty}
       />
     );
   }
