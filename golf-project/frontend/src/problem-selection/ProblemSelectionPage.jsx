@@ -1,6 +1,9 @@
 // ProblemSelectionPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore/lite";
+import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
+import { readData } from "../firebase/databaseUtils";
 import "./ProblemSelectionPage.css";
 
 // Difficulty levels with corresponding problems
@@ -8,41 +11,117 @@ const difficulties = {
   easy: {
     description: "Ideal for beginners. These problems cover basic programming concepts and simple algorithms.",
     emoji: "🌱",
-    problems: [
-      { id: "add", title: "Add Two Numbers" },
-      { id: "reverse", title: "Reverse String" },
-      { id: "palindrome", title: "Check Palindrome" },
-      { id: "factorial", title: "Calculate Factorial" },
-      { id: "fizzbuzz", title: "FizzBuzz" }
-    ]
   },
   medium: {
     description: "Challenges for intermediate programmers. These problems involve more complex algorithms and data structures.",
     emoji: "🌿",
-    problems: [
-      { id: "twosum", title: "Two Sum" },
-      { id: "validparentheses", title: "Valid Parentheses" },
-      { id: "longestsubstring", title: "Longest Substring Without Repeating Characters" },
-      { id: "mergeintervals", title: "Merge Intervals" },
-      { id: "groupanagrams", title: "Group Anagrams" }
-    ]
   },
   hard: {
     description: "Advanced problems for experienced programmers. These challenges often require optimal solutions and advanced algorithms.",
     emoji: "🌳",
-    problems: [
-      { id: "mediansortedarrays", title: "Median of Two Sorted Arrays" },
-      { id: "regularexpressionmatching", title: "Regular Expression Matching" },
-      { id: "trapwater", title: "Trapping Rain Water" },
-      { id: "mergeklargelists", title: "Merge k Sorted Lists" },
-      { id: "longestvalidparentheses", title: "Longest Valid Parentheses" }
-    ]
   }
 };
 
 export default function ProblemSelectionPage() {
   // State to track the selected difficulty level
   const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
+  const [systemProblems, setSystemProblems] = useState([]);
+  const [userProblems, setUserProblems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchProblems();
+  }, [selectedDifficulty]);
+
+  const fetchProblems = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log("Fetching problems...");
+      const problemsCollection = collection(dbCodeRunner, 'problems');
+      const problemsSnapshot = await getDocs(problemsCollection);
+      console.log(`Found ${problemsSnapshot.docs.length} problems`);
+
+      const allProblems = await Promise.all(problemsSnapshot.docs.map(async (doc) => {
+        const problemData = doc.data();
+        console.log(`Processing problem: ${doc.id}`, problemData);
+        let creatorInfo = null;
+        if (problemData.createdBy) {
+          try {
+            await new Promise((resolve) => {
+              readData(`users/${problemData.createdBy}`, (userData) => {
+                if (userData) {
+                  creatorInfo = {
+                    name: userData.displayName || "Anonymous User",
+                    createdAt: problemData.createdAt ? new Date(problemData.createdAt) : null
+                  };
+                }
+                resolve();
+              });
+            });
+          } catch (userError) {
+            console.error(`Error fetching user data for problem ${doc.id}:`, userError);
+          }
+        }
+        return { 
+          id: doc.id, 
+          ...problemData, 
+          creatorInfo
+        };
+      }));
+
+      const filteredProblems = allProblems.filter(problem => problem.difficulty === selectedDifficulty);
+      
+      const systemProblemsList = filteredProblems.filter(problem => !problem.creatorInfo);
+      const userProblemsList = filteredProblems.filter(problem => problem.creatorInfo);
+
+      setSystemProblems(systemProblemsList);
+      setUserProblems(userProblemsList);
+
+      console.log(`Filtered ${systemProblemsList.length} system problems and ${userProblemsList.length} user problems for difficulty: ${selectedDifficulty}`);
+    } catch (err) {
+      console.error("Error fetching problems:", err);
+      setError(`Failed to load problems. Error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const renderProblemList = (problems, title) => (
+    <section className="problem-list-section">
+      <h2>{title}</h2>
+      {problems.length === 0 ? (
+        <p>No problems found for this difficulty level.</p>
+      ) : (
+        <ul className="problem-list">
+          {problems.map((problem) => (
+            <li key={problem.id} className="problem-item">
+              <Link to={`/problems/${problem.id}`} className="problem-link">
+                {problem.title}
+              </Link>
+              {problem.creatorInfo && (
+                <span className="problem-creator">
+                  - created by {problem.creatorInfo.name} at {formatDate(problem.creatorInfo.createdAt)}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 
   return (
     <div className="problem-selection-page">
@@ -69,21 +148,19 @@ export default function ProblemSelectionPage() {
           </p>
         </section>
         
-        <section className="problem-list-section">
-          <h2>Available Problems</h2>
-          <ul className="problem-list">
-            {difficulties[selectedDifficulty].problems.map((problem) => (
-              <li key={problem.id} className="problem-item">
-                <Link
-                  to={`/problems/${problem.id}`}
-                  className="problem-link"
-                >
-                  {problem.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {isLoading ? (
+          <p>Loading problems...</p>
+        ) : error ? (
+          <div className="error-message">
+            <p>{error}</p>
+            <button onClick={fetchProblems}>Try Again</button>
+          </div>
+        ) : (
+          <>
+            {renderProblemList(systemProblems, "System Problems")}
+            {renderProblemList(userProblems, "User-Created Problems")}
+          </>
+        )}
 
         <section className="problem-selection-info">
           <h2>Tips for Problem Solving 💡</h2>

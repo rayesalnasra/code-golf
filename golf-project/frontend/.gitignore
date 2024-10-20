@@ -16,6 +16,9 @@ dist-ssr
 /backend/config/login-auth-*
 .env
 
+# Miscs
+/node_modules
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

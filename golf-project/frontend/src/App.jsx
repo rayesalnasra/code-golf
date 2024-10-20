@@ -12,16 +12,19 @@ import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
 import DirectMessagePage from './dm-page/DirectMessagePage'; // Ensure this is imported
+import MyProblemsPage from './my-problems/MyProblemsPage';
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
 import codeGolfLogo from './code-golf-icon.png';
+import CreateProblemPage from './CreateProblemPage';
 import './App.css';
+import EditProblemPage from './EditProblemPage';
+import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
 
-/**
- * Main application component that handles routing and authentication.
- */
+// Import the DeletableAdBanner component
+import DeletableAdBanner from './ads/DeletableAdBanner';
+
 function App() {
-  // State variables to manage authentication and UI settings
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userDisplayName, setUserDisplayName] = useState('');
@@ -29,11 +32,9 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Retrieve dark mode preference from local storage
     const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
     setIsDarkMode(savedDarkMode);
 
-    // Set up listener for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await user.reload();
@@ -106,6 +107,7 @@ function App() {
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><Link to="/my-problems">My Problems</Link></li>
                       <li><button onClick={toggleDarkMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button></li>
                       <li><button onClick={handleLogout}>Logout</button></li>
                     </ul>
@@ -121,8 +123,19 @@ function App() {
                 <li><Link to="/documentation">Documentation</Link></li>
                 <li><Link to="/discussion">Discussion</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
+                <li><Link to="/create-problem">Create Problem</Link></li>
+                <li><Link to="/play-code-golf">Play Code Golf</Link></li>
               </ul>
             </nav>
+            {/* Ad Banner under the navigation menu */}
+            <div className="ad-banner">
+              <DeletableAdBanner />
+            </div>
+
+            {/* Fixed bottom-right corner Ad */}
+            <div className="fixed-ad-banner">
+              <DeletableAdBanner />
+            </div>
           </>
         )}
 
@@ -140,7 +153,17 @@ function App() {
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+          <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
+          <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/play-code-golf" element={<PlayCodeGolf />} />
+          <Route path="/play-code-golf/:difficulty" element={<PlayCodeGolf />} />
+          <Route path="/play-code-golf/:difficulty/:language" element={<PlayCodeGolf />} />
         </Routes>
+
+        <div className="footer-ad-banner">
+          <DeletableAdBanner />
+        </div>
       </div>
     </Router>
   );
