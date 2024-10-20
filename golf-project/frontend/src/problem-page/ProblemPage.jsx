@@ -24,7 +24,8 @@ export default function ProblemPage({
   onCodeChange,
   isCodeGolfMode = false,
   isSolved = false,
-  language: propLanguage
+  language: propLanguage,
+  showBackLink = true
 }) {
   const { problemId: paramProblemId, difficulty } = useParams();
   const navigate = useNavigate();
@@ -358,9 +359,11 @@ export default function ProblemPage({
 
   return (
     <div className="problem-page">
-      <button onClick={() => handleNavigateAway("/problems")} className="back-link">
-        &larr; Back to problem selection
-      </button>
+      {showBackLink && (
+        <button onClick={() => handleNavigateAway("/problems")} className="back-link">
+          &larr; Back to problem selection
+        </button>
+      )}
       
       {problem && <ProblemDescription description={problem.description} />}
       

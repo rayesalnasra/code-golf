@@ -54,7 +54,7 @@ const PlayCodeGolf = () => {
   const [userCode, setUserCode] = useState({});
   const [problemAttempts, setProblemAttempts] = useState(0);
   const [score, setScore] = useState(0); // Initialize score
-  const [problemTimer, setProblemTimer] = useState(0); // Initialize problemTimer
+  const [problemTimer, setProblemTimer] = useState(0);
   const [difficulty, setDifficulty] = useState('easy'); // Example initialization
   const [gameId, setGameId] = useState('game123'); // Example game ID
 
@@ -420,6 +420,15 @@ const PlayCodeGolf = () => {
     return () => clearInterval(interval);
   }, [isTimerRunning, currentProblemIndex]);
 
+  const getDifficultyDescription = (difficulty) => {
+    const descriptions = {
+      easy: "👶 Perfect for beginners. Focus on basic programming concepts and simple optimizations.",
+      medium: "👨‍💻 For intermediate coders. Challenges require more complex problem-solving and optimization techniques.",
+      hard: "🧙‍♂️ For experienced programmers. Expect intricate problems that will push your coding skills to the limit."
+    };
+    return descriptions[difficulty] || "Select a difficulty to see its description.";
+  };
+
   if (isLoading) return <div>Loading problems...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -433,84 +442,123 @@ const PlayCodeGolf = () => {
 
   return (
     <div className="play-code-golf">
-      <h1>Play Code Golf</h1>
-      {!selectedDifficulty ? (
-        <div className="difficulty-selection">
-          <h2>Select Difficulty</h2>
-          <button onClick={() => handleDifficultySelect('easy')}>Easy</button>
-          <button onClick={() => handleDifficultySelect('medium')}>Medium</button>
-          <button onClick={() => handleDifficultySelect('hard')}>Hard</button>
-        </div>
-      ) : !selectedLanguage ? (
-        <div className="language-selection">
-          <h2>Select Language</h2>
-          <button onClick={() => handleLanguageSelect('python')}>Python</button>
-          <button onClick={() => handleLanguageSelect('javascript')}>JavaScript</button>
-        </div>
-      ) : problems.length > 0 ? (
-        <div className="problem-container">
-          <h2>Problem {currentProblemIndex + 1} of {problems.length}</h2>
-          <div className="problem-stats">
-            <Timer
-              isRunning={isTimerRunning}
-              onTimerUpdate={handleTimeUpdate}
-            />
-            <div className="character-count">Characters: {characterCount}</div>
-            <div className="attempts">Attempts: {attempts[problems[currentProblemIndex].id] || 0}</div>
-            <div className="score">
-              Score: {scores[problems[currentProblemIndex].id] || '-'} 
-              ({getScoreLabel(scores[problems[currentProblemIndex].id] || 0)})
+      <div className="content-container">
+        <h1 className="page-title">Play Code Golf 🏌️‍♂️</h1>
+        
+        {!selectedDifficulty ? (
+          <section className="difficulty-section">
+            <h2>Choose Your Challenge 🎯</h2>
+            <p className="section-description">
+              Select the difficulty level that matches your coding skills. Each level offers a unique set of challenges designed to test your problem-solving abilities and code optimization skills.
+            </p>
+            <div className="difficulty-selector">
+              {['easy', 'medium', 'hard'].map((diff) => (
+                <button
+                  key={diff}
+                  onClick={() => handleDifficultySelect(diff)}
+                  className={`difficulty-button ${selectedDifficulty === diff ? 'selected' : ''}`}
+                >
+                  {diff.charAt(0).toUpperCase() + diff.slice(1)}
+                </button>
+              ))}
             </div>
-            <div className="total-score">Total Score: {totalScore}</div>
-          </div>
-          <div className="navigation-buttons">
-            <button 
-              onClick={navigateToPreviousProblem} 
-              disabled={currentProblemIndex === 0}
-            >
-              Previous Problem
-            </button>
-            {problems.map((_, index) => (
+            {selectedDifficulty && (
+              <p className="difficulty-description">
+                {getDifficultyDescription(selectedDifficulty)}
+              </p>
+            )}
+          </section>
+        ) : !selectedLanguage ? (
+          <section className="language-section">
+            <h2>Pick Your Language 💻</h2>
+            <p className="section-description">
+              Choose the programming language you want to use for this Code Golf session. Each language offers its own unique features and challenges for code golf.
+            </p>
+            <div className="language-selector">
+              {['python', 'javascript'].map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => handleLanguageSelect(lang)}
+                  className={`language-button ${selectedLanguage === lang ? 'selected' : ''}`}
+                >
+                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : problems.length > 0 ? (
+          <div className="problem-container">
+            <h2>Problem {currentProblemIndex + 1} of {problems.length}</h2>
+            <div className="problem-stats">
+              <Timer
+                isRunning={isTimerRunning}
+                onTimerUpdate={handleTimeUpdate}
+              />
+              <div className="character-count">Characters: {characterCount}</div>
+              <div className="attempts">Attempts: {attempts[problems[currentProblemIndex].id] || 0}</div>
+              <div className="score">
+                Score: {scores[problems[currentProblemIndex].id] || '-'} 
+                ({getScoreLabel(scores[problems[currentProblemIndex].id] || 0)})
+              </div>
+              <div className="total-score">Total Score: {totalScore}</div>
+            </div>
+            <div className="navigation-buttons">
               <button 
-                key={index} 
-                onClick={() => navigateToProblem(index)}
-                className={currentProblemIndex === index ? 'active' : ''}
+                onClick={navigateToPreviousProblem} 
+                disabled={currentProblemIndex === 0}
               >
-                {index + 1}
+                Previous Problem
               </button>
-            ))}
-            <button 
-              onClick={navigateToNextProblem} 
-              disabled={currentProblemIndex === problems.length - 1}
-            >
-              Next Problem
-            </button>
-          </div>
-          <ProblemPage 
-            key={`${problems[currentProblemIndex].id}-${selectedLanguage}`}
-            problemId={problems[currentProblemIndex].id} 
-            onComplete={() => handleAttempt(problems[currentProblemIndex].id, true)}
-            onIncorrectAttempt={() => handleAttempt(problems[currentProblemIndex].id, false)}
-            onStart={handleProblemStart}
-            onCodeChange={handleCodeChange}
-            isCodeGolfMode={true}
-            isSolved={solvedProblems[problems[currentProblemIndex].id] || false}
-            language={selectedLanguage}
-            initialCode={userCode[problems[currentProblemIndex].id] || ''}
-          />
-          <button onClick={handleFinish} className="finish-button">Finish Game</button>
-          {showCompletionMessage && (
-            <div className="completion-message">
-              <p>{completionMessage}</p>
-              <button onClick={handleNextProblem}>
-                {currentProblemIndex < problems.length - 1 ? 'Next Problem' : 'Finish Game'}
+              {problems.map((_, index) => (
+                <button 
+                  key={index} 
+                  onClick={() => navigateToProblem(index)}
+                  className={currentProblemIndex === index ? 'active' : ''}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button 
+                onClick={navigateToNextProblem} 
+                disabled={currentProblemIndex === problems.length - 1}
+              >
+                Next Problem
               </button>
             </div>
-          )}
-        </div>
-      ) : (
-        <div>No problems found for this difficulty level.</div>
-      )}
+            <ProblemPage 
+              key={`${problems[currentProblemIndex].id}-${selectedLanguage}`}
+              problemId={problems[currentProblemIndex].id} 
+              onComplete={() => handleAttempt(problems[currentProblemIndex].id, true)}
+              onIncorrectAttempt={() => handleAttempt(problems[currentProblemIndex].id, false)}
+              onStart={handleProblemStart}
+              onCodeChange={handleCodeChange}
+              isCodeGolfMode={true}
+              isSolved={solvedProblems[problems[currentProblemIndex].id] || false}
+              language={selectedLanguage}
+              initialCode={userCode[problems[currentProblemIndex].id] || ''}
+              showBackLink={false}
+            />
+            <div className="finish-button-container">
+              <button onClick={handleFinish} className="finish-button">Finish Game</button>
+            </div>
+            {showCompletionMessage && (
+              <div className="completion-message">
+                <p>{completionMessage}</p>
+                <button onClick={handleNextProblem}>
+                  {currentProblemIndex < problems.length - 1 ? 'Next Problem' : 'Finish Game'}
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="no-problems-message">
+            <p>No problems found for this difficulty level. Please try another difficulty or check back later.</p>
+            <button onClick={() => setSelectedDifficulty(null)} className="retry-button">
+              Select Different Difficulty
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,12 @@
+/* Base styles */
 .play-code-golf {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .play-code-golf h1 {
@@ -11,7 +15,9 @@
   margin-bottom: 30px;
 }
 
-.difficulty-selection {
+/* Difficulty selection */
+.difficulty-selection,
+.language-selection {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,30 +25,40 @@
   margin-top: 40px;
 }
 
-.difficulty-selection h2 {
+.difficulty-selection h2,
+.language-selection h2 {
   color: #2c974b;
 }
 
-.difficulty-selection button {
+.difficulty-selection button,
+.language-selection button,
+.start-game {
   padding: 10px 20px;
-  font-size: 18px;
-  background-color: #2c974b;
-  color: white;
-  border: none;
+  font-size: 16px;
+  background-color: #ffffff;
+  color: #2c974b;
+  border: 2px solid #2c974b;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
-.difficulty-selection button:hover {
-  background-color: #22753a;
+.difficulty-selection button:hover,
+.language-selection button:hover,
+.start-game:hover,
+.difficulty-selection button.selected,
+.language-selection button.selected {
+  background-color: #2c974b;
+  color: white;
 }
 
+/* Problem container */
 .problem-container {
   background-color: #f9f9f9;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .problem-container h2 {
@@ -51,6 +67,7 @@
   margin-bottom: 20px;
 }
 
+/* Problem stats */
 .problem-stats {
   display: flex;
   justify-content: space-between;
@@ -59,7 +76,7 @@
   padding: 15px;
   border-radius: 5px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .problem-stats > div {
@@ -68,24 +85,10 @@
   text-align: center;
   padding: 10px;
   font-weight: bold;
-}
-
-.timer, .character-count, .attempts, .score, .total-score {
   color: #2c974b;
 }
 
-.language-selector {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.language-selector select {
-  padding: 5px 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #2c974b;
-}
-
+/* Navigation buttons */
 .navigation-buttons {
   display: flex;
   justify-content: center;
@@ -96,16 +99,17 @@
 .navigation-buttons button {
   padding: 8px 15px;
   font-size: 14px;
-  background-color: #2c974b;
-  color: white;
-  border: none;
+  background-color: #ffffff;
+  color: #2c974b;
+  border: 1px solid #2c974b;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .navigation-buttons button:hover:not(:disabled) {
-  background-color: #22753a;
+  background-color: #2c974b;
+  color: white;
 }
 
 .navigation-buttons button:disabled {
@@ -114,10 +118,11 @@
 }
 
 .navigation-buttons button.active {
-  background-color: #22753a;
-  font-weight: bold;
+  background-color: #2c974b;
+  color: white;
 }
 
+/* Completion message */
 .completion-message {
   position: fixed;
   top: 50%;
@@ -155,6 +160,97 @@
   background-color: #22753a;
 }
 
+/* Finish button */
+.finish-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.finish-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.finish-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Dark mode styles */
+body.dark-mode .play-code-golf {
+  background-color: #282a2d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .play-code-golf h1,
+body.dark-mode .difficulty-selection h2,
+body.dark-mode .language-selection h2,
+body.dark-mode .problem-container h2 {
+  color: #a5d6a7;
+}
+
+body.dark-mode .difficulty-selection button,
+body.dark-mode .language-selection button,
+body.dark-mode .start-game,
+body.dark-mode .navigation-buttons button {
+  background-color: #333;
+  color: #a5d6a7;
+  border-color: #a5d6a7;
+}
+
+body.dark-mode .difficulty-selection button:hover,
+body.dark-mode .language-selection button:hover,
+body.dark-mode .start-game:hover,
+body.dark-mode .navigation-buttons button:hover:not(:disabled),
+body.dark-mode .difficulty-selection button.selected,
+body.dark-mode .language-selection button.selected,
+body.dark-mode .navigation-buttons button.active {
+  background-color: #a5d6a7;
+  color: #333;
+}
+
+body.dark-mode .problem-container,
+body.dark-mode .problem-stats {
+  background-color: #333;
+}
+
+body.dark-mode .problem-stats > div {
+  color: #a5d6a7;
+}
+
+body.dark-mode .completion-message {
+  background-color: rgba(40, 42, 45, 0.95);
+  border-color: #a5d6a7;
+}
+
+body.dark-mode .completion-message p {
+  color: #a5d6a7;
+}
+
+body.dark-mode .completion-message button {
+  background-color: #a5d6a7;
+  color: #333;
+}
+
+body.dark-mode .completion-message button:hover {
+  background-color: #81c784;
+}
+
+body.dark-mode .finish-button {
+  background-color: #d32f2f;
+}
+
+body.dark-mode .finish-button:hover {
+  background-color: #b71c1c;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .problem-stats {
     flex-direction: column;
@@ -174,43 +270,96 @@
   }
 }
 
-.game-setup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+.page-title {
+  color: #2c974b;
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
 }
 
-.difficulty-selection,
-.language-selection {
+.difficulty-section,
+.language-section {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-description {
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Action buttons */
+.action-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
-.difficulty-selection button,
-.language-selection button {
+.action-buttons button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #f0f0f0;
+  background-color: #2c974b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons button:hover:not(:disabled) {
+  background-color: #22753a;
+}
+
+.action-buttons button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Specific button styles */
+.action-buttons button:nth-child(2) {
+  background-color: #4a90e2;
+}
+
+.action-buttons button:nth-child(2):hover:not(:disabled) {
+  background-color: #3a78c2;
+}
+
+.difficulty-button,
+.language-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ffffff;
+  color: #2c974b;
   border: 2px solid #2c974b;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
-.difficulty-selection button:hover,
-.language-selection button:hover,
-.difficulty-selection button.selected,
-.language-selection button.selected {
+.difficulty-button:hover,
+.language-button:hover,
+.difficulty-button.selected,
+.language-button.selected {
   background-color: #2c974b;
   color: white;
 }
 
-.start-game {
-  padding: 12px 24px;
-  font-size: 18px;
+.no-problems-message {
+  text-align: center;
+  color: #666;
+}
+
+.retry-button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
   background-color: #2c974b;
   color: white;
   border: none;
@@ -219,21 +368,46 @@
   transition: background-color 0.3s;
 }
 
-.start-game:hover {
+.retry-button:hover {
   background-color: #22753a;
 }
 
-.finish-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 20px;
+/* Dark mode styles */
+body.dark-mode .play-code-golf {
+  background-color: #282a2d;
+  color: #e0e0e0;
 }
 
-.finish-button:hover {
-  background-color: #d32f2f;
+body.dark-mode .difficulty-section,
+body.dark-mode .language-section {
+  background-color: #333;
+}
+
+body.dark-mode .section-description,
+body.dark-mode .difficulty-description {
+  color: #ccc;
+}
+
+body.dark-mode .difficulty-button,
+body.dark-mode .language-button {
+  background-color: #444;
+  color: #9be89d;
+  border-color: #9be89d;
+}
+
+body.dark-mode .difficulty-button:hover,
+body.dark-mode .language-button:hover,
+body.dark-mode .difficulty-button.selected,
+body.dark-mode .language-button.selected {
+  background-color: #9be89d;
+  color: #333;
+}
+
+body.dark-mode .retry-button {
+  background-color: #9be89d;
+  color: #333;
+}
+
+body.dark-mode .retry-button:hover {
+  background-color: #8cbf6e;
 }
