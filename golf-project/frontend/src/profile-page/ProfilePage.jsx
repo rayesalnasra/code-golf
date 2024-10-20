@@ -2,8 +2,26 @@ import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
 import { readProfileData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
+import { Line } from "react-chartjs-2";
+import { getDatabase, ref, get, set } from "firebase/database";
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
+
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip
+);
 
 function ProfilePage() {
   const [user, setUser] = useState({
@@ -12,18 +30,19 @@ function ProfilePage() {
     level: 0,
     xp: 0,
     score: 0,
-    bio: "", // Adding bio field
+    bio: "",
   });
 
   const [editableUser, setEditableUser] = useState({
     displayName: "",
-    bio: "", // Adding bio field
+    bio: "",
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false); // State to toggle privacy
-  const [pastDMs, setPastDMs] = useState([]); 
-  const navigate = useNavigate(); 
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [pastDMs, setPastDMs] = useState([]);
+  const [weeklyProgress, setWeeklyProgress] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userId = localStorage.getItem("userUID");
@@ -42,11 +61,11 @@ function ProfilePage() {
               level: userData.level || 0,
               xp: userData.xp || 0,
               score: userData.score || 0,
-              bio: storedBio || userData.bio || "No bio available", // Add bio handling
+              bio: storedBio || userData.bio || "No bio available",
             });
             setEditableUser({
               displayName: storedDisplayName || userData.displayName || "Anonymous User",
-              bio: storedBio || userData.bio || "", // Set initial bio
+              bio: storedBio || userData.bio || "",
             });
           }
 
@@ -77,7 +96,7 @@ function ProfilePage() {
                 displayName: displayName,
                 latestMessage: messageToDisplay.message,
                 latestMessageTime: messageTime,
-                isFromUser: messageToDisplay.userId === userId, // Mark if the message is from the user
+                isFromUser: messageToDisplay.userId === userId,
               });
             }
           }
@@ -88,7 +107,61 @@ function ProfilePage() {
         }
       };
 
+      const fetchWeeklyProgress = async () => {
+        const db = getDatabase();
+        const progressData = [];
+        for (let i = 1; i <= 7; i++) {
+          const dayRef = ref(db, `weeklyProgress/${userId}/day${i}`);
+          const snapshot = await get(dayRef);
+          if (snapshot.exists()) {
+            progressData.push(snapshot.val());
+          } else {
+            progressData.push(0);
+          }
+        }
+        setWeeklyProgress(progressData);
+      };
+
+      fetchWeeklyProgress();
+
+      const updateWeeklyProgress = async () => {
+        const db = getDatabase();
+        const currentDate = new Date().toISOString().split("T")[0];
+        const lastAccessRef = ref(db, `users/${userId}/lastAccessDate`);
+        const lastAccessSnapshot = await get(lastAccessRef);
+        const lastAccessDate = lastAccessSnapshot.exists()
+          ? lastAccessSnapshot.val()
+          : null;
+
+        if (lastAccessDate === currentDate) {
+          const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
+          const userScoreRef = ref(db, `users/${userId}/score`);
+          const userScoreSnapshot = await get(userScoreRef);
+          if (userScoreSnapshot.exists()) {
+            await set(day7Ref, userScoreSnapshot.val());
+          }
+        } else {
+          for (let i = 1; i < 7; i++) {
+            const currentDayRef = ref(db, `weeklyProgress/${userId}/day${i}`);
+            const nextDayRef = ref(db, `weeklyProgress/${userId}/day${i + 1}`);
+            const nextDaySnapshot = await get(nextDayRef);
+            if (nextDaySnapshot.exists()) {
+              await set(currentDayRef, nextDaySnapshot.val());
+            }
+          }
+          const day7Ref = ref(db, `weeklyProgress/${userId}/day7`);
+          const userScoreRef = ref(db, `users/${userId}/score`);
+          const userScoreSnapshot = await get(userScoreRef);
+          if (userScoreSnapshot.exists()) {
+            await set(day7Ref, userScoreSnapshot.val());
+          }
+          await set(lastAccessRef, currentDate);
+        }
+      };
+
       fetchData();
+      fetchWeeklyProgress();
+      updateWeeklyProgress();
     }
   }, []);
 
@@ -99,7 +172,7 @@ function ProfilePage() {
   const handleCancelClick = () => {
     setEditableUser({
       displayName: user.displayName,
-      bio: user.bio, // Reset bio on cancel
+      bio: user.bio,
     });
     setIsEditing(false);
   };
@@ -125,10 +198,9 @@ function ProfilePage() {
           });
         }
 
-        // --- Update Firebase Realtime Database ---
         await updateData(`users/${userId}`, {
           displayName: editableUser.displayName,
-          bio: editableUser.bio, // Update bio
+          bio: editableUser.bio,
         });
 
         localStorage.setItem("userDisplayName", editableUser.displayName);
@@ -137,7 +209,7 @@ function ProfilePage() {
         setUser((prevUser) => ({
           ...prevUser,
           displayName: editableUser.displayName,
-          bio: editableUser.bio, // Update bio in state
+          bio: editableUser.bio,
         }));
         setIsEditing(false);
 
@@ -149,6 +221,32 @@ function ProfilePage() {
     } else {
       console.error("No user ID found in localStorage");
     }
+  };
+
+  const data = {
+    labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+    datasets: [
+      {
+        label: "Weekly Progress",
+        data: weeklyProgress,
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const score = context.raw;
+            return `Score: ${score}`;
+          },
+        },
+      },
+    },
   };
 
   const handleReplyClick = (dmUserId) => {
@@ -178,16 +276,14 @@ function ProfilePage() {
                 />
               ) : (
                 <p>{isPrivate ? "Private" : user.displayName}</p>
-                // <p>{user.displayName}</p>
               )}
             </div>
             <div className="info-item">
               <h3>Email</h3>
               <p>{isPrivate ? "Private" : user.email}</p>
-              {/* <p>{user.email}</p> */}
             </div>
             <div className="info-item">
-              <h3>Bio</h3> {/* New bio section */}
+              <h3>Bio</h3>
               {isEditing ? (
                 <textarea
                   name="bio"
@@ -196,7 +292,6 @@ function ProfilePage() {
                 />
               ) : (
                 <p>{isPrivate ? "Private" : user.bio}</p>
-                // <p>{user.bio}</p>
               )}
             </div>
           </div>
@@ -211,13 +306,13 @@ function ProfilePage() {
             </div>
           ) : (
             <div className="button-group">
-            <button className="edit-button" onClick={handleEditClick}>
-              Edit
-            </button>
-             <button className="private-button" onClick={togglePrivacy}>
-             {isPrivate ? "Make Public" : "Make Private"}
-           </button>
-           </div>
+              <button className="edit-button" onClick={handleEditClick}>
+                Edit
+              </button>
+              <button className="private-button" onClick={togglePrivacy}>
+                {isPrivate ? "Make Public" : "Make Private"}
+              </button>
+            </div>
           )}
         </section>
 
@@ -242,6 +337,63 @@ function ProfilePage() {
           ) : (
             <p>No past direct messages.</p>
           )}
+        </section>
+
+        <section className="profile-section">
+          <h2>Statistics</h2>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <h3>Level</h3>
+              <p className="stat-value">{user.level}</p>
+            </div>
+            <div className="stat-item">
+              <h3>XP</h3>
+              <p className="stat-value">
+                {user.xp} / {100 + user.level * 50}
+              </p>
+            </div>
+            <div className="stat-item">
+              <h3>Score</h3>
+              <p className="stat-value">{user.score}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="profile-section">
+          <h2>Badges</h2>
+          <div className="badges-grid">
+            {["100", "1000", "1500", "2000", "2500"].map((badge, index) => (
+              <div key={index} className="badge-item">
+                <img
+                  className={`badge-image ${
+                    user.score >= parseInt(badge) ? "" : "greyed-out"
+                  }`}
+                  src={`./src/assets/badges/gold_medal.png`}
+                  alt={`Badge for ${badge} points`}
+                />
+                <p>{badge} Points</p>
+              </div>
+            ))}
+          </div>
+          <div className="badges-grid">
+            {["1", "5", "10", "50", "100+"].map((badge, index) => (
+              <div key={index} className="badge-item">
+                <img
+                  className={`badge-image ${
+                    user.level >= parseInt(badge) ? "" : "greyed-out"
+                  }`}
+                  src={`./src/assets/badges/gold_medal.png`}
+                  alt={`Badge for Level ${badge}`}
+                />
+                <p>Level {badge}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="profile-section">
+          <h2>Weekly Progress</h2>
+          <Line data={data} options={options} />
         </section>
       </div>
     </div>
