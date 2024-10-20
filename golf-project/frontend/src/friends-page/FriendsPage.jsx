@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './friendsPage.css'; // Ensure to import your CSS file
+import './FriendsPage.css'; // Ensure to import your CSS file
 
 function FriendsPage() {
   const [friends, setFriends] = useState([]);

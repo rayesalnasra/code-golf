@@ -13,6 +13,7 @@ import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
 import FriendsPage from './friends-page/FriendsPage'; 
 import DirectMessagePage from './dm-page/DirectMessagePage'; // Ensure this is imported
+import MyProblemsPage from './my-problems/MyProblemsPage';
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
 import codeGolfLogo from './code-golf-icon.png';
@@ -20,7 +21,7 @@ import CreateProblemPage from './CreateProblemPage';
 import './App.css';
 import EditProblemPage from './EditProblemPage';
 import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
-import MyProblemsPage from './my-problems/MyProblemsPage';
+
 
 // Import the DeletableAdBanner component
 import DeletableAdBanner from './ads/DeletableAdBanner';

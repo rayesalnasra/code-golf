@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
-import { readData, updateData } from "../firebase/databaseUtils";
+import { readProfileData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
@@ -32,22 +32,63 @@ function ProfilePage() {
     const storedBio = localStorage.getItem("userBio");
 
     if (userId) {
-      readData(`users/${userId}`, (userData) => {
-        if (userData) {
-          setUser({
-            displayName: storedDisplayName || userData.displayName || "Anonymous User",
-            email: storedEmail || userData.email || "No email provided",
-            level: userData.level || 0,
-            xp: userData.xp || 0,
-            score: userData.score || 0,
-            bio: storedBio || userData.bio || "No bio available", // Add bio handling
-          });
-          setEditableUser({
-            displayName: storedDisplayName || userData.displayName || "Anonymous User",
-            bio: storedBio || userData.bio || "", // Set initial bio
-          });
+      const fetchData = async () => {
+        try {
+          const userData = await readProfileData(`users/${userId}`);
+          if (userData) {
+            setUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              email: storedEmail || userData.email || "No email provided",
+              level: userData.level || 0,
+              xp: userData.xp || 0,
+              score: userData.score || 0,
+              bio: storedBio || userData.bio || "No bio available", // Add bio handling
+            });
+            setEditableUser({
+              displayName: storedDisplayName || userData.displayName || "Anonymous User",
+              bio: storedBio || userData.bio || "", // Set initial bio
+            });
+          }
+
+          const directMessages = await readProfileData(`directMessages`);
+          const userPastDMs = [];
+
+          for (const conversationKey in directMessages) {
+            if (conversationKey.includes(userId)) {
+              const otherUserId = conversationKey.split('_').find(id => id !== userId);
+
+              const otherUserData = await readProfileData(`users/${otherUserId}`);
+              const displayName = otherUserData?.displayName || "Unknown User";
+
+              const messages = Object.values(directMessages[conversationKey]);
+
+              const latestMessageIndex = messages.length - 1;
+              const secondToLatestMessageIndex = messages.length - 2;
+
+              const latestMessage = messages[latestMessageIndex];
+              const secondToLatestMessage = messages.length > 1 ? messages[secondToLatestMessageIndex] : latestMessage;
+
+              const messageToDisplay = secondToLatestMessage || latestMessage; 
+
+              const messageTime = new Date(messageToDisplay.timestamp).toLocaleString();
+
+              userPastDMs.push({
+                id: otherUserId,
+                displayName: displayName,
+                latestMessage: messageToDisplay.message,
+                latestMessageTime: messageTime,
+                isFromUser: messageToDisplay.userId === userId, // Mark if the message is from the user
+              });
+            }
+          }
+
+          setPastDMs(userPastDMs);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      });
+      };
+
+      fetchData();
     }
   }, []);
 
@@ -157,7 +198,6 @@ function ProfilePage() {
                 <p>{isPrivate ? "Private" : user.bio}</p>
                 // <p>{user.bio}</p>
               )}
-              <p>{user.email}</p>
             </div>
           </div>
           {isEditing ? (

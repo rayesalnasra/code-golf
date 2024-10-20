@@ -14,7 +14,17 @@ export const pushData = (path, data) => {
 };
 
 // Function to read data from the database
-export const readData = async (path) => {
+export const readData = (path, callback) => {
+  const dbRef = ref(database, path);
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+};
+
+
+// Function to read data from the database
+export const readProfileData = async (path) => {
   const dbRef = ref(database, path);
   
   return new Promise((resolve, reject) => {
@@ -30,7 +40,6 @@ export const readData = async (path) => {
     });
   });
 };
-
 
 
 // Function to update data in the database
