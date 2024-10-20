@@ -19,6 +19,7 @@ import CreateProblemPage from './CreateProblemPage';
 import './App.css';
 import EditProblemPage from './EditProblemPage';
 import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
+import MyProblemsPage from './my-problems/MyProblemsPage';
 
 // Import the DeletableAdBanner component
 import DeletableAdBanner from './ads/DeletableAdBanner';
