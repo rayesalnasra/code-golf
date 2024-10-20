@@ -78,21 +78,26 @@ const EditProblemPage = () => {
     }
   };
 
-  if (isLoading) return <div>Loading problem...</div>;
+  if (isLoading) return <div className="loading">Loading problem...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="edit-problem-page">
-      <h1>Edit Problem</h1>
-      {problem && (
-        <ProblemForm
-          initialProblem={problem}
-          initialTestCases={testCases}
-          onSubmit={handleSubmit}
-          submitButtonText="Update Problem"
-          showIdField={false}
-        />
-      )}
+      <div className="content-container">
+        <h1 className="page-title">Edit Problem 📝</h1>
+        {problem && (
+          <div className="edit-problem-form">
+            <h2>Problem Details</h2>
+            <ProblemForm
+              initialProblem={problem}
+              initialTestCases={testCases}
+              onSubmit={handleSubmit}
+              submitButtonText="Update Problem"
+              showIdField={false}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

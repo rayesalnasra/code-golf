@@ -65,18 +65,23 @@ const CreateProblemPage = () => {
 
   return (
     <div className="create-problem-page">
-      <h1>Create New Problem</h1>
-      {userId ? (
-        <ProblemForm
-          initialProblem={initialProblem}
-          initialTestCases={[]}
-          onSubmit={handleSubmit}
-          submitButtonText="Create Problem"
-          showIdField={true}
-        />
-      ) : (
-        <p className="error-message">Please log in to create a problem.</p>
-      )}
+      <div className="content-container">
+        <h1 className="page-title">Create New Problem 🧩</h1>
+        {userId ? (
+          <div className="create-problem-form">
+            <h2>Problem Details</h2>
+            <ProblemForm
+              initialProblem={initialProblem}
+              initialTestCases={[]}
+              onSubmit={handleSubmit}
+              submitButtonText="Create Problem"
+              showIdField={true}
+            />
+          </div>
+        ) : (
+          <p className="error-message">Please log in to create a problem.</p>
+        )}
+      </div>
     </div>
   );
 };
