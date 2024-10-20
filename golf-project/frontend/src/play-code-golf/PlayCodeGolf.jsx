@@ -6,6 +6,7 @@ import ProblemPage from '../problem-page/ProblemPage';
 import Timer from './Timer';
 import './PlayCodeGolf.css';
 
+// Scoring constants
 const SCORING = {
   ACE: 1,
   BIRDIE: 2,
@@ -32,11 +33,11 @@ const PlayCodeGolf = () => {
   const { difficulty: urlDifficulty, problemId: urlProblemId } = useParams();
   const navigate = useNavigate();
   const [selectedDifficulty, setSelectedDifficulty] = useState(urlDifficulty || null);
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [problems, setProblems] = useState([]);
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [language, setLanguage] = useState('python');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [problemTimes, setProblemTimes] = useState({});
   const [characterCount, setCharacterCount] = useState(0);
@@ -48,10 +49,10 @@ const PlayCodeGolf = () => {
   const [solvedProblems, setSolvedProblems] = useState({});
 
   useEffect(() => {
-    if (selectedDifficulty) {
+    if (selectedDifficulty && selectedLanguage) {
       fetchProblems();
     }
-  }, [selectedDifficulty]);
+  }, [selectedDifficulty, selectedLanguage]);
 
   useEffect(() => {
     if (urlProblemId && problems.length > 0) {
@@ -77,7 +78,7 @@ const PlayCodeGolf = () => {
       const selected = shuffled.slice(0, 5);
       setProblems(selected);
       if (!urlProblemId) {
-        navigate(`/play-code-golf/${selectedDifficulty}/${selected[0].id}?language=${language}`);
+        navigate(`/play-code-golf/${selectedDifficulty}/${selected[0].id}?language=${selectedLanguage}`);
       }
     } catch (err) {
       console.error("Error fetching problems:", err);
@@ -89,7 +90,11 @@ const PlayCodeGolf = () => {
 
   const handleDifficultySelect = (difficulty) => {
     setSelectedDifficulty(difficulty);
-    navigate(`/play-code-golf/${difficulty}`);
+  };
+
+  const handleLanguageSelect = (language) => {
+    setSelectedLanguage(language);
+    navigate(`/play-code-golf/${selectedDifficulty}/${language}`);
   };
 
   const calculateScore = (problemId, attempts) => {
@@ -223,7 +228,7 @@ const PlayCodeGolf = () => {
     setCurrentProblemIndex(index);
     setIsTimerRunning(false);
     setCharacterCount(0);
-    navigate(`/play-code-golf/${selectedDifficulty}/${problems[index].id}?language=${language}`);
+    navigate(`/play-code-golf/${selectedDifficulty}/${problems[index].id}?language=${selectedLanguage}`);
   };
 
   const navigateToPreviousProblem = () => {
@@ -236,11 +241,6 @@ const PlayCodeGolf = () => {
     if (currentProblemIndex < problems.length - 1) {
       navigateToProblem(currentProblemIndex + 1);
     }
-  };
-
-  const handleLanguageChange = (newLanguage) => {
-    setLanguage(newLanguage);
-    navigate(`/play-code-golf/${selectedDifficulty}/${problems[currentProblemIndex].id}?language=${newLanguage}`);
   };
 
   if (isLoading) return <div>Loading problems...</div>;
@@ -256,6 +256,12 @@ const PlayCodeGolf = () => {
           <button onClick={() => handleDifficultySelect('medium')}>Medium</button>
           <button onClick={() => handleDifficultySelect('hard')}>Hard</button>
         </div>
+      ) : !selectedLanguage ? (
+        <div className="language-selection">
+          <h2>Select Language</h2>
+          <button onClick={() => handleLanguageSelect('python')}>Python</button>
+          <button onClick={() => handleLanguageSelect('javascript')}>JavaScript</button>
+        </div>
       ) : problems.length > 0 ? (
         <div className="problem-container">
           <h2>Problem {currentProblemIndex + 1} of {problems.length}</h2>
@@ -268,13 +274,6 @@ const PlayCodeGolf = () => {
               ({getScoreLabel(scores[problems[currentProblemIndex].id] || 0)})
             </div>
             <div className="total-score">Total Score: {totalScore}</div>
-          </div>
-          <div className="language-selector">
-            <label>Language: </label>
-            <select value={language} onChange={(e) => handleLanguageChange(e.target.value)}>
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-            </select>
           </div>
           <div className="navigation-buttons">
             <button 
@@ -300,7 +299,7 @@ const PlayCodeGolf = () => {
             </button>
           </div>
           <ProblemPage 
-            key={`${problems[currentProblemIndex].id}-${language}`}
+            key={`${problems[currentProblemIndex].id}-${selectedLanguage}`}
             problemId={problems[currentProblemIndex].id} 
             onComplete={() => handleAttempt(problems[currentProblemIndex].id, true)}
             onIncorrectAttempt={() => handleAttempt(problems[currentProblemIndex].id, false)}
@@ -308,6 +307,7 @@ const PlayCodeGolf = () => {
             onCodeChange={handleCodeChange}
             isCodeGolfMode={true}
             isSolved={solvedProblems[problems[currentProblemIndex].id] || false}
+            language={selectedLanguage}
           />
           {showCompletionMessage && (
             <div className="completion-message">
