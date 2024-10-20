@@ -139,6 +139,12 @@ body.dark-mode {
   margin-bottom: 0.5rem;
 }
 
+.problem-creator {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 10px;
+}
+
 @media (max-width: 768px) {
   .problem-selection-page {
       padding: 20px;
