@@ -10,11 +10,14 @@ import DocumentationPage from './documentation-page/DocumentationPage';
 import ProblemPage from './problem-page/ProblemPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
+import MyProblemsPage from './my-problems/MyProblemsPage';
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
 import ProtectedRoute from './login-pages/ProtectedRoute';
 import codeGolfLogo from './code-golf-icon.png';
+import CreateProblemPage from './CreateProblemPage';
 import './App.css';
+import EditProblemPage from './EditProblemPage';
 
 /**
  * Main application component that handles routing and authentication.
@@ -118,6 +121,7 @@ function App() {
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
+                      <li><Link to="/my-problems">My Problems</Link></li>
                       <li><button onClick={toggleDarkMode}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</button></li>
                       <li><button onClick={handleLogout}>Logout</button></li>
                     </ul>
@@ -132,6 +136,7 @@ function App() {
                 <li><Link to="/tutorial">Tutorial</Link></li>
                 <li><Link to="/documentation">Documentation</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
+                <li><Link to="/create-problem">Create Problem</Link></li>
               </ul>
             </nav>
           </>
@@ -150,6 +155,9 @@ function App() {
           <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+          <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
+          <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
+          <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>

@@ -4,6 +4,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getTestCases, saveUserCode, getUserSubmission, getSolution } from "../firebase/firebaseCodeRunner.js";
 import { ref, onValue, update } from "firebase/database";
 import { database } from "../firebase/firebase.js";
+import { doc, getDoc } from "firebase/firestore/lite";
+import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import "./ProblemPage.css";
 
 import CodeEditor from "./CodeEditor";
@@ -13,64 +15,6 @@ import ProblemDescription from "./ProblemDescription";
 import ActionButtons from "./ActionButtons";
 import LanguageSelector from "./LanguageSelector";
 import axios from "axios";
-
-// Problem descriptions for each problem ID
-const problemDescriptions = {
-  add: "Create a function that adds two numbers",
-  reverse: "Create a function that reverses a given string",
-  palindrome: "Create a function that checks if a given string is a palindrome.",
-  factorial: "Create a function that calculates the factorial of a given non-negative integer.",
-  fizzbuzz: "Create a function that returns 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, 'FizzBuzz' for multiples of both, and the number for other cases.",
-  twosum: "Given an array of integers and a target sum, return indices of the two numbers such that they add up to the target.",
-  validparentheses: "Create a function that determines if the input string has valid parentheses.",
-  longestsubstring: "Find the length of the longest substring without repeating characters.",
-  mergeintervals: "Merge all overlapping intervals and return an array of the non-overlapping intervals.",
-  groupanagrams: "Group anagrams together from an array of strings.",
-  mediansortedarrays: "Find the median of two sorted arrays.",
-  regularexpressionmatching: "Implement regular expression matching with support for '.' and '*'.",
-  trapwater: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
-  mergeklargelists: "Merge k sorted linked lists and return it as one sorted list.",
-  longestvalidparentheses: "Given a string containing just '(' and ')', find the length of the longest valid parentheses substring.",
-};
-
-// Initial code templates for each problem and language
-const initialCodes = {
-  python: {
-    add: "def add(a, b):\n    return a + b",
-    reverse: "def reverse_string(s):\n    return s[::-1]",
-    palindrome: "def is_palindrome(s):\n    # Your code here",
-    factorial: "def factorial(n):\n    # Your code here",
-    fizzbuzz: "def fizzbuzz(n):\n    # Your code here",
-    twosum: "def two_sum(nums, target):\n    # Your code here",
-    validparentheses: "def is_valid_parentheses(s):\n    # Your code here",
-    longestsubstring: "def length_of_longest_substring(s):\n    # Your code here",
-    mergeintervals: "def merge_intervals(intervals):\n    # Your code here",
-    groupanagrams: "def group_anagrams(strs):\n    # Your code here",
-    mediansortedarrays: "def find_median_sorted_arrays(nums1, nums2):\n    # Your code here",
-    regularexpressionmatching: "def is_match(s, p):\n    # Your code here",
-    trapwater: "def trap(height):\n    # Your code here",
-    mergeklargelists: "def merge_k_lists(lists):\n    # Your code here",
-    longestvalidparentheses: "def longest_valid_parentheses(s):\n    # Your code here",
-  },
-      
-  javascript: {
-    add: "function add(a, b) {\n    return a + b;\n}",
-    reverse: "function reverseString(s) {\n    return s.split('').reverse().join('');\n}",
-    palindrome: "function isPalindrome(s) {\n    // Your code here\n}",
-    factorial: "function factorial(n) {\n    // Your code here\n}",
-    fizzbuzz: "function fizzbuzz(n) {\n    // Your code here\n}",
-    twosum: "function twoSum(nums, target) {\n    // Your code here\n}",
-    validparentheses: "function isValidParentheses(s) {\n    // Your code here\n}",
-    longestsubstring: "function lengthOfLongestSubstring(s) {\n    // Your code here\n}",
-    mergeintervals: "function mergeIntervals(intervals) {\n    // Your code here\n}",
-    groupanagrams: "function groupAnagrams(strs) {\n    // Your code here\n}",
-    mediansortedarrays: "function findMedianSortedArrays(nums1, nums2) {\n    // Your code here\n}",
-    regularexpressionmatching: "function isMatch(s, p) {\n    // Your code here\n}",
-    trapwater: "function trap(height) {\n    // Your code here\n}",
-    mergeklargelists: "function mergeKLists(lists) {\n    // Your code here\n}",
-    longestvalidparentheses: "function longestValidParentheses(s) {\n    // Your code here\n}",
-  }
-};
 
 export default function ProblemPage() {
   const { problemId } = useParams();
@@ -90,6 +34,8 @@ export default function ProblemPage() {
   const [showSolution, setShowSolution] = useState(false);
   const [solutionCode, setSolutionCode] = useState("");
   const [user, setUser] = useState(null);
+  const [problem, setProblem] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Effect to get language from URL params
   useEffect(() => {
@@ -100,20 +46,59 @@ export default function ProblemPage() {
     }
   }, [location]);
 
-  // Fetch test cases, user submission, and user data on component mount
+  // Fetch problem, test cases, user submission, and user data on component mount
   useEffect(() => {
-    fetchTestCases();
-    fetchUserSubmission();
-    fetchUserData();
-  }, [problemId, language]);
+    fetchProblem();
+  }, [problemId]);
+
+  useEffect(() => {
+    if (problem) {
+      fetchTestCases();
+      fetchUserSubmission();
+      fetchUserData();
+    }
+  }, [problem, language]);
+
+  // Fetch problem details from Firestore
+  const fetchProblem = async () => {
+    setIsLoading(true);
+    try {
+      const problemDoc = await getDoc(doc(dbCodeRunner, 'problems', problemId));
+      if (problemDoc.exists()) {
+        setProblem(problemDoc.data());
+      } else {
+        setLoadError("Problem not found");
+      }
+    } catch (error) {
+      console.error("Error fetching problem:", error);
+      setLoadError("Failed to load problem details");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Fetch test cases for the current problem
   const fetchTestCases = async () => {
     try {
-      const cases = await getTestCases(problemId);
-      setTestCases(cases);
+      // First, try to fetch test cases from the new structure
+      const testCasesDocRef = doc(dbCodeRunner, 'testCases', problemId);
+      const testCasesDoc = await getDoc(testCasesDocRef);
+      
+      if (testCasesDoc.exists()) {
+        // New structure: test cases are in a 'cases' array
+        setTestCases(testCasesDoc.data().cases);
+      } else {
+        // If not found, try the old getTestCases function
+        const oldTestCases = await getTestCases(problemId);
+        if (oldTestCases && oldTestCases.length > 0) {
+          setTestCases(oldTestCases);
+        } else {
+          throw new Error("No test cases found for this problem");
+        }
+      }
     } catch (error) {
       console.error("Error fetching test cases:", error);
+      setLoadError("Failed to load test cases. Please try again.");
     }
   };
 
@@ -128,21 +113,22 @@ export default function ProblemPage() {
         if (userCode) {
           setCode(userCode);
         } else {
-          setCode(initialCodes[language][problemId] || "");
+          setCode(problem?.initialCode[language] || "");
         }
       } catch (error) {
         console.error("Error fetching user submission:", error);
         setLoadError("Failed to load your saved code. Using initial code instead.");
-        setCode(initialCodes[language][problemId] || "");
+        setCode(problem?.initialCode[language] || "");
       }
     } else {
-      setCode(initialCodes[language][problemId] || "");
+      setCode(problem?.initialCode[language] || "");
     }
     setResults([]);
     setTestResult("");
     setIsLoading(false);
     setHasUnsavedChanges(false);
     setShowSolution(false);
+    setIsInitialLoad(false);
   };
 
   // Fetch user data from the database
@@ -233,7 +219,7 @@ export default function ProblemPage() {
   // Reset the code editor to the initial state
   const resetCode = () => {
     if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
-      setCode(initialCodes[language][problemId] || "");
+      setCode(problem?.initialCode[language] || "");
       setHasUnsavedChanges(true);
       setShowSolution(false);
     }
@@ -303,7 +289,7 @@ export default function ProblemPage() {
         &larr; Back to problem selection
       </button>
       
-      <ProblemDescription description={problemDescriptions[problemId]} />
+      {problem && <ProblemDescription description={problem.description} />}
       
       <LanguageSelector 
         language={language} 
@@ -315,7 +301,7 @@ export default function ProblemPage() {
       <CodeEditor
         code={code}
         language={language}
-        isLoading={isLoading}
+        isLoading={isLoading || isInitialLoad}
         loadError={loadError}
         onChange={handleChange}
       />

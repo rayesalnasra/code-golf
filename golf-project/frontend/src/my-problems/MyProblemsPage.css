@@ -1,0 +1,55 @@
+.my-problems-page {
+  padding: 20px;
+}
+
+.problem-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.problem-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.problem-title {
+  font-weight: bold;
+}
+
+.problem-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .delete-button, .create-problem-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.edit-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.create-problem-button {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #2196F3;
+  color: white;
+}
+
+.error-message {
+  color: red;
+  margin-top: 20px;
+}
