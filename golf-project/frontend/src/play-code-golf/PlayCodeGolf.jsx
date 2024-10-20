@@ -346,9 +346,30 @@ const PlayCodeGolf = () => {
 
     const initialUserCode = {};
     for (const problem of problems) {
-      const submission = await fetchUserSubmission(problem.id);
-      if (submission) {
-        initialUserCode[problem.id] = submission;
+      try {
+        const submission = await getUserCodeGolfSubmission(userId, problem.id, selectedLanguage);
+        if (submission) {
+          initialUserCode[problem.id] = submission.code;
+          
+          // Update other state variables with the saved submission data
+          setAttempts(prevAttempts => ({
+            ...prevAttempts,
+            [problem.id]: submission.attempts
+          }));
+          setScores(prevScores => ({
+            ...prevScores,
+            [problem.id]: submission.score
+          }));
+          setProblemTimes(prevTimes => ({
+            ...prevTimes,
+            [problem.id]: submission.timer
+          }));
+        } else {
+          initialUserCode[problem.id] = problem.initialCode[selectedLanguage] || '';
+        }
+      } catch (error) {
+        console.error(`Error loading Code Golf submission for problem ${problem.id}:`, error);
+        initialUserCode[problem.id] = problem.initialCode[selectedLanguage] || '';
       }
     }
     setUserCode(initialUserCode);

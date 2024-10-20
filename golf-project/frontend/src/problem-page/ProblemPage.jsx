@@ -119,33 +119,38 @@ export default function ProblemPage({
 
   // Fetch user's previous submission for the current problem
   const fetchUserSubmission = async () => {
-    if (isCodeGolfMode) return;
-
     setIsLoading(true);
     setLoadError("");
     const userId = localStorage.getItem('userUID');
-    if (userId) {
-      try {
+
+    try {
+      if (isCodeGolfMode) {
+        // For Code Golf mode, always use the initial code
+        setCode(problem?.initialCode[language] || "");
+      } else if (userId) {
+        // For regular mode, try to load user submission
         const userCode = await getUserSubmission(userId, problemId, language);
         if (userCode) {
           setCode(userCode);
         } else {
           setCode(problem?.initialCode[language] || "");
         }
-      } catch (error) {
-        console.error("Error fetching user submission:", error);
-        setLoadError("Failed to load your saved code. Using initial code instead.");
+      } else {
+        // If no user ID, use initial code
         setCode(problem?.initialCode[language] || "");
       }
-    } else {
+    } catch (error) {
+      console.error("Error fetching user submission:", error);
+      setLoadError("Failed to load your saved code. Using initial code instead.");
       setCode(problem?.initialCode[language] || "");
+    } finally {
+      setResults([]);
+      setTestResult("");
+      setIsLoading(false);
+      setHasUnsavedChanges(false);
+      setShowSolution(false);
+      setIsInitialLoad(false);
     }
-    setResults([]);
-    setTestResult("");
-    setIsLoading(false);
-    setHasUnsavedChanges(false);
-    setShowSolution(false);
-    setIsInitialLoad(false);
   };
 
   // Fetch user data from the database
