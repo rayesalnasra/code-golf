@@ -22,6 +22,26 @@ export const readData = (path, callback) => {
   });
 };
 
+
+// Function to read data from the database
+export const readProfileData = async (path) => {
+  const dbRef = ref(database, path);
+  
+  return new Promise((resolve, reject) => {
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        resolve(data);
+      } else {
+        resolve(null); // Resolve with null if no data is found
+      }
+    }, (error) => {
+      reject(error);
+    });
+  });
+};
+
+
 // Function to update data in the database
 export const updateData = (path, data) => {
   const dbRef = ref(database, path);

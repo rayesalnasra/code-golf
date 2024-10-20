@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { updateProfile } from "firebase/auth";
-import { readData, updateData } from "../firebase/databaseUtils";
+import { readProfileData, updateData } from "../firebase/databaseUtils";
 import { auth } from "../firebase/firebaseAuth";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
@@ -29,7 +29,7 @@ function ProfilePage() {
     if (userId) {
       const fetchData = async () => {
         try {
-          const userData = await readData(`users/${userId}`);
+          const userData = await readProfileData(`users/${userId}`);
           if (userData) {
             setUser({
               displayName: storedDisplayName || userData.displayName || "Anonymous User",
@@ -43,14 +43,14 @@ function ProfilePage() {
             });
           }
 
-          const directMessages = await readData(`directMessages`);
+          const directMessages = await readProfileData(`directMessages`);
           const userPastDMs = [];
 
           for (const conversationKey in directMessages) {
             if (conversationKey.includes(userId)) {
               const otherUserId = conversationKey.split('_').find(id => id !== userId);
 
-              const otherUserData = await readData(`users/${otherUserId}`);
+              const otherUserData = await readProfileData(`users/${otherUserId}`);
               const displayName = otherUserData?.displayName || "Unknown User";
 
               const messages = Object.values(directMessages[conversationKey]);
