@@ -56,7 +56,6 @@ function ProfilePage() {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  // --- New state for weekly progress ---
   const [weeklyProgress, setWeeklyProgress] = useState([]);
 
   useEffect(() => {
@@ -82,7 +81,6 @@ function ProfilePage() {
         }
       });
 
-      // --- New code to fetch weekly progress ---
       const fetchWeeklyProgress = async () => {
         const db = getDatabase();
         const progressData = [];
@@ -100,7 +98,6 @@ function ProfilePage() {
 
       fetchWeeklyProgress();
 
-      // --- New code to update day7 value and shift previous values ---
       const updateWeeklyProgress = async () => {
         const db = getDatabase();
         const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
@@ -203,7 +200,6 @@ function ProfilePage() {
     }
   };
 
-  // --- New code to prepare data for the line chart ---
   const data = {
     labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
     datasets: [
