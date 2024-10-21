@@ -7,12 +7,6 @@ export const addData = (path, data) => {
   return set(dbRef, data);
 };
 
-// Function to remove data from the database
-export const removeData = (path) => {
-  const dbRef = ref(database, path);
-  return remove(dbRef);
-};
-
 // Function to push data to a list in the database
 export const pushData = (path, data) => {
   const dbRef = ref(database, path);
@@ -32,7 +26,7 @@ export const readData = (path, callback) => {
 // Function to read data from the database
 export const readProfileData = async (path) => {
   const dbRef = ref(database, path);
-
+  
   return new Promise((resolve, reject) => {
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
@@ -53,3 +47,4 @@ export const updateData = (path, data) => {
   const dbRef = ref(database, path);
   return update(dbRef, data);
 };
+        
