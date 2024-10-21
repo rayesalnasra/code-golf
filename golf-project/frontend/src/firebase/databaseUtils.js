@@ -1,4 +1,4 @@
-import { ref, set, push, onValue, update } from "firebase/database";
+import { ref, set, push, onValue, update, remove } from "firebase/database";
 import { database } from "./firebase"; // Ensure the path is correct
 
 // Function to add data to the database
