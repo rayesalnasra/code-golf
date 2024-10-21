@@ -9,6 +9,9 @@ import TutorialPage from './tutorial-page/TutorialPage';
 import DocumentationPage from './documentation-page/DocumentationPage';
 import DiscussionPage from './discussion-page/DiscussionPage';
 import ProblemPage from './problem-page/ProblemPage';
+import QuizPage from './quiz/QuizPage';
+import TakeQuizPage from './quiz/TakeQuizPage';
+import QuizCreationPage from './quiz/QuizCreationPage';
 import ProblemSelectionPage from './problem-selection/ProblemSelectionPage';
 import MySolutionsPage from './solutions-page/MySolutionsPage';
 import FriendsPage from './friends-page/FriendsPage'; 
@@ -127,6 +130,7 @@ function App() {
                 <li><Link to="/discussion">Discussion</Link></li>
                 <li><Link to="/problems">Problems</Link></li>
                 <li><Link to="/create-problem">Create Problem</Link></li>
+                <li><Link to="/quiz">Quiz</Link></li>
                 <li><Link to="/play-code-golf">Play Code Golf</Link></li>
               </ul>
             </nav>
@@ -156,6 +160,9 @@ function App() {
           <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
           <Route path="/friends" element={isAuthenticated ? <FriendsPage /> : <Navigate to="/login" />} />
           <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
+          <Route path="/quiz" element={isAuthenticated ? <QuizPage /> : <Navigate to="/login" />} />
+          <Route path="/create-quiz" element={isAuthenticated ? <QuizCreationPage /> : <Navigate to="/login" />} /> {/* Added Quiz Creation Route */}
+          <Route path="/take-quiz/:quizId" element={isAuthenticated ? <TakeQuizPage /> : <Navigate to="/login" />} />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
           <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
           <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />

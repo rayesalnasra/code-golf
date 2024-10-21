@@ -1,0 +1,114 @@
+/* Quiz Page Container */
+.quiz-page-container {
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Quiz Page Title */
+.quiz-page-title {
+  color: #2c974b;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Quiz List Container */
+.quiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between quiz cards */
+}
+
+/* Quiz Card */
+.quiz-card {
+  padding: 15px;
+  border: 1px solid #2c974b;
+  border-radius: 5px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Quiz Title */
+.quiz-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #2c974b;
+}
+
+/* Quiz Card Buttons Container */
+.quiz-card-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* Start Quiz Button */
+.start-quiz-btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #2c974b;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.start-quiz-btn:hover {
+  background-color: #1f6b35;
+}
+
+/* Delete Quiz Button */
+.delete-quiz-btn {
+  display: inline-flex;
+  max-width: fit-content;
+  justify-content: space-between; 
+  padding: 10px 15px;
+  background-color: #dc3545;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-quiz-btn:hover {
+  background-color: #c82333;
+}
+
+/* Create Quiz Title */
+.create-quiz-title {
+  margin-top: 30px;
+  font-size: 1.5em;
+  color: #2c974b;
+}
+
+/* Quiz Input */
+.quiz-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #2c974b;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+/* Create Quiz Button */
+.create-quiz-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  color: #ffffff;
+  background-color: #2c974b;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+}
+
+.create-quiz-btn:hover {
+  background-color: #1f6b35;
+}
