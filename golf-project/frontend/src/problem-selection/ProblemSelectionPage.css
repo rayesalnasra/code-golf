@@ -1,18 +1,13 @@
 /* Default Light Mode */
 :root {
-  --background-page: #ffffff; /* White background for light mode */
-  --background-section: #f6f8fa; /* Light gray for sections */
-  --background-item: #ffffff; /* White background for items */
-  --color-title: #2c974b; /* Dark green for titles */
-  --color-heading: #2c974b; /* Dark green for headings */
-  --color-label: #2c974b; /* Dark green for labels */
-  --color-border: #2c974b; /* Dark green for borders */
-  --color-text: #333; /* Dark text for general use */
-  --color-text-italic: #555; /* Gray text for italic */
-  --color-link: #2c974b; /* Dark green for links */
-  --color-link-hover: #22753a; /* Darker green for link hover */
-  --background-hover: #e6f7e9; /* Light green for item hover */
-  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  --primary-color: #2c974b;
+  --primary-color-dark: #22753a;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #333333;
+  --text-dark: #f1f1f1;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Dark Mode */
@@ -34,11 +29,13 @@ body.dark-mode {
 
 /* Apply variables to elements */
 .problem-selection-page {
-  background-color: var(--background-page);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--shadow-light);
   margin: 0 auto;
+  max-width: 1200px;
+  color: var(--text-light);
 }
 
 .content-container {
@@ -48,7 +45,7 @@ body.dark-mode {
 }
 
 .page-title {
-  color: var(--color-title);
+  color: var(--primary-color);
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -58,19 +55,19 @@ body.dark-mode {
 .difficulty-section,
 .problem-list-section,
 .problem-selection-info {
-  background-color: var(--background-section);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
 }
 
 .difficulty-section h2,
 .problem-list-section h2,
 .problem-selection-info h2 {
-  color: var(--color-heading);
+  color: var(--primary-color);
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid var(--color-heading);
+  border-bottom: 2px solid var(--primary-color);
   padding-bottom: 0.5rem;
 }
 
@@ -80,22 +77,22 @@ body.dark-mode {
 
 .difficulty-selector label {
   margin-right: 0.5rem;
-  color: var(--color-label);
+  color: var(--text-light);
   font-weight: 500;
 }
 
 .difficulty-selector select {
   padding: 0.5rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--primary-color);
   border-radius: 4px;
-  color: var(--color-label);
-  background-color: var(--background-page);
+  color: var(--text-light);
+  background-color: var(--background-light);
   font-size: 1rem;
 }
 
 .difficulty-description {
   margin-bottom: 1rem;
-  color: var(--color-text-italic);
+  color: #666;
   font-style: italic;
 }
 
@@ -107,17 +104,17 @@ body.dark-mode {
 .problem-item {
   margin-bottom: 0.75rem;
   padding: 0.5rem;
-  background-color: var(--background-item);
+  background-color: #f6f8fa;
   border-radius: 4px;
   transition: background-color 0.3s ease;
 }
 
 .problem-item:hover {
-  background-color: var(--background-hover);
+  background-color: #e6f7e9;
 }
 
 .problem-link {
-  color: var(--color-link);
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -125,7 +122,7 @@ body.dark-mode {
 }
 
 .problem-link:hover {
-  color: var(--color-link-hover);
+  color: var(--primary-color-dark);
 }
 
 .problem-selection-info ul {
@@ -133,7 +130,7 @@ body.dark-mode {
 }
 
 .problem-selection-info li {
-  color: var(--color-text);
+  color: var(--text-light);
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
@@ -145,18 +142,70 @@ body.dark-mode {
   margin-left: 10px;
 }
 
+/* Dark Mode Styles */
+body.dark-mode .problem-selection-page {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .difficulty-section,
+body.dark.mode .problem-list-section,
+body.dark.mode .problem-selection-info {
+  background-color: #1c1c1c;
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark.mode .difficulty-section h2,
+body.dark.mode .problem-list-section h2,
+body.dark.mode .problem-selection-info h2 {
+  color: #9be89d;
+  border-bottom-color: #9be89d;
+}
+
+body.dark.mode .difficulty-selector label {
+  color: var(--text-dark);
+}
+
+body.dark.mode .difficulty-selector select {
+  color: var(--text-dark);
+  background-color: #333;
+  border-color: #9be89d;
+}
+
+body.dark.mode .problem-item {
+  background-color: #2c2c2c;
+}
+
+body.dark.mode .problem-item:hover {
+  background-color: #333333;
+}
+
+body.dark.mode .problem-link {
+  color: #9be89d;
+}
+
+body.dark.mode .problem-link:hover {
+  color: #8cbf6e;
+}
+
+body.dark.mode .problem-creator {
+  color: #aaa;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .problem-selection-page {
-      padding: 20px;
+    padding: 20px;
   }
   
   .page-title {
-      font-size: 2rem;
+    font-size: 2rem;
   }
   
   .difficulty-section,
   .problem-list-section,
   .problem-selection-info {
-      padding: 1rem;
+    padding: 1rem;
   }
 }

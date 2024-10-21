@@ -1,17 +1,13 @@
 /* Default Light Mode */
 :root {
-  --background-page: #ffffff; /* White background for light mode */
-  --background-section: #f6f8fa; /* Light gray for sections */
-  --background-table-header: #2c974b; /* Green for table headers */
-  --background-table-row-even: #f1f8ff; /* Light background for even rows */
-  --background-table-row-hover: #e6f7e9; /* Highlight on hover */
-  --background-info: #e6f7e9; /* Light background for info */
-  --text-color: #333; /* Dark text for general use */
-  --text-title: #2c974b; /* Dark green text for titles */
-  --text-header: #ffffff; /* White text for table headers */
-  --text-info: #333; /* Dark text for info section */
-  --border-color: #e1e4e8; /* Light border for table rows */
-  --border-header: #2c974b; /* Green border for headers */
+  --primary-color: #2c974b;
+  --primary-color-dark: #22753a;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #333333;
+  --text-dark: #f1f1f1;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Dark Mode */
@@ -32,12 +28,12 @@ body.dark-mode {
 
 /* Apply variables to elements */
 .leaderboard-page {
-  background-color: var(--background-page);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-light);
   margin: 0 auto;
-  color: var(--text-color);
+  color: var(--text-light);
 }
 
 .content-container {
@@ -47,7 +43,7 @@ body.dark-mode {
 }
 
 .page-title {
-  color: var(--text-title);
+  color: var(--primary-color);
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -55,10 +51,10 @@ body.dark-mode {
 }
 
 .leaderboard-section {
-  background-color: var(--background-section);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-light);
   overflow-x: auto;
 }
 
@@ -71,35 +67,35 @@ body.dark-mode {
 .leaderboard-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e1e4e8;
 }
 
 .leaderboard-table th {
-  background-color: var(--background-table-header);
-  color: var(--text-header);
+  background-color: var(--primary-color);
+  color: var(--background-light);
   font-weight: 600;
 }
 
 .leaderboard-table tr:nth-child(even) {
-  background-color: var(--background-table-row-even);
+  background-color: #f6f8fa;
 }
 
 .leaderboard-table tr:hover {
-  background-color: var(--background-table-row-hover);
+  background-color: #e6f7e9;
 }
 
 .leaderboard-info {
-  background-color: var(--background-info);
+  background-color: #f6f8fa;
   border-radius: 8px;
   padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-light);
 }
 
 .leaderboard-info h2 {
-  color: var(--text-title);
+  color: var(--primary-color);
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid var(--border-header);
+  border-bottom: 2px solid var(--primary-color);
   padding-bottom: 0.5rem;
 }
 
@@ -108,28 +104,72 @@ body.dark-mode {
 }
 
 .leaderboard-info li {
-  color: var(--text-info);
+  color: var(--text-light);
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
 }
 
+/* Dark Mode Styles */
+body.dark-mode .leaderboard-page {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .leaderboard-section,
+body.dark-mode .leaderboard-info {
+  background-color: #1c1c1c;
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .leaderboard-table th {
+  background-color: var(--primary-color-dark);
+}
+
+body.dark-mode .leaderboard-table tr:nth-child(even) {
+  background-color: #2c2c2c;
+}
+
+body.dark-mode .leaderboard-table tr:hover {
+  background-color: #333333;
+}
+
+body.dark-mode .leaderboard-info h2 {
+  color: #9be89d;
+  border-bottom-color: #9be89d;
+}
+
+body.dark-mode .leaderboard-info li {
+  color: var(--text-dark);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .leaderboard-page {
-      padding: 20px;
+    padding: 15px;
   }
 
   .page-title {
-      font-size: 2rem;
+    font-size: 1.8rem;
   }
 
-  .leaderboard-section {
-      padding: 1rem;
+  .leaderboard-section,
+  .leaderboard-info {
+    padding: 1rem;
   }
 
   .leaderboard-table th,
   .leaderboard-table td {
-      padding: 8px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .leaderboard-info h2 {
+    font-size: 1.2rem;
+  }
+
+  .leaderboard-info li {
+    font-size: 0.9rem;
   }
 }

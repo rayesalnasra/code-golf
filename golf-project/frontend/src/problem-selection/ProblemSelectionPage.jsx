@@ -70,7 +70,6 @@ export default function ProblemSelectionPage() {
           creatorInfo
         };
       }));
-
       const filteredProblems = allProblems.filter(problem => problem.difficulty === selectedDifficulty);
       
       const systemProblemsList = filteredProblems.filter(problem => !problem.creatorInfo);

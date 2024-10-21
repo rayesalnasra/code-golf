@@ -197,3 +197,30 @@
 .dark-mode .extra-content p {
   color: #f0f0f0; /* Light gray text */
 }
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .welcome-message {
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .features {
+    flex-direction: column;
+  }
+
+  .feature-item {
+    margin-bottom: 1rem;
+  }
+}

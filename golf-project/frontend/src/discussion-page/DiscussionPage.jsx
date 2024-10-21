@@ -114,7 +114,7 @@ const DiscussionPage = () => {
 
   return (
     <div className="discussion-page">
-      <h1 className="discussion-page__title">Discussion</h1>
+      <h1 className="discussion-page__title">Discussion 💬</h1>
       <div className="discussion-page__message-list">
         {messages.map((message) => (
           <div key={message.id} className="discussion-page__message">

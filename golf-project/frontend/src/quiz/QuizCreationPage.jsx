@@ -196,34 +196,37 @@ const QuizCreationPage = () => {
           
           {question.answers.map((answer, answerIndex) => (
             <div key={answerIndex} className="answer-field">
+              <div className="answer-input-container">
+                <div className="correct-answer-selection">
+                  <input
+                    type={question.questionType === 'select-all-that-apply' ? 'checkbox' : 'radio'}
+                    name={`correct-answer-${index}`}
+                    checked={question.correctAnswers[answerIndex]}
+                    onChange={() => handleCorrectAnswerChange(index, answerIndex)}
+                  />
+                </div>
                 {question.questionType === 'true-false' ? (
                   <div className="true-false-question">
                     <span>{answer}</span>
                   </div>
                 ) : (
-                  <>
-                    <textarea
-                      placeholder="Answer text"
-                      value={answer}
-                      onChange={(e) => handleAnswerChange(index, answerIndex, e.target.value)}
-                    />
-                    <div className="formatted-preview">
-                      {formatMessage(answer)}
-                    </div>
-                  </>
+                  <textarea
+                    placeholder="Answer text"
+                    value={answer}
+                    onChange={(e) => handleAnswerChange(index, answerIndex, e.target.value)}
+                    className="quiz-creation-answer-input"
+                  />
                 )}
-                {errors[`question_${index}_answer_${answerIndex}`] && 
-                  <div className="error-message">{errors[`question_${index}_answer_${answerIndex}`]}</div>}
-                
-                <input
-                  type={question.questionType === 'select-all-that-apply' ? 'checkbox' : 'radio'}
-                  name={`correct-answer-${index}`}
-                  checked={question.correctAnswers[answerIndex]}
-                  onChange={() => handleCorrectAnswerChange(index, answerIndex)}
-                />
-                <label>Correct Answer</label>
               </div>
-            ))}
+              {question.questionType !== 'true-false' && (
+                <div className="formatted-preview">
+                  {formatMessage(answer)}
+                </div>
+              )}
+              {errors[`question_${index}_answer_${answerIndex}`] && 
+                <div className="error-message">{errors[`question_${index}_answer_${answerIndex}`]}</div>}
+            </div>
+          ))}
           {errors[`question_${index}_correct`] && 
             <div className="error-message">{errors[`question_${index}_correct`]}</div>}
 

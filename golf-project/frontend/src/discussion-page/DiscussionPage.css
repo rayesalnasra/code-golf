@@ -1,16 +1,28 @@
+:root {
+  --primary-color: #2c974b;
+  --primary-color-dark: #22753a;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #333333;
+  --text-dark: #f1f1f1;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 /* General Page Styles */
 .discussion-page {
-  background-color: var(--background-page);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--shadow-light);
   margin: 0 auto;
   max-width: 1200px;
+  color: var(--text-light);
 }
 
 .discussion-page__title {
-  color: var(--color-title);
-  font-size: 2rem;
+  color: var(--primary-color);
+  font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
@@ -18,17 +30,17 @@
 
 .discussion-page__message-list {
   padding: 1.2rem;
-  background-color: var(--background-section);
+  background-color: var(--background-light);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
   max-height: 400px;
-  overflow-y: auto; /* Adds vertical scroll when content exceeds max height */
+  overflow-y: auto;
 }
 
 .discussion-page__message {
   margin-bottom: 1rem;
   padding: 0.5rem;
-  background-color: var(--background-resource-item);
+  background-color: #f6f8fa;
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -43,68 +55,64 @@
 }
 
 .discussion-page__message-user {
-  color: var(--color-title);
-  font-weight: 600;
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
 .discussion-page__message-timestamp {
   font-size: 0.8rem;
-  color: #666;
-  text-align: right;
-  flex-shrink: 0;
-  margin-left: 1rem;
+  color: #888;
+  align-self: flex-end;
 }
 
 .discussion-page__message-content {
-  color: var(--color-text);
+  margin-top: 0.5rem;
+  color: var(--text-light);
   word-wrap: break-word; /* Prevents long words from breaking out of container */
   overflow-wrap: break-word; /* Allows word wrapping for long text */
 }
 
 .discussion-page__form {
-  margin-top: 2rem;
-  padding: 1.2rem;
-  background-color: var(--background-section);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
   display: flex;
-  gap: 1rem; /* Adds space between the input and button */
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .discussion-page__input {
-  flex-grow: 1;
+  width: 98%;
   padding: 0.5rem;
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-  height: 25px;
-  resize: none; /* Prevents resizing of textarea */
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 1rem;
-  color: var(--color-text);
+  color: var(--text-light);
+  resize: vertical;
+  min-height: 60px;
 }
 
 .discussion-page__input::placeholder {
-  font-family: 'Courier New', monospace;
   color: #888;
 }
 
 .discussion-page__input:focus {
   outline: none;
-  box-shadow: 0 0 5px var(--color-link); /* Adds focus effect when input is active */
+  box-shadow: 0 0 5px var(--primary-color);
 }
 
-.discussion-page__button {
-  padding: 0.5rem 1rem;
+.discussion-page__submit {
+  padding: 0.3rem 0.8rem;
+  background-color: var(--primary-color);
+  color: white;
   border: none;
-  border-radius: 8px;
-  background-color: var(--color-link);
-  color: var(--background-page);
-  font-size: 1rem;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  width: 100%;
 }
 
-.discussion-page__button:hover {
-  background-color: var(--color-link-hover); /* Changes button color on hover */
+.discussion-page__submit:hover {
+  background-color: var(--primary-color-dark);
 }
 
 .discussion-page__message-content pre {
@@ -123,33 +131,71 @@
 }
 
 .discussion-page__error {
-  color: var(--color-text);
+  color: var(--text-light);
   font-size: 1rem;
   margin-top: 2rem;
   padding: 1.2rem;
-  background-color: var(--background-section);
+  background-color: var(--background-light);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
 }
 
 /* DM Button Styles */
 .dm-button {
-  margin-left: auto; /* Moves the DM button to the right */
+  margin-left: auto;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 3px 8px;
   cursor: pointer;
   border-radius: 4px;
+  font-size: 0.8rem;
+  width: auto;
+  min-width: 60px;
 }
 
 .dm-button:hover {
-  opacity: 0.8; /* Adds hover effect to the DM button */
+  opacity: 0.8;
 }
 
 .discussion-page__header {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Ensures spacing between message user and button */
+  justify-content: space-between;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .discussion-page {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .discussion-page__message-list {
+  background-color: #1c1c1c;
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .discussion-page__message {
+  background-color: #2c2c2c;
+}
+
+body.dark-mode .discussion-page__message-user {
+  color: #9be89d;
+}
+
+body.dark-mode .discussion-page__input {
+  background-color: #333;
+  color: var(--text-dark);
+  border-color: #555;
+}
+
+body.dark-mode .discussion-page__submit {
+  background-color: #9be89d;
+  color: #121212;
+}
+
+body.dark-mode .discussion-page__submit:hover {
+  background-color: #8cbf6e;
 }
 
 /* Responsive adjustments */
@@ -159,7 +205,7 @@
   }
   
   .discussion-page__title {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
   
   .discussion-page__message-list {
@@ -167,6 +213,10 @@
   }
   
   .discussion-page__form {
-    padding: 1rem;
+    flex-direction: column;
+  }
+  
+  .discussion-page__submit {
+    width: 100%;
   }
 }

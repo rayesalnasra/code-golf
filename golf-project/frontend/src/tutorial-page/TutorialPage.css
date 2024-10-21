@@ -1,16 +1,13 @@
 /* Default Light Mode */
 :root {
-  --background-page: #ffffff; /* White background for light mode */
-  --background-section: #f6f8fa; /* Light gray for sections */
-  --background-strategy-item: #ffffff; /* White for strategy items */
-  --background-code-example: #f0f0f0; /* Light gray for code examples */
-  --background-conclusion: #e6f7e9; /* Light green for conclusion */
-  --color-title: #2c974b; /* Dark green for titles */
-  --color-heading: #22753a; /* Slightly darker green for headings */
-  --color-text: #333; /* Dark text for general use */
-  --color-list: #333; /* Dark text for list items */
-  --color-code-border: #2c974b; /* Dark green border for code examples */
-  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  --primary-color: #2c974b;
+  --primary-color-dark: #22753a;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #333333;
+  --text-dark: #f1f1f1;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Dark Mode */
@@ -30,11 +27,12 @@ body.dark-mode {
 
 /* Apply variables to elements */
 .tutorial-page {
-  background-color: var(--background-page);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 30px;
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--shadow-light);
   margin: 0 auto;
+  color: var(--text-light);
 }
 
 .content-container {
@@ -44,7 +42,7 @@ body.dark-mode {
 }
 
 .page-title {
-  color: var(--color-title);
+  color: var(--primary-color);
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -52,28 +50,28 @@ body.dark-mode {
 }
 
 .tutorial-section {
-  background-color: var(--background-section);
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 1.2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
 }
 
 .tutorial-section h2 {
-  color: var(--color-title);
+  color: var(--primary-color);
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid var(--color-title);
+  border-bottom: 2px solid var(--primary-color);
   padding-bottom: 0.5rem;
 }
 
 .tutorial-section h3 {
-  color: var(--color-heading);
+  color: var(--primary-color-dark);
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
 
 .tutorial-section p, .tutorial-section li {
-  color: var(--color-text);
+  color: var(--text-light);
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -89,15 +87,15 @@ body.dark-mode {
 }
 
 .strategy-item {
-  background-color: var(--background-strategy-item);
+  background-color: #f6f8fa;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .code-example {
-  background-color: var(--background-code-example);
-  border-left: 4px solid var(--color-code-border);
+  background-color: #f0f0f0;
+  border-left: 4px solid var(--primary-color);
   padding: 1rem;
   margin-top: 0.5rem;
   overflow-x: auto;
@@ -113,29 +111,59 @@ body.dark-mode {
 }
 
 .conclusion {
-  background-color: var(--background-conclusion);
+  background-color: #e6f7e9;
   text-align: center;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .tutorial-page {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .tutorial-section {
+  background-color: #1c1c1c;
+  box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode .tutorial-section h2,
+body.dark-mode .tutorial-section h3 {
+  color: #9be89d;
+}
+
+body.dark-mode .strategy-item {
+  background-color: #2c2c2c;
+}
+
+body.dark-mode .code-example {
+  background-color: #333333;
+  border-left-color: #9be89d;
+}
+
+body.dark-mode .conclusion {
+  background-color: #333333;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .tutorial-page {
-      padding: 20px;
+    padding: 20px;
   }
 
   .page-title {
-      font-size: 2rem;
+    font-size: 2rem;
   }
 
   .tutorial-section {
-      padding: 1rem;
+    padding: 1rem;
   }
 
   .code-example {
-      padding: 0.8rem;
+    padding: 0.8rem;
   }
 
   .code-example code {
-      font-size: 0.8rem;
+    font-size: 0.8rem;
   }
 }

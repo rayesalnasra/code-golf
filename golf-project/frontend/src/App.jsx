@@ -35,6 +35,7 @@ function App() {
   const [userDisplayName, setUserDisplayName] = useState('');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
@@ -90,6 +91,10 @@ function App() {
     }
   }, [isDarkMode]);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -99,16 +104,16 @@ function App() {
       <div className="app-container">
         {isAuthenticated && (
           <>
-            <div className="header-container">
+            <header className="app-header">
               <div className="logo-container">
-                <img src={codeGolfLogo} alt="Code Golf Logo" className="code-golf-logo" />
+                <img src={codeGolfLogo} alt="Code Golf Logo" className="logo" />
               </div>
-              <div className="profile-container">
-                <div className="profile-icon" onClick={toggleDropdown} style={{ cursor: 'pointer', fontSize: '30px' }}>
+              <div className="user-menu">
+                <div className="user-icon" onClick={toggleDropdown}>
                   👤
                 </div>
                 {isDropdownVisible && (
-                  <div className="dropdown">
+                  <div className="user-dropdown">
                     <ul>
                       <li><Link to="/profile">Profile</Link></li>
                       <li><Link to="/my-solutions">My Solutions</Link></li>
@@ -120,61 +125,62 @@ function App() {
                   </div>
                 )}
               </div>
-            </div>
-            <nav>
+            </header>
+            <nav className={`app-nav ${isMenuOpen ? 'open' : ''}`}>
               <ul>
-                <li><Link to="/home">Home</Link></li>
-                <li><Link to="/leaderboard">Leaderboard</Link></li>
-                <li><Link to="/tutorial">Tutorial</Link></li>
-                <li><Link to="/documentation">Documentation</Link></li>
-                <li><Link to="/discussion">Discussion</Link></li>
-                <li><Link to="/problems">Problems</Link></li>
-                <li><Link to="/create-problem">Create Problem</Link></li>
-                <li><Link to="/quiz">Quiz</Link></li>
-                <li><Link to="/play-code-golf">Play Code Golf</Link></li>
+                <li><Link to="/" onClick={toggleMenu}>Home</Link></li>
+                <li><Link to="/leaderboard" onClick={toggleMenu}>Leaderboard</Link></li>
+                <li><Link to="/tutorial" onClick={toggleMenu}>Tutorial</Link></li>
+                <li><Link to="/documentation" onClick={toggleMenu}>Documentation</Link></li>
+                <li><Link to="/discussion" onClick={toggleMenu}>Discussion</Link></li>
+                <li><Link to="/problems" onClick={toggleMenu}>Problems</Link></li>
+                <li><Link to="/create-problem" onClick={toggleMenu}>Create Problem</Link></li>
+                <li><Link to="/quiz" onClick={toggleMenu}>Quiz</Link></li>
+                <li><Link to="/play-code-golf" onClick={toggleMenu}>Play Code Golf</Link></li>
               </ul>
             </nav>
-            {/* Ad Banner under the navigation menu */}
             <div className="ad-banner">
               <DeletableAdBanner />
             </div>
-
-            {/* Fixed bottom-right corner Ad */}
             <div className="fixed-ad-banner">
               <DeletableAdBanner />
             </div>
           </>
         )}
 
-        <Routes>
-          <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />} />
-          <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
-          <Route path="/home" element={<HomePage isAuthenticated={isAuthenticated} />} />
-          <Route path="/profile" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />} />
-          <Route path="/my-solutions" element={isAuthenticated ? <MySolutionsPage /> : <Navigate to="/login" />} />
-          <Route path="/leaderboard" element={isAuthenticated ? <LeaderboardPage /> : <Navigate to="/login" />} />
-          <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
-          <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
-          <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
-          <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
-          <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
-          <Route path="/friends" element={isAuthenticated ? <FriendsPage /> : <Navigate to="/login" />} />
-          <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
-          <Route path="/quiz" element={isAuthenticated ? <QuizPage /> : <Navigate to="/login" />} />
-          <Route path="/create-quiz" element={isAuthenticated ? <QuizCreationPage /> : <Navigate to="/login" />} /> {/* Added Quiz Creation Route */}
-          <Route path="/take-quiz/:quizId" element={isAuthenticated ? <TakeQuizPage /> : <Navigate to="/login" />} />
-          <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
-          <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
-          <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
-          <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
-          <Route path="/play-code-golf" element={<PlayCodeGolf />} />
-          <Route path="/play-code-golf/:difficulty" element={<PlayCodeGolf />} />
-          <Route path="/play-code-golf/:difficulty/:language" element={<PlayCodeGolf />} />
-        </Routes>
+        <main className="app-main">
+          <Routes>
+            <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />} />
+            <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
+            <Route path="/home" element={<HomePage isAuthenticated={isAuthenticated} />} />
+            <Route path="/profile" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/my-solutions" element={isAuthenticated ? <MySolutionsPage /> : <Navigate to="/login" />} />
+            <Route path="/leaderboard" element={isAuthenticated ? <LeaderboardPage /> : <Navigate to="/login" />} />
+            <Route path="/tutorial" element={isAuthenticated ? <TutorialPage /> : <Navigate to="/login" />} />
+            <Route path="/documentation" element={isAuthenticated ? <DocumentationPage /> : <Navigate to="/login" />} />
+            <Route path="/discussion" element={isAuthenticated ? <DiscussionPage /> : <Navigate to="/login" />} />
+            <Route path="/problems" element={isAuthenticated ? <ProblemSelectionPage /> : <Navigate to="/login" />} />
+            <Route path="/problems/:problemId" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
+            <Route path="/friends" element={isAuthenticated ? <FriendsPage /> : <Navigate to="/login" />} />
+            <Route path="/direct-message/:userId" element={isAuthenticated ? <DirectMessagePage /> : <Navigate to="/login" />} />
+            <Route path="/quiz" element={isAuthenticated ? <QuizPage /> : <Navigate to="/login" />} />
+            <Route path="/create-quiz" element={isAuthenticated ? <QuizCreationPage /> : <Navigate to="/login" />} /> {/* Added Quiz Creation Route */}
+            <Route path="/take-quiz/:quizId" element={isAuthenticated ? <TakeQuizPage /> : <Navigate to="/login" />} />
+            <Route path="/" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+            <Route path="/create-problem" element={isAuthenticated ? <CreateProblemPage /> : <Navigate to="/login" />} />
+            <Route path="/my-problems" element={isAuthenticated ? <MyProblemsPage /> : <Navigate to="/login" />} />
+            <Route path="/edit-problem/:problemId" element={isAuthenticated ? <EditProblemPage /> : <Navigate to="/login" />} />
+            <Route path="/play-code-golf" element={<PlayCodeGolf />} />
+            <Route path="/play-code-golf/:difficulty" element={<PlayCodeGolf />} />
+            <Route path="/play-code-golf/:difficulty/:language" element={<PlayCodeGolf />} />
+          </Routes>
+        </main>
 
-        <div className="footer-ad-banner">
-          <DeletableAdBanner />
-        </div>
+        <footer className="app-footer">
+          <div className="footer-ad-banner">
+            <DeletableAdBanner />
+          </div>
+        </footer>
       </div>
     </Router>
   );

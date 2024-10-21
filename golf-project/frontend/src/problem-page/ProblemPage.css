@@ -311,3 +311,27 @@ body.dark-mode .language-selector select:hover {
 .action-buttons button:nth-child(4):hover:not(:disabled) {
   background-color: #d48c1f;
 }
+
+@media (max-width: 768px) {
+  .problem-page {
+    padding: 15px;
+  }
+
+  .problem-description {
+    font-size: 1rem;
+  }
+
+  .button-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

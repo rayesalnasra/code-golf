@@ -1,7 +1,19 @@
-/* Base Styles */
+:root {
+  --primary-color: #2c974b;
+  --primary-color-dark: #22753a;
+  --background-light: #ffffff;
+  --background-dark: #000000;
+  --text-light: #333333;
+  --text-dark: #f1f1f1;
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 body {
-  background-color: #e6f7e9;
   font-family: Arial, sans-serif;
+  background-color: #e6f7e9;
+  color: var(--text-light);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .app-container {
@@ -10,220 +22,159 @@ body {
   padding: 20px;
 }
 
-.app-title {
-  color: #2c974b;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-nav {
-  background-color: #ffffff;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-nav.dark {
-  background-color: #2c2c2c;
-}
-
-nav ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: space-around;
-}
-
-nav ul li a {
-  color: #2c974b;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-nav ul li a:hover {
-  color: #22753a;
-}
-
-/* Profile Icon and Dropdown */
-.profile-container {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px;
-  position: relative;
-}
-
-.profile-icon img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown {
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #2c974b;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-}
-
-.dropdown ul {
-  list-style-type: none;
-  padding: 10px;
-  margin: 0;
-}
-
-.dropdown ul li {
-  padding: 10px;
-  text-align: left;
-}
-
-/* Normalize button and link styles */
-.dropdown ul li button,
-.dropdown ul li a {
-  background: none;
-  border: none;
-  color: #2c974b;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 10px 20px;
-  width: 100%;
-  text-align: left;
-  display: block;
-}
-
-.dropdown ul li button:hover,
-.dropdown ul li a:hover {
-  color: #22753a;
-}
-
-.header-container {
+.app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #ffffff;
+  background-color: var(--background-light);
   border-radius: 8px 8px 0 0;
-  margin-bottom: 1px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-}
-
-.code-golf-logo {
+.logo {
   height: 40px;
   width: auto;
 }
 
-.profile-container {
-  display: flex;
-  align-items: center;
+.user-menu {
+  position: relative;
 }
 
-nav {
-  border-radius: 0 0 8px 8px;
-  margin-top: 0;
-}
-
-/* Dark Mode Button */
-button {
+.user-icon {
+  font-size: 30px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #ffffff;
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--background-light);
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+  z-index: 100;
 }
 
-body.dark-mode button {
-  color: #fff;
+.user-dropdown ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Enhanced Dark Mode Styles */
-body.dark-mode {
-  background-color: #202124; /* Softer dark gray background instead of pure black */
-  color: #e0e0e0; /* Lighter grey for text to increase readability */
+.user-dropdown li {
+  padding: 10px 20px;
 }
 
-body.dark-mode .header-container {
-  background-color: #282a2d; /* Lighter background for the header for contrast */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Darker, more prominent shadow */
+.user-dropdown a,
+.user-dropdown button {
+  color: var(--primary-color);
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: color 0.3s;
 }
 
-body.dark-mode nav {
-  background-color: #282a2d; /* Dark grey for nav similar to header */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Elevated shadow for nav */
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+  color: var(--primary-color-dark);
 }
 
-body.dark-mode nav ul li a {
-  color: #a5d6a7; /* Softer green for nav links */
+.app-nav {
+  background-color: var(--background-light);
+  padding: 10px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: var(--shadow-light);
 }
 
-body.dark-mode nav ul li a:hover {
-  color: #81c784; /* Slightly brighter hover effect */
+.app-nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-body.dark-mode .dropdown {
-  background-color: #333; /* Dark dropdown with enough contrast */
-  border: 1px solid #4caf50; /* Green border to highlight dropdown */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+.app-nav li {
+  margin: 5px 10px;
 }
 
-body.dark-mode .dropdown ul li button,
-body.dark-mode .dropdown ul li a {
-  color: #b2ff59; /* Softer green for dropdown text */
+.app-nav a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
-body.dark-mode .dropdown ul li button:hover,
-body.dark-mode .dropdown ul li a:hover {
-  color: #76ff03; /* Bright green hover effect */
+.app-nav a:hover {
+  color: var(--primary-color-dark);
 }
 
-body.dark-mode .profile-icon img {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* Darker shadow for profile icon */
+/* Hamburger menu icon */
+.menu-icon {
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
 }
 
-body.dark-mode .app-container {
-  background-color: #303134; /* Mid-tone grey background for content container */
+/* Media query for responsive design */
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .menu-icon {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+
+  .app-nav {
+    width: 100%;
+  }
+
+  .app-nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-nav li {
+    margin: 10px 0;
+  }
+}
+
+.app-main {
+  margin-top: 20px;
+  background-color: var(--background-light);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Soft shadow around content */
+  box-shadow: var(--shadow-light);
 }
 
-body.dark-mode .app-title {
-  color: #81c784; /* Softer green title text */
+.app-footer {
+  margin-top: 20px;
 }
 
-/* Smooth transitions for mode changes */
-body, nav, .header-container, .dropdown, nav ul li a, button, .app-container {
-  transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+/* Ad styles */
+.ad-banner,
+.fixed-ad-banner,
+.footer-ad-banner {
+  max-width: 100%;
+  overflow: hidden;
 }
 
-
-/* Ads */
-/* Ads */
-.ad-banner img {
-  max-height: 150px; /* Restrict the height of the image */
-  width: 100%; /* Keep the width proportional */
-  height: 100%; /* Ensure the image height fills the banner's height */
-  object-fit: cover; /* Maintain image aspect ratio and fill the container */
-}
-
-
+.ad-banner img,
+.fixed-ad-banner img,
 .footer-ad-banner img {
   max-height: 150px;
   width: 100%;
-  height: 100%; /* Fill the height of the container */
   object-fit: cover;
 }
 
@@ -232,30 +183,42 @@ body, nav, .header-container, .dropdown, nav ul li a, button, .app-container {
   bottom: 20px;
   right: 20px;
   max-width: 300px;
-  height: 150px; /* Set the height for the fixed banner */
   z-index: 1000;
 }
 
-.fixed-ad-banner img {
-  width: 100%;
-  height: 100%; /* Fill both height and width */
-  object-fit: cover;
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #202124;
+  color: var(--text-dark);
 }
 
-.deletable-ad-banner {
-  position: relative;
+body.dark-mode .app-header,
+body.dark-mode .app-nav,
+body.dark.mode .app-main,
+body.dark.mode .user-dropdown {
+  background-color: #282a2d;
+  box-shadow: var(--shadow-dark);
 }
 
-.close-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: #ff5c5c;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 5px;
-  font-size: 14px;
+body.dark.mode .app-nav a,
+body.dark.mode .user-dropdown a,
+body.dark.mode .user-dropdown button {
+  color: #a5d6a7;
 }
 
+body.dark.mode .app-nav a:hover,
+body.dark.mode .user-dropdown a:hover,
+body.dark.mode .user-dropdown button:hover {
+  color: #81c784;
+}
+
+/* Transitions for smooth mode changes */
+.app-header,
+.app-nav,
+.app-main,
+.user-dropdown,
+.app-nav a,
+.user-dropdown a,
+.user-dropdown button {
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}

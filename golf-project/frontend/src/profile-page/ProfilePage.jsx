@@ -325,9 +325,11 @@ function ProfilePage() {
                   key={`${dmUser.id}-${index}`} 
                   className={`dm-box ${dmUser.isFromUser ? 'user-message' : 'other-user-message'}`}
                 >
-                  <div className="dm-username">{dmUser.displayName}</div>
-                  <div className="dm-latest-message">{dmUser.latestMessage}</div>
-                  <div className="dm-time">{dmUser.latestMessageTime}</div>
+                  <div className="dm-content">
+                    <div className="dm-username">{dmUser.displayName}</div>
+                    <div className="dm-latest-message">{dmUser.latestMessage}</div>
+                    <div className="dm-time">{dmUser.latestMessageTime}</div>
+                  </div>
                   <button className="reply-button" onClick={() => handleReplyClick(dmUser.id)}>
                     Reply
                   </button>
