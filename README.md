@@ -55,7 +55,57 @@ Code Golf is a fun and competitive platform where coding enthusiasts can test th
 
 ## Usage
 
-[Provide examples of how to use the application, including any important commands or features]
+## Usage
+
+### Getting Started
+
+1. After installation, navigate to the home page of the application.
+   
+2. You'll be greeted with a welcome message and options to start coding or view the leaderboard.
+
+3. Click on "Start Coding 🚀" to begin your Code Golf journey.
+
+### Playing Code Golf
+
+1. Choose your difficulty level:
+   - Easy: Perfect for beginners
+   - Medium: For intermediate coders
+   - Hard: Challenges for experienced programmers
+
+2. Select your preferred programming language (currently supporting Python and JavaScript).
+
+3. You'll be presented with a coding problem. Read the description carefully.
+
+4. Write your solution in the code editor provided. Remember, in Code Golf, the goal is to solve the problem with the fewest characters possible!
+
+5. Use the "Run Code" button to test your solution against the provided test cases.
+
+6. Keep track of your attempts, character count, and time spent on each problem.
+
+7. Once you've solved the problem, you'll see your score and can move on to the next challenge.
+
+8. After completing all problems in a session, you'll see a summary of your performance.
+
+### Viewing Documentation
+
+1. Access the Documentation page to find helpful coding resources.
+
+2. Here you'll find links to external resources for both JavaScript and Python to help improve your coding skills.
+
+### Checking the Leaderboard
+
+1. Visit the Leaderboard page to see how you rank among other Code Golf players.
+
+2. You can view rankings for different difficulty levels and programming languages.
+
+### Tips for Success
+
+- Practice regularly to improve your skills and climb the leaderboard.
+- Study other golfers' solutions to learn new techniques.
+- Remember that Code Golf is about fun and learning, not writing production code.
+- Try to balance brevity with readability when possible.
+
+Happy golfing! 🏌️‍♂️💻
 
 ## Support
 
@@ -91,7 +141,27 @@ We'd like to thank all contributors and the open-source community for their supp
 
 ## License
 
+MIT License
 
+Copyright (c) 2024 Code Golf
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ## Project Status
 
