@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
-import { dbCodeRunner } from './firebase/firebaseCodeRunner';
-import ProblemForm from './components/ProblemForm';
+import { dbCodeRunner } from '../firebase/firebaseCodeRunner';
+import ProblemForm from '../components/ProblemForm';
 import './EditProblemPage.css';
 
 const EditProblemPage = () => {

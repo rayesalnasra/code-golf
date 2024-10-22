@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 jest.mock('./CreateProblemPage.css', () => ({}));
-import CreateProblemPage from './create-problems/CreateProblemPage';
+import CreateProblemPage from './CreateProblemPage';
 
 // Mock the firebase modules
 jest.mock('./firebase/firebaseCodeRunner', () => ({

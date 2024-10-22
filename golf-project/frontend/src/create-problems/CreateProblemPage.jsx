@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { setDoc, doc } from 'firebase/firestore/lite';
-import { dbCodeRunner } from './firebase/firebaseCodeRunner';
-import ProblemForm from './components/ProblemForm';
+import { dbCodeRunner } from '../firebase/firebaseCodeRunner';
+import ProblemForm from '../components/ProblemForm';
 import './CreateProblemPage.css';
 
 const CreateProblemPage = () => {

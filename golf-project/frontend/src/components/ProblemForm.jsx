@@ -4,7 +4,9 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import axios from 'axios';
 
+// Main component for creating/editing programming problems
 const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonText, showIdField }) => {
+  // State variables
   const [problem, setProblem] = useState(initialProblem);
   const [testCases, setTestCases] = useState(initialTestCases);
   const [newTestCase, setNewTestCase] = useState({ inputs: '', expected_output: '' });
@@ -12,11 +14,13 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
   const [error, setError] = useState(null);
   const [allTestsPassed, setAllTestsPassed] = useState(false);
 
+  // Update state when props change
   useEffect(() => {
     setProblem(initialProblem);
     setTestCases(initialTestCases);
   }, [initialProblem, initialTestCases]);
 
+  // Handle changes in form inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProblem(prevProblem => ({
@@ -25,6 +29,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     }));
   };
 
+  // Handle changes in code editor
   const handleCodeChange = (value, type) => {
     setProblem(prevProblem => ({
       ...prevProblem,
@@ -32,6 +37,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     }));
   };
 
+  // Handle changes in test case inputs
   const handleTestCaseChange = (e) => {
     const { name, value } = e.target;
     setNewTestCase(prevTestCase => ({
@@ -40,6 +46,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     }));
   };
 
+  // Parse test case input/output values
   const parseTestCaseValue = (value) => {
     try {
       return JSON.parse(value);
@@ -54,6 +61,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     }
   };
 
+  // Add a new test case
   const addTestCase = () => {
     const newCase = {
       inputs: parseTestCaseValue(newTestCase.inputs),
@@ -63,10 +71,12 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     setNewTestCase({ inputs: '', expected_output: '' });
   };
 
+  // Remove a test case
   const removeTestCase = (index) => {
     setTestCases(prevTestCases => prevTestCases.filter((_, i) => i !== index));
   };
 
+  // Run the code against test cases
   const runCode = async () => {
     setError(null);
     setTestResults(null);
@@ -97,6 +107,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     }
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!allTestsPassed) {
@@ -106,6 +117,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
     onSubmit(problem, testCases);
   };
 
+  // Render the form
   return (
     <form onSubmit={handleSubmit}>
       {showIdField && (
@@ -167,6 +179,8 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
           <option value="python">Python</option>
         </select>
       </div>
+      
+      {/* Initial Code editor */}
       <div>
         <label htmlFor="initialCode">Initial Code:</label>
         <CodeMirror
@@ -176,6 +190,8 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
           onChange={(value) => handleCodeChange(value, 'initialCode')}
         />
       </div>
+      
+      {/* Solution Code editor */}
       <div>
         <label htmlFor="solution">Solution:</label>
         <CodeMirror
@@ -186,6 +202,7 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
         />
       </div>
       
+      {/* Test Cases section */}
       <div>
         <h2>Test Cases</h2>
         {testCases.map((testCase, index) => (
@@ -214,8 +231,13 @@ const ProblemForm = ({ initialProblem, initialTestCases, onSubmit, submitButtonT
         </div>
       </div>
       
+      {/* Test Solution button */}
       <button type="button" onClick={runCode}>Test Solution</button>
+      
+      {/* Submit button (disabled if not all tests passed) */}
       <button type="submit" disabled={!allTestsPassed}>{submitButtonText}</button>
+      
+      {/* Warning message if not all tests passed */}
       {!allTestsPassed && (
         <p className="warning-message">All test cases must pass before you can submit the problem.</p>
       )}

@@ -20,9 +20,9 @@ import MyProblemsPage from './my-problems/MyProblemsPage';
 import Login from './login-pages/Login';
 import Register from './login-pages/Register';
 import codeGolfLogo from './code-golf-icon.png';
-import CreateProblemPage from './CreateProblemPage';
+import CreateProblemPage from './create-problems/CreateProblemPage';
 import './App.css';
-import EditProblemPage from './EditProblemPage';
+import EditProblemPage from './create-problems/EditProblemPage';
 import PlayCodeGolf from './play-code-golf/PlayCodeGolf';
 
 
