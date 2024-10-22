@@ -55,8 +55,6 @@ Code Golf is a fun and competitive platform where coding enthusiasts can test th
 
 ## Usage
 
-## Usage
-
 ### Getting Started
 
 1. After installation, navigate to the home page of the application.
