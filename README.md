@@ -22,7 +22,7 @@ Whether you're looking to improve your coding skills, compete with friends, or s
 4. Open terminal in the backend folder
 ```bash
 Type "npm install" #install npm
-then "node server.js"
+then "npm start"
 ```
 
 5. Open another terminal in the frontend folder
@@ -34,7 +34,7 @@ then "npm run dev"
 6. Open another terminal in the server folder
 ```bash
 Type "npm install" #install npm
-then "npm start code-golf"
+then "npm start"
 ```
 
 **Meet the Team:**
