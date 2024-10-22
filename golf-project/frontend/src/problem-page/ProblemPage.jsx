@@ -16,6 +16,7 @@ import ActionButtons from "./ActionButtons";
 import LanguageSelector from "./LanguageSelector";
 import axios from "axios";
 
+// Main ProblemPage component
 export default function ProblemPage({ 
   problemId: propProblemId, 
   onComplete, 
@@ -27,12 +28,15 @@ export default function ProblemPage({
   language: propLanguage,
   showBackLink = true
 }) {
+  // Extract parameters from URL and router
   const { problemId: paramProblemId, difficulty } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Determine the problem ID (from props or URL params)
   const problemId = propProblemId || paramProblemId;
   
+  // State variables
   const [language, setLanguage] = useState(propLanguage || 'python'); // Default to 'python' if not provided
   const [code, setCode] = useState("");
   const [results, setResults] = useState([]);
@@ -48,6 +52,7 @@ export default function ProblemPage({
   const [problem, setProblem] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // Effect to set language from URL params (if not in Code Golf mode)
   useEffect(() => {
     if (!isCodeGolfMode) {
       const params = new URLSearchParams(location.search);
@@ -58,12 +63,14 @@ export default function ProblemPage({
     }
   }, [location.search, isCodeGolfMode]);
 
+  // Effect to fetch problem details when problemId changes
   useEffect(() => {
     if (problemId) {
       fetchProblem();
     }
   }, [problemId]);
 
+  // Effect to fetch test cases, user submission, and user data when problem or language changes
   useEffect(() => {
     if (problem) {
       fetchTestCases();
@@ -72,7 +79,7 @@ export default function ProblemPage({
     }
   }, [problem, language]);
 
-  // Fetch problem details from Firestore
+  // Function to fetch problem details from Firestore
   const fetchProblem = async () => {
     setIsLoading(true);
     try {
@@ -93,7 +100,7 @@ export default function ProblemPage({
     }
   };
 
-  // Fetch test cases for the current problem
+  // Function to fetch test cases for the current problem
   const fetchTestCases = async () => {
     try {
       // First, try to fetch test cases from the new structure
@@ -118,7 +125,7 @@ export default function ProblemPage({
     }
   };
 
-  // Fetch user's previous submission for the current problem
+  // Function to fetch user's previous submission for the current problem
   const fetchUserSubmission = async () => {
     setIsLoading(true);
     setLoadError("");
@@ -163,7 +170,7 @@ export default function ProblemPage({
     }
   };
 
-  // Fetch user data from the database
+  // Function to fetch user data from the database
   const fetchUserData = () => {
     const userId = localStorage.getItem('userUID');
     if (userId) {
@@ -177,7 +184,7 @@ export default function ProblemPage({
     }
   };
 
-  // Handle code changes in the editor
+  // Function to handle code changes in the editor
   const handleChange = (value) => {
     if (!isCodeGolfMode || !isSolved) {
       setCode(value);
@@ -189,7 +196,7 @@ export default function ProblemPage({
     }
   };
 
-  // Update user's progress after passing a test
+  // Function to update user's progress after passing a test
   const updateUserProgress = () => {
     if (!user || isCodeGolfMode) return;  // Don't update progress in Code Golf mode
 
@@ -222,7 +229,7 @@ export default function ProblemPage({
     }
   };
 
-  // Run the user's code and check against test cases
+  // Function to run the user's code and check against test cases
   const runCode = () => {
     axios.post("http://localhost:3000/run-code", { code, problem: problemId, language, testCases })
       .then((res) => {
@@ -248,7 +255,7 @@ export default function ProblemPage({
       });
   };
 
-  // Save user's code to the database
+  // Function to save user's code to the database
   const saveCode = async () => {
     if (isCodeGolfMode) return;
 
@@ -269,7 +276,7 @@ export default function ProblemPage({
     }
   };
 
-  // Reset the code editor to the initial state
+  // Function to reset the code editor to the initial state
   const resetCode = () => {
     if (window.confirm("Are you sure you want to reset your code? This action cannot be undone.")) {
       setCode(problem?.initialCode[language] || "");
@@ -278,7 +285,7 @@ export default function ProblemPage({
     }
   };
 
-  // Handle errors from code execution
+  // Function to handle errors from code execution
   const handleError = (error) => {
     if (error.response) {
       setResults([{ error: error.response.data.error || "An error occurred while running your code." }]);
@@ -290,7 +297,7 @@ export default function ProblemPage({
     setTestResult("failed");
   };
 
-  // Handle navigation away from the page
+  // Function to handle navigation away from the page
   const handleNavigateAway = (to) => {
     if (hasUnsavedChanges) {
       const confirmNavigation = window.confirm(
@@ -306,7 +313,7 @@ export default function ProblemPage({
     }
   };
 
-  // Toggle solution visibility
+  // Function to toggle solution visibility
   const handleViewSolution = async () => {
     if (showSolution) {
       setShowSolution(false);
@@ -322,13 +329,14 @@ export default function ProblemPage({
     }
   };
 
-  // Call onStart when the problem is loaded
+  // Effect to call onStart when the problem is loaded
   useEffect(() => {
     if (problem && onStart) {
       onStart();
     }
   }, [problem, onStart]);
 
+  // Function to handle language change
   const handleLanguageChange = (newLanguage) => {
     if (hasUnsavedChanges) {
       const confirmChange = window.confirm(
@@ -349,6 +357,7 @@ export default function ProblemPage({
     setShowSolution(false);
   };
 
+  // Effect to fetch user submission or set initial code when problem or language changes
   useEffect(() => {
     if (problem && !isCodeGolfMode) {
       fetchUserSubmission();
@@ -357,6 +366,7 @@ export default function ProblemPage({
     }
   }, [problem, language, isCodeGolfMode]);
 
+  // Render the component
   return (
     <div className="problem-page">
       {showBackLink && (

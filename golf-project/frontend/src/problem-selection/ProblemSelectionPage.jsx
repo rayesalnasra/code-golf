@@ -6,7 +6,7 @@ import { dbCodeRunner } from "../firebase/firebaseCodeRunner";
 import { readData } from "../firebase/databaseUtils";
 import "./ProblemSelectionPage.css";
 
-// Difficulty levels with corresponding problems
+// Object containing difficulty levels with descriptions and emojis
 const difficulties = {
   easy: {
     description: "Ideal for beginners. These problems cover basic programming concepts and simple algorithms.",
@@ -23,17 +23,19 @@ const difficulties = {
 };
 
 export default function ProblemSelectionPage() {
-  // State to track the selected difficulty level
+  // State variables for managing component data and UI
   const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
   const [systemProblems, setSystemProblems] = useState([]);
   const [userProblems, setUserProblems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Effect hook to fetch problems when difficulty changes
   useEffect(() => {
     fetchProblems();
   }, [selectedDifficulty]);
 
+  // Function to fetch problems from Firestore
   const fetchProblems = async () => {
     setIsLoading(true);
     setError(null);
@@ -43,10 +45,12 @@ export default function ProblemSelectionPage() {
       const problemsSnapshot = await getDocs(problemsCollection);
       console.log(`Found ${problemsSnapshot.docs.length} problems`);
 
+      // Process each problem document
       const allProblems = await Promise.all(problemsSnapshot.docs.map(async (doc) => {
         const problemData = doc.data();
         console.log(`Processing problem: ${doc.id}`, problemData);
         let creatorInfo = null;
+        // Fetch creator info if available
         if (problemData.createdBy) {
           try {
             await new Promise((resolve) => {
@@ -70,8 +74,10 @@ export default function ProblemSelectionPage() {
           creatorInfo
         };
       }));
+      // Filter problems based on selected difficulty
       const filteredProblems = allProblems.filter(problem => problem.difficulty === selectedDifficulty);
       
+      // Separate system and user-created problems
       const systemProblemsList = filteredProblems.filter(problem => !problem.creatorInfo);
       const userProblemsList = filteredProblems.filter(problem => problem.creatorInfo);
 
@@ -87,6 +93,7 @@ export default function ProblemSelectionPage() {
     }
   };
 
+  // Helper function to format dates
   const formatDate = (date) => {
     if (!date) return "";
     return date.toLocaleString('en-US', {
@@ -98,6 +105,7 @@ export default function ProblemSelectionPage() {
     });
   };
 
+  // Function to render a list of problems
   const renderProblemList = (problems, title) => (
     <section className="problem-list-section">
       <h2>{title}</h2>
@@ -122,11 +130,13 @@ export default function ProblemSelectionPage() {
     </section>
   );
 
+  // Main component render
   return (
     <div className="problem-selection-page">
       <div className="content-container">
         <h1 className="page-title">Problem Selection 🧩</h1>
         
+        {/* Difficulty selection section */}
         <section className="difficulty-section">
           <h2>Choose Your Challenge</h2>
           <div className="difficulty-selector">
@@ -147,6 +157,7 @@ export default function ProblemSelectionPage() {
           </p>
         </section>
         
+        {/* Conditional rendering based on loading and error states */}
         {isLoading ? (
           <p>Loading problems...</p>
         ) : error ? (
@@ -161,6 +172,7 @@ export default function ProblemSelectionPage() {
           </>
         )}
 
+        {/* Tips section */}
         <section className="problem-selection-info">
           <h2>Tips for Problem Solving 💡</h2>
           <ul>

@@ -5,13 +5,16 @@ const TutorialPage = () => {
   return (
     <div className="tutorial-page">
       <div className="content-container">
+        {/* Page title */}
         <h1 className="page-title">How to Play Code Golf 🎯</h1>
         
+        {/* Section: What is Code Golf? */}
         <section className="tutorial-section">
           <h2>What is Code Golf?</h2>
           <p>Code Golf is a recreational programming competition where participants strive to solve coding challenges using the fewest characters possible while maintaining functionality.</p>
         </section>
 
+        {/* Section: Basic Rules */}
         <section className="tutorial-section">
           <h2>Basic Rules</h2>
           <ul>
@@ -22,9 +25,11 @@ const TutorialPage = () => {
           </ul>
         </section>
 
+        {/* Section: Strategies for Code Golf */}
         <section className="tutorial-section">
           <h2>Strategies for Code Golf</h2>
           <div className="strategy-list">
+            {/* Strategy 1: Use Short Variable Names */}
             <div className="strategy-item">
               <h3>1. Use Short Variable Names</h3>
               <p>Instead of descriptive names, use single letters or short abbreviations.</p>
@@ -35,6 +40,7 @@ let counter = 0;
 let c = 0;`}</code></pre>
               </div>
             </div>
+            {/* Strategy 2: Utilize Shorthand Operators */}
             <div className="strategy-item">
               <h3>2. Utilize Shorthand Operators</h3>
               <p>Use ++ instead of += 1, ternary operators instead of if-else, etc.</p>
@@ -45,6 +51,7 @@ x = x + 1;
 x++;`}</code></pre>
               </div>
             </div>
+            {/* Strategy 3: Leverage Language-Specific Tricks */}
             <div className="strategy-item">
               <h3>3. Leverage Language-Specific Tricks</h3>
               <p>Each programming language has unique shortcuts. Learn and use them.</p>
@@ -59,6 +66,7 @@ if x in range(1,6):`}</code></pre>
           </div>
         </section>
 
+        {/* Section: Additional Tips */}
         <section className="tutorial-section">
           <h2>Additional Tips</h2>
           <ul>
@@ -69,6 +77,7 @@ if x in range(1,6):`}</code></pre>
           </ul>
         </section>
 
+        {/* Conclusion Section */}
         <section className="tutorial-section conclusion">
           <h2>Ready to Tee Off?</h2>
           <p>Now that you know the basics, it's time to start golfing! Remember, the goal is to have fun while sharpening your coding skills. Happy golfing!</p>

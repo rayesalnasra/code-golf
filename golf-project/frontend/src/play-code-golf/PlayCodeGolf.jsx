@@ -20,12 +20,14 @@ const SCORING = {
   MAX_SCORE: 7
 };
 
+// Par attempts for different difficulty levels
 const PAR_ATTEMPTS = {
   easy: 3,
   medium: 4,
   hard: 5
 };
 
+// Maximum attempts for different difficulty levels
 const MAX_ATTEMPTS = {
   easy: 6,
   medium: 7,
@@ -58,6 +60,7 @@ const PlayCodeGolf = () => {
   const [difficulty, setDifficulty] = useState('easy'); // Example initialization
   const [gameId, setGameId] = useState('game123'); // Example game ID
 
+  // Fetch problems when difficulty and language are selected
   useEffect(() => {
     if (selectedDifficulty && selectedLanguage) {
       fetchProblems().then(() => {
@@ -66,6 +69,7 @@ const PlayCodeGolf = () => {
     }
   }, [selectedDifficulty, selectedLanguage]);
 
+  // Set current problem index based on URL problem ID
   useEffect(() => {
     if (urlProblemId && problems.length > 0) {
       const index = problems.findIndex(p => p.id === urlProblemId);
@@ -75,6 +79,7 @@ const PlayCodeGolf = () => {
     }
   }, [urlProblemId, problems]);
 
+  // Redirect to login if user is not authenticated
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
@@ -85,6 +90,7 @@ const PlayCodeGolf = () => {
     return () => unsubscribe();
   }, [navigate]);
 
+  // Fetch problems from Firestore
   const fetchProblems = async () => {
     setIsLoading(true);
     setError(null);
@@ -110,15 +116,18 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Handle difficulty selection
   const handleDifficultySelect = (difficulty) => {
     setSelectedDifficulty(difficulty);
   };
 
+  // Handle language selection
   const handleLanguageSelect = (language) => {
     setSelectedLanguage(language);
     navigate(`/play-code-golf/${selectedDifficulty}/${language}`);
   };
 
+  // Calculate score based on attempts and difficulty
   const calculateScore = (problemId, attempts) => {
     const par = PAR_ATTEMPTS[selectedDifficulty];
     const maxAttempts = MAX_ATTEMPTS[selectedDifficulty];
@@ -133,6 +142,7 @@ const PlayCodeGolf = () => {
     return attempts;
   };
 
+  // Get score label based on score value
   const getScoreLabel = (score) => {
     switch (score) {
       case SCORING.ACE: return "Hole-in-One";
@@ -146,6 +156,7 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Generate completion message based on score and attempts
   const getCompletionMessage = (score, attempts) => {
     const par = PAR_ATTEMPTS[selectedDifficulty];
     switch (score) {
@@ -166,6 +177,7 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Handle problem attempt (correct or incorrect)
   const handleAttempt = async (problemId, isCorrect) => {
     await saveCurrentProblemState();
     if (isCorrect) {
@@ -218,6 +230,7 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Handle navigation to next problem
   const handleNextProblem = () => {
     setShowCompletionMessage(false);
     if (currentProblemIndex < problems.length - 1) {
@@ -232,10 +245,12 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Start the timer when problem starts
   const handleProblemStart = () => {
     setIsTimerRunning(true);
   };
 
+  // Update problem time
   const handleTimeUpdate = (time) => {
     setProblemTimes(prevTimes => ({
       ...prevTimes,
@@ -243,6 +258,7 @@ const PlayCodeGolf = () => {
     }));
   };
 
+  // Handle code changes and update character count
   const handleCodeChange = (newCode) => {
     const problemId = problems[currentProblemIndex].id;
     setCharacterCount(newCode.length);
@@ -252,6 +268,7 @@ const PlayCodeGolf = () => {
     }));
   };
 
+  // Save current problem state to Firestore
   const saveCurrentProblemState = async () => {
     const user = auth.currentUser;
     if (!user || !problems[currentProblemIndex]) {
@@ -293,6 +310,7 @@ const PlayCodeGolf = () => {
     }
   };
 
+  // Navigate to a specific problem
   const navigateToProblem = (index) => {
     setCurrentProblemIndex(index);
     setIsTimerRunning(false);
@@ -312,18 +330,21 @@ const PlayCodeGolf = () => {
     navigate(`/play-code-golf/${selectedDifficulty}/${problem.id}?language=${selectedLanguage}`);
   };
 
+  // Navigate to previous problem
   const navigateToPreviousProblem = () => {
     if (currentProblemIndex > 0) {
       navigateToProblem(currentProblemIndex - 1);
     }
   };
 
+  // Navigate to next problem
   const navigateToNextProblem = () => {
     if (currentProblemIndex < problems.length - 1) {
       navigateToProblem(currentProblemIndex + 1);
     }
   };
 
+  // Handle finish game action
   const handleFinish = () => {
     // Assign maximum score to unsolved problems
     const finalScores = { ...scores };
@@ -337,6 +358,7 @@ const PlayCodeGolf = () => {
     setShowSummary(true);
   };
 
+  // Load initial user code from Firestore
   const loadInitialUserCode = async () => {
     const userId = auth.currentUser?.uid;
     if (!userId) {
@@ -375,21 +397,22 @@ const PlayCodeGolf = () => {
     setUserCode(initialUserCode);
   };
 
+  // Update problem timer
   const handleTimerUpdate = (newTime) => {
     setProblemTimer(newTime);
   };
 
-  // Example: Update score
+  // Update score
   const updateScore = (newScore) => {
     setScore(newScore);
   };
 
-  // Example: Increment attempts
+  // Increment problem attempts
   const incrementAttempts = () => {
     setProblemAttempts(prevAttempts => prevAttempts + 1);
   };
 
-  // Example: Update timer
+  // Update timer
   const updateTimer = (seconds) => {
     const problemId = problems[currentProblemIndex].id;
     setProblemTimes(prevTimes => ({
@@ -398,18 +421,22 @@ const PlayCodeGolf = () => {
     }));
   };
 
+  // Log score updates
   useEffect(() => {
     console.log('Score updated:', score);
   }, [score]);
 
+  // Log attempts updates
   useEffect(() => {
     console.log('Attempts updated:', problemAttempts);
   }, [problemAttempts]);
 
+  // Log timer updates
   useEffect(() => {
     console.log('Timer updated:', problemTimer);
   }, [problemTimer]);
 
+  // Start/stop timer based on isTimerRunning state
   useEffect(() => {
     let interval;
     if (isTimerRunning) {
@@ -420,6 +447,7 @@ const PlayCodeGolf = () => {
     return () => clearInterval(interval);
   }, [isTimerRunning, currentProblemIndex]);
 
+  // Get difficulty description
   const getDifficultyDescription = (difficulty) => {
     const descriptions = {
       easy: "👶 Perfect for beginners. Focus on basic programming concepts and simple optimizations.",
@@ -429,9 +457,9 @@ const PlayCodeGolf = () => {
     return descriptions[difficulty] || "Select a difficulty to see its description.";
   };
 
+  // Render loading, error, or summary components
   if (isLoading) return <div>Loading problems...</div>;
   if (error) return <div className="error-message">{error}</div>;
-
   if (showSummary) {
     return (
       <CodeGolfSummary
@@ -440,11 +468,13 @@ const PlayCodeGolf = () => {
     );
   }
 
+  // Main component render
   return (
     <div className="play-code-golf">
       <div className="content-container">
         <h1 className="page-title">Play Code Golf 🏌️‍♂️</h1>
         
+        {/* Render difficulty selection */}
         {!selectedDifficulty ? (
           <section className="difficulty-section">
             <h2>Choose Your Challenge 🎯</h2>

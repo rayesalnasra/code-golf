@@ -5,8 +5,10 @@ import ProblemForm from './components/ProblemForm';
 import './CreateProblemPage.css';
 
 const CreateProblemPage = () => {
+  // State to store the user ID
   const [userId, setUserId] = useState(null);
 
+  // Effect to retrieve the user ID from local storage on component mount
   useEffect(() => {
     const storedUserId = localStorage.getItem('userUID');
     if (storedUserId) {
@@ -14,13 +16,16 @@ const CreateProblemPage = () => {
     }
   }, []);
 
+  // Function to handle form submission
   const handleSubmit = async (problem, testCases) => {
+    // Check if user is logged in
     if (!userId) {
       alert("You must be logged in to save a problem.");
       return;
     }
 
     try {
+      // Prepare problem data
       const problemData = {
         ...problem,
         initialCode: { [problem.language]: problem.initialCode },
@@ -28,8 +33,10 @@ const CreateProblemPage = () => {
         createdAt: new Date().toISOString()
       };
 
+      // Save problem data to Firestore
       await setDoc(doc(dbCodeRunner, 'problems', problem.id), problemData);
 
+      // Prepare and save test cases data
       const testCasesData = {
         problemId: problem.id,
         cases: testCases,
@@ -38,6 +45,7 @@ const CreateProblemPage = () => {
       };
       await setDoc(doc(dbCodeRunner, 'testCases', problem.id), testCasesData);
 
+      // Prepare and save solution data
       const solutionData = {
         problemId: problem.id,
         [problem.language]: problem.solution,
@@ -53,6 +61,7 @@ const CreateProblemPage = () => {
     }
   };
 
+  // Initial problem state
   const initialProblem = {
     id: '',
     title: '',
@@ -68,6 +77,7 @@ const CreateProblemPage = () => {
       <div className="content-container">
         <h1 className="page-title">Create New Problem 🧩</h1>
         {userId ? (
+          // Render ProblemForm if user is logged in
           <div className="create-problem-form">
             <h2>Problem Details</h2>
             <ProblemForm
@@ -79,6 +89,7 @@ const CreateProblemPage = () => {
             />
           </div>
         ) : (
+          // Show error message if user is not logged in
           <p className="error-message">Please log in to create a problem.</p>
         )}
       </div>

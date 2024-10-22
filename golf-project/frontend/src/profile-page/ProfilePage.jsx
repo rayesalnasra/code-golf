@@ -24,6 +24,7 @@ ChartJS.register(
 );
 
 function ProfilePage() {
+  // State for user data
   const [user, setUser] = useState({
     displayName: "",
     email: "",
@@ -33,11 +34,13 @@ function ProfilePage() {
     bio: "",
   });
 
+  // State for editable user data
   const [editableUser, setEditableUser] = useState({
     displayName: "",
     bio: "",
   });
 
+  // Other state variables
   const [isEditing, setIsEditing] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [pastDMs, setPastDMs] = useState([]);
@@ -53,6 +56,7 @@ function ProfilePage() {
     if (userId) {
       const fetchData = async () => {
         try {
+          // Fetch user data
           const userData = await readProfileData(`users/${userId}`);
           if (userData) {
             setUser({
@@ -69,6 +73,7 @@ function ProfilePage() {
             });
           }
 
+          // Fetch and process direct messages
           const directMessages = await readProfileData(`directMessages`);
           const userPastDMs = [];
 
@@ -122,8 +127,6 @@ function ProfilePage() {
         setWeeklyProgress(progressData);
       };
 
-      fetchWeeklyProgress();
-
       const updateWeeklyProgress = async () => {
         const db = getDatabase();
         const currentDate = new Date().toISOString().split("T")[0];
@@ -165,10 +168,12 @@ function ProfilePage() {
     }
   }, []);
 
+  // Handler for edit button click
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
+  // Handler for cancel button click
   const handleCancelClick = () => {
     setEditableUser({
       displayName: user.displayName,
@@ -177,6 +182,7 @@ function ProfilePage() {
     setIsEditing(false);
   };
 
+  // Handler for input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditableUser((prevState) => ({
@@ -185,6 +191,7 @@ function ProfilePage() {
     }));
   };
 
+  // Handler for save button click
   const handleSaveClick = async () => {
     const userId = localStorage.getItem("userUID");
 
@@ -223,6 +230,7 @@ function ProfilePage() {
     }
   };
 
+  // Chart data and options
   const data = {
     labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
     datasets: [
@@ -249,10 +257,12 @@ function ProfilePage() {
     },
   };
 
+  // Handler for reply button click
   const handleReplyClick = (dmUserId) => {
     navigate(`/direct-message/${dmUserId}`);
   };
 
+  // Toggle privacy setting
   const togglePrivacy = () => {
     setIsPrivate((prevIsPrivate) => !prevIsPrivate);
   };
@@ -262,6 +272,7 @@ function ProfilePage() {
       <div className="content-container">
         <h1 className="page-title">User Profile 👤</h1>
 
+        {/* Personal Information Section */}
         <section className="profile-section">
           <h2>Personal Information</h2>
           <div className="info-grid">
@@ -316,6 +327,7 @@ function ProfilePage() {
           )}
         </section>
 
+        {/* Direct Messages Section */}
         <section className="profile-section">
           <h2>Direct Messages</h2>
           {pastDMs.length > 0 ? (
@@ -341,6 +353,7 @@ function ProfilePage() {
           )}
         </section>
 
+        {/* Statistics Section */}
         <section className="profile-section">
           <h2>Statistics</h2>
           <div className="stats-grid">
@@ -361,6 +374,7 @@ function ProfilePage() {
           </div>
         </section>
 
+        {/* Badges Section */}
         <section className="profile-section">
           <h2>Badges</h2>
           <div className="badges-grid">
@@ -393,6 +407,7 @@ function ProfilePage() {
           </div>
         </section>
 
+        {/* Weekly Progress Section */}
         <section className="profile-section">
           <h2>Weekly Progress</h2>
           <Line data={data} options={options} />
